@@ -1,0 +1,85 @@
+networks:
+  app_network:
+    name: ${COMPOSE_PROJECT_NAME}
+    driver: bridge
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+      args:
+        - NGINX_VERSION=${NGINX_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    ports:
+      - ${HTTP_ON_HOST}:80
+    volumes:
+      - ${PATH_TO_CODE}:/var/www/html
+    depends_on:
+      - php
+      - mongodb
+    networks:
+      - app_network
+
+  php:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_php_${PHP_VERSION}
+    volumes:
+      - ${PATH_TO_CODE}:/var/www/html
+    networks:
+      - app_network
+
+  mongodb:
+    image: mongo:${MONGO_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_mongodb
+    ports:
+      - ${MONGO_ON_HOST}:27017
+    volumes:
+      - ./database/data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+    networks:
+      - app_network
+
+  composer:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_composer
+    volumes:
+      - ${PATH_TO_CODE}:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: [ "php", "/usr//bin/composer" ]
+    networks:
+      - app_network
+
+  artisan:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_artisan
+    volumes:
+      - ${PATH_TO_CODE}:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: [ "php", "artisan" ]
+    networks:
+      - app_network
+
+  npm:
+    image: node:${NODE_VERSION}
+    container_name: ${COMPOSE_PROJECT_NAME}_npm
+    volumes:
+      - ${PATH_TO_CODE}:/var/www/html
+    working_dir: /var/www/html
+    entrypoint: [ "npm" ]
+    networks:
+      - app_network
