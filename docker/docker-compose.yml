@@ -9,6 +9,8 @@ services:
       context: .
       dockerfile: sonar.dockerfile
     container_name: ${COMPOSE_PROJECT_NAME}_sonar
+    profiles:
+      - default
     depends_on:
       - php
       - nginx
@@ -22,6 +24,8 @@ services:
       args:
         - NGINX_VERSION=${NGINX_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    profiles:
+      - default
     ports:
       - ${HTTP_ON_HOST}:80
     volumes:
@@ -39,6 +43,8 @@ services:
       args:
         - PHP_VERSION=${PHP_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_php_${PHP_VERSION}
+    profiles:
+      - default
     volumes:
       - ${PATH_TO_CODE}:/var/www/html
     networks:
@@ -47,6 +53,8 @@ services:
   mongodb:
     image: mongo:${MONGO_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_mongodb
+    profiles:
+      - default
     restart: unless-stopped
     ports:
       - ${MONGO_ON_HOST}:27017
@@ -66,6 +74,8 @@ services:
       args:
         - PHP_VERSION=${PHP_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_composer
+    profiles:
+      - tools
     volumes:
       - ${PATH_TO_CODE}:/var/www/html
     working_dir: /var/www/html
@@ -80,6 +90,8 @@ services:
       args:
         - PHP_VERSION=${PHP_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_artisan
+    profiles:
+      - tools
     volumes:
       - ${PATH_TO_CODE}:/var/www/html
     working_dir: /var/www/html
@@ -90,6 +102,8 @@ services:
   npm:
     image: node:${NODE_VERSION}
     container_name: ${COMPOSE_PROJECT_NAME}_npm
+    profiles:
+      - tools
     volumes:
       - ${PATH_TO_CODE}:/var/www/html
     working_dir: /var/www/html

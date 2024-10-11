@@ -35,13 +35,13 @@ To get started, make sure you have [Docker installed](https://docs.docker.com/do
 
 Next, open the .env file and update any settings (e.g., versions & exposed ports) to match your desired development environment.
 
-Then, navigate in your terminal to that directory, and spin up the containers for the full web server stack by running `docker-compose up -d --build nginx`.
+Then, navigate in your terminal to that directory, and spin up the containers for the full web server stack by running `docker-compose up --build`.
 
 After that completes, run the following to install and compile the dependencies for the application:
 
 - `docker-compose run --rm composer install`
 - `docker-compose run --rm npm install`
-- `docker-compose run --rm npm run dev`
+- `docker-compose run --rm npm run build`
 
 When the container network is up, the following services and their ports are available to the host machine:
 
@@ -60,3 +60,6 @@ You can create an interactive shell by doing one of the following:
 
 - `docker-compose run -it --entrypoint /bin/bash <SERVICE>`
 -  `docker compose exec -it <SERVICE> /bin/sh` 
+
+## Acknowledgements
+Thanks to [The Technology Sandbox](https://www.youtube.com/@thetechnologysandbox) for sharing a baseline for managing a Laravel application with Docker ([Docker Kit For Laravel](https://www.youtube.com/watch?v=GwgwgoWCm8Q)).
