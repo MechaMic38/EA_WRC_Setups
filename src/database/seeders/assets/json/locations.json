@@ -1,0 +1,251 @@
+[
+    {
+        "_id": 29,
+        "name": "Central Europe Rally",
+        "description": "An unforviging asphalt rally blasting through the countryside of the Czech Republic, Germany, and Austria.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Asphalt Soft",
+            "Asphalt Medium",
+            "Asphalt Hard",
+            "Asphalt Rain"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "tarmac",
+        "img_banner_path": "central_europe.png",
+        "img_bg_path": "central_europe.jpg"
+    },
+    {
+        "_id": 13,
+        "name": "Bio Bío Rally Chile",
+        "description": "A challenging and versatile gravel rally set within stunning natural vistas.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Gravel Super Soft",
+            "Gravel Soft",
+            "Gravel Medium",
+            "Gravel Hard"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "chile.png",
+        "img_bg_path": "chile.jpg"
+    },
+    {
+        "_id": 16,
+        "name": "Croatia Rally",
+        "description": "A fast and technical asphalt rally through rustic villages and winding mountain roads.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Asphalt Soft",
+            "Asphalt Medium",
+            "Asphalt Hard",
+            "Asphalt Rain"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "tarmac",
+        "img_banner_path": "croatia.png",
+        "img_bg_path": "croatia.jpg"
+    },
+    {
+        "_id": 8,
+        "name": "Rally Estonia",
+        "description": "A blazingly fast rally through big jumps, wide gravel roads, and tight stages.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": ["Gravel Super Soft", "Gravel Soft", "Gravel Medium"],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "estonia.png",
+        "img_bg_path": "estonia.jpg"
+    },
+    {
+        "_id": 15,
+        "name": "Secto Rally Finland",
+        "description": "Competitors fly through stages of big jumps and wide roads in this gravel rally.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": ["Gravel Super Soft", "Gravel Soft", "Gravel Medium"],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "finland.png",
+        "img_bg_path": "finland.jpg"
+    },
+    {
+        "_id": 24,
+        "name": "EKO Acropolis Rally Greece",
+        "description": "An unforviging asphalt rally blasting through the countryside of the Czech Republic, Germany, and Austria.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Gravel Super Soft",
+            "Gravel Soft",
+            "Gravel Medium",
+            "Gravel Hard"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "greece.png",
+        "img_bg_path": "greece.jpg"
+    },
+    {
+        "_id": 25,
+        "name": "FORUM8 Rally Japan",
+        "description": "A fast flowing asphalt rally with plenty of verticality through the mountainous Chubu region.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Asphalt Soft",
+            "Asphalt Medium",
+            "Asphalt Hard",
+            "Asphalt Rain"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "tarmac",
+        "img_banner_path": "japan.png",
+        "img_bg_path": "japan.jpg"
+    },
+    {
+        "_id": 26,
+        "name": "Safari Rally Kenya",
+        "description": "This gravel rally is both visually stunning and ruggedly harsh as it cuts through the African wilderness.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": ["Gravel Medium", "Gravel Hard"],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "kenya.png",
+        "img_bg_path": "kenya.jpg"
+    },
+    {
+        "_id": 5,
+        "name": "Rally Mediterraneo",
+        "description": "An historic asphalt rally with unforgiving obstacles and extreme drops.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Asphalt Soft",
+            "Asphalt Medium",
+            "Asphalt Hard",
+            "Asphalt Rain"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "tarmac",
+        "img_banner_path": "mediterraneo.png",
+        "img_bg_path": "mediterraneo.jpg"
+    },
+    {
+        "_id": 12,
+        "name": "Guanajuato Rally México",
+        "description": "A highly technical desert rally run on extreme and hazardous terrain.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": ["Gravel Medium", "Gravel Hard"],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "mexico.png",
+        "img_bg_path": "mexico.jpg"
+    },
+    {
+        "_id": 17,
+        "name": "Rallye Monte-Carlo",
+        "description": "A classic mountainous asphalt rally complicated with wintry and icy conditions.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Winter",
+            "Asphalt Soft",
+            "Asphalt Medium",
+            "Asphalt Hard",
+            "Asphalt Rain"
+        ],
+        "surface_conditions": ["Dry", "Wet", "Ice"],
+        "surface_type": "tarmac",
+        "img_banner_path": "monte_carlo.png",
+        "img_bg_path": "monte_carlo.jpg"
+    },
+    {
+        "_id": 27,
+        "name": "FANATEC Rally Oceania",
+        "description": "Rolling hills and sweeping vistas characterise this iconic gravel rally.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": ["Gravel Super Soft", "Gravel Soft", "Gravel Medium"],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "oceania.png",
+        "img_bg_path": "oceania.jpg"
+    },
+    {
+        "_id": 14,
+        "name": "AGON by AOC Rally Pacifico",
+        "description": "A tricky gravel rally set within the humid and tropical jungles of South East Asia.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": ["Gravel Medium", "Gravel Hard"],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "pacifico.png",
+        "img_bg_path": "pacifico.jpg"
+    },
+    {
+        "_id": 6,
+        "name": "Vodafone Rally de Portugal",
+        "description": "Long fast and flowing rally through the idyllic and vibrant countryside.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Gravel Super Soft",
+            "Gravel Soft",
+            "Gravel Medium",
+            "Gravel Hard"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "portugal.png",
+        "img_bg_path": "portugal.jpg"
+    },
+    {
+        "_id": 7,
+        "name": "Rally Italia Sardegna",
+        "description": "A difficult rally with winding gravel roads navigating the warm coastal regions.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Gravel Super Soft",
+            "Gravel Soft",
+            "Gravel Medium",
+            "Gravel Hard"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "gravel",
+        "img_banner_path": "sardegna.png",
+        "img_bg_path": "sardegna.jpg"
+    },
+    {
+        "_id": 9,
+        "name": "Rally Scandia",
+        "description": "An uncompromising snow rally taking place in the freezing cold Nordic forests.",
+        "seasons": ["Winter"],
+        "tyres": ["Snow"],
+        "surface_conditions": ["Snow"],
+        "surface_type": "snow",
+        "img_banner_path": "central_europe.png",
+        "img_bg_path": "central_europe.jpg"
+    },
+    {
+        "_id": 28,
+        "name": "Rally Iberia",
+        "description": "Blistering fast asphalt rally through the countryside of España.",
+        "seasons": ["Spring", "Summer", "Autumn", "Winter"],
+        "tyres": [
+            "Asphalt Soft",
+            "Asphalt Medium",
+            "Asphalt Hard",
+            "Asphalt Rain"
+        ],
+        "surface_conditions": ["Dry", "Wet"],
+        "surface_type": "tarmac",
+        "img_banner_path": "scandia.png",
+        "img_bg_path": "scandia.jpg"
+    },
+    {
+        "_id": 18,
+        "name": "Rally Sweden",
+        "description": "Spruce trees, snow banks, and icy straights make up this iconic snow rally.",
+        "seasons": ["Winter"],
+        "tyres": ["Snow"],
+        "surface_conditions": ["Snow"],
+        "surface_type": "snow",
+        "img_banner_path": "sweden.png",
+        "img_bg_path": "sweden.jpg"
+    }
+]

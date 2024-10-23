@@ -1,0 +1,92 @@
+[
+    {
+        "_id": 19,
+        "name": "WRC",
+        "img_path": "wrc.png"
+    },
+    {
+        "_id": 21,
+        "name": "WRC2",
+        "img_path": "wrc_2.png"
+    },
+    {
+        "_id": 20,
+        "name": "JWRC",
+        "img_path": "junior_wrc.png"
+    },
+    {
+        "_id": 17,
+        "name": "World Rally Car 2017 - 2021",
+        "img_path": "wrc_2017_2021.png"
+    },
+    {
+        "_id": 14,
+        "name": "Rally2",
+        "img_path": "rally_2.png"
+    },
+    {
+        "_id": 8,
+        "name": "Rally4",
+        "img_path": "rally_4.png"
+    },
+    {
+        "_id": 7,
+        "name": "NR4/R4",
+        "img_path": "nr4_r4.png"
+    },
+    {
+        "_id": 10,
+        "name": "S2000",
+        "img_path": "s_2000.png"
+    },
+    {
+        "_id": 13,
+        "name": "World Rally Car 1997 - 2011",
+        "img_path": "wrc_1997_2011.png"
+    },
+    {
+        "_id": 9,
+        "name": "S1600",
+        "img_path": "s_1600.png"
+    },
+    {
+        "_id": 11,
+        "name": "F2 Kit Car",
+        "img_path": "f2_kit_car.png"
+    },
+    {
+        "_id": 12,
+        "name": "Group A",
+        "img_path": "group_a.png"
+    },
+    {
+        "_id": 6,
+        "name": "Group B (4WD)",
+        "img_path": "group_b_4wd.png"
+    },
+    {
+        "_id": 5,
+        "name": "Group B (RWD)",
+        "img_path": "group_b_rwd.png"
+    },
+    {
+        "_id": 4,
+        "name": "H3 (RWD)",
+        "img_path": "h3_rwd.png"
+    },
+    {
+        "_id": 3,
+        "name": "H2 (RWD)",
+        "img_path": "h2_rwd.png"
+    },
+    {
+        "_id": 2,
+        "name": "H2 (FWD)",
+        "img_path": "h2_fwd.png"
+    },
+    {
+        "_id": 1,
+        "name": "H1 (FWD)",
+        "img_path": "h1_fwd.png"
+    }
+]

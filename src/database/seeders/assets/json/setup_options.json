@@ -1,0 +1,223 @@
+{
+    "alignment": {
+        "toe_front": {
+            "label": "(Front) Toe Angle",
+            "unit": "°",
+            "steps": 41
+        },
+        "toe_rear": {
+            "label": "(Rear) Toe Angle",
+            "unit": "°",
+            "steps": 41
+        },
+        "camber_front": {
+            "label": "(Front) Camber Angle",
+            "unit": "°",
+            "steps": 22
+        },
+        "camber_rear": {
+            "label": "(Rear) Camber Angle",
+            "unit": "°",
+            "steps": 22
+        }
+    },
+    "braking": {
+        "braking_force": {
+            "label": "Braking Force",
+            "unit": "Nm",
+            "steps": 61
+        },
+        "brake_bias": {
+            "label": "Brake Bias",
+            "unit": "%",
+            "steps": 61
+        },
+        "handbrake_force": {
+            "label": "Handbrake Force",
+            "unit": "Nm",
+            "steps": 61
+        }
+    },
+    "differentials": {
+        "lsd_driving_front": {
+            "label": "(Front) LSD Driving Lock",
+            "unit": "%",
+            "steps": 11
+        },
+        "lsd_braking_front": {
+            "label": "(Front) LSD Braking Lock",
+            "unit": "%",
+            "steps": 11
+        },
+        "lsd_preload_front": {
+            "label": "(Front) LSD Preload",
+            "unit": "Nm",
+            "steps": 12
+        },
+        "lsd_driving_centre": {
+            "label": "(Centre) LSD Driving Lock",
+            "unit": "%",
+            "steps": 11
+        },
+        "lsd_braking_centre": {
+            "label": "(Centre) LSD Braking Lock",
+            "unit": "%",
+            "steps": 11
+        },
+        "lsd_preload_centre": {
+            "label": "(Centre) LSD Preload",
+            "unit": "Nm",
+            "steps": 12
+        },
+        "lsd_driving_rear": {
+            "label": "(Rear) LSD Driving Lock",
+            "unit": "%",
+            "steps": 11
+        },
+        "lsd_braking_rear": {
+            "label": "(Rear) LSD Braking Lock",
+            "unit": "%",
+            "steps": 11
+        },
+        "lsd_preload_rear": {
+            "label": "(Rear) LSD Preload",
+            "unit": "Nm",
+            "steps": 12
+        },
+        "torque_bias_centre": {
+            "label": "(Centre) Torque Bias",
+            "steps": 33
+        },
+        "viscous_front": {
+            "label": "(Front) Viscous Differential",
+            "unit": "kgf.m/100rpm",
+            "steps": 11
+        },
+        "viscous_centre": {
+            "label": "(Centre) Viscous Differential",
+            "unit": "kgf.m/100rpm",
+            "steps": 11
+        },
+        "viscous_rear": {
+            "label": "(Rear) Viscous Differential",
+            "unit": "kgf.m/100rpm",
+            "steps": 11
+        }
+    },
+    "gears": {
+        "gear_1": {
+            "label": "1st Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "gear_2": {
+            "label": "2nd Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "gear_3": {
+            "label": "3rd Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "gear_4": {
+            "label": "4th Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "gear_5": {
+            "label": "5th Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "gear_6": {
+            "label": "6th Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "gear_7": {
+            "label": "7th Gear",
+            "unit": "",
+            "steps": 201
+        },
+        "final_drive": {
+            "label": "Final Drive",
+            "unit": "",
+            "steps": 201
+        }
+    },
+    "damping": {
+        "slow_bump_front": {
+            "label": "(Front) Slow Bump",
+            "unit": "",
+            "steps": 11
+        },
+        "fast_bump_front": {
+            "label": "(Front) Fast Bump",
+            "unit": "",
+            "steps": 11
+        },
+        "bump_division_front": {
+            "label": "(Front) Bump Division",
+            "unit": "m/s",
+            "steps": 11
+        },
+        "slow_rebound_front": {
+            "label": "(Front) Slow Rebound",
+            "unit": "",
+            "steps": 11
+        },
+        "slow_bump_rear": {
+            "label": "(Rear) Slow Bump",
+            "unit": "",
+            "steps": 11
+        },
+        "fast_bump_rear": {
+            "label": "(Rear) Fast Bump",
+            "unit": "",
+            "steps": 11
+        },
+        "bump_division_rear": {
+            "label": "(Rear) Bump Division",
+            "unit": "m/s",
+            "steps": 11
+        },
+        "slow_rebound_rear": {
+            "label": "(Rear) Slow Rebound",
+            "unit": "",
+            "steps": 11
+        }
+    },
+    "springs": {
+        "height_front": {
+            "label": "(Front) Ride Height",
+            "unit": "mm",
+            "steps": 21
+        },
+        "spring_front": {
+            "label": "(Front) Spring Rate",
+            "unit": "N/mm",
+            "steps": 21
+        },
+        "antiroll_front": {
+            "label": "(Front) Anti-roll Bar",
+            "unit": "N/mm",
+            "steps": 22
+        },
+        "height_rear": {
+            "label": "(Rear) Ride Height",
+            "unit": "mm",
+            "steps": 21
+        },
+        "spring_rear": {
+            "label": "(Rear) Spring Rate",
+            "unit": "N/mm",
+            "steps": 21
+        },
+        "antiroll_rear": {
+            "label": "(Rear) Anti-roll Bar",
+            "unit": "N/mm",
+            "steps": 21
+        }
+    }
+}
