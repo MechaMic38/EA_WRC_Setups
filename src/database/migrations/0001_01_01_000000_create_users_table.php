@@ -15,28 +15,17 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $collection) {
-            $collection->id();
-            $collection->string('name')->unique();
-            $collection->string('email')->unique();
-            $collection->timestamp('email_verified_at')->nullable();
-            $collection->string('password');
-            $collection->rememberToken();
-            $collection->timestamps();
+            $collection->index('name');
+            $collection->index('email');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $collection) {
-            $collection->string('email')->primary();
-            $collection->string('token');
-            $collection->timestamp('created_at')->nullable();
+            $collection->index('email');
         });
 
         Schema::create('sessions', function (Blueprint $collection) {
-            $collection->string('id')->primary();
-            $collection->foreignId('user_id')->nullable()->index();
-            $collection->string('ip_address', 45)->nullable();
-            $collection->text('user_agent')->nullable();
-            $collection->longText('payload');
-            $collection->integer('last_activity')->index();
+            $collection->index('user_id')->nullable();
+            $collection->index('last_activity');
         });
     }
 
