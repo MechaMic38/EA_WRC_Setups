@@ -21,7 +21,11 @@ class SetupBlueprintSeeder extends Seeder
         $json = File::get($jsonPath);
         $data = json_decode($json, true);
 
-        foreach($data as $item) {
+        foreach ($data as $item) {
+            $timestamp = now();
+            $item['updated_at'] = $timestamp;
+            $item['created_at'] = $timestamp;
+
             DB::table($this->collection)->insert($item);
         }
     }

@@ -54,6 +54,10 @@ class LocationSeeder extends Seeder
                 $item['img_bg_path'] = null;
             }
 
+            $timestamp = now();
+            $item['updated_at'] = $timestamp;
+            $item['created_at'] = $timestamp;
+
             // Insert the item into the database with the specified ID
             DB::table($this->collection)->insert($item);
         }

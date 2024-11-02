@@ -40,6 +40,10 @@ class VehicleSeeder extends Seeder
                 $item['img_path'] = null;
             }
 
+            $timestamp = now();
+            $item['updated_at'] = $timestamp;
+            $item['created_at'] = $timestamp;
+
             // Insert the item into the database with the specified ID
             DB::table($this->collection)->insert($item);
         }
