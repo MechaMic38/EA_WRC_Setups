@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\VehicleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -24,4 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+Route::get('/dashboard/categories', [CategoryController::class, 'index']);
+
+Route::get('/dashboard/locations', [LocationController::class, 'index']);
+
+Route::get('/dashboard/vehicles', [VehicleController::class, 'index']);
+
+
+require __DIR__ . '/auth.php';

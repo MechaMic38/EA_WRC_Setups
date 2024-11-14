@@ -44,8 +44,11 @@ class CategorySeeder extends Seeder
             $item['updated_at'] = $timestamp;
             $item['created_at'] = $timestamp;
 
-            // Insert the item into the database with the specified ID
-            DB::table($this->collection)->insert($item);
+            // Cast IDs to strings
+            $item['_id'] = (string) $item['_id'];
+
+            // Insert the item into the database
+            DB::table($this->collection)->insertGetId($item);
         }
     }
 }

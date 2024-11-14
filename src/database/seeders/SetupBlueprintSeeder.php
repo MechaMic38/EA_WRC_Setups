@@ -26,6 +26,10 @@ class SetupBlueprintSeeder extends Seeder
             $item['updated_at'] = $timestamp;
             $item['created_at'] = $timestamp;
 
+            // Cast IDs to strings
+            $item['_id'] = (string) $item['_id'];
+
+            // Insert the item into the database
             DB::table($this->collection)->insert($item);
         }
     }

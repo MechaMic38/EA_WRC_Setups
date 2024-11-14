@@ -44,7 +44,12 @@ class VehicleSeeder extends Seeder
             $item['updated_at'] = $timestamp;
             $item['created_at'] = $timestamp;
 
-            // Insert the item into the database with the specified ID
+            // Cast IDs to strings
+            $item['_id'] = (string) $item['_id'];
+            $item['category_id'] = (string) $item['category_id'];
+            $item['setup_blueprint_id'] = (string) $item['setup_blueprint_id'];
+
+            // Insert the item into the database
             DB::table($this->collection)->insert($item);
         }
     }
