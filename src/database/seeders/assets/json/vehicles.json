@@ -1,567 +1,648 @@
 [
     {
         "_id": 103,
-        "name": "Ford Puma Rally1 Hybrid",
+        "name": "Puma Rally1 Hybrid",
+        "manufacturer_id": 1,
         "category_id": 19,
         "setup_blueprint_id": 103,
         "img_path": "WRC/ford_puma_rally1.jpg"
     },
     {
         "_id": 104,
-        "name": "Hyundai i20 N Rally1 Hybrid",
+        "name": "i20 N Rally1 Hybrid",
+        "manufacturer_id": 2,
         "category_id": 19,
         "setup_blueprint_id": 104,
         "img_path": "WRC/hyundai_i20_rally1.jpg"
     },
     {
         "_id": 105,
-        "name": "Toyota GR Yaris Rally1 Hybrid",
+        "name": "GR Yaris Rally1 Hybrid",
+        "manufacturer_id": 3,
         "category_id": 19,
         "setup_blueprint_id": 105,
         "img_path": "WRC/toyota_yaris_rally1.jpg"
     },
     {
         "_id": 4,
-        "name": "Citroën C3 Rally2",
+        "name": "C3 Rally2",
+        "manufacturer_id": 4,
         "category_id": 21,
         "setup_blueprint_id": 4,
         "img_path": "WRC2/citroen_c3_rally2.jpg"
     },
     {
         "_id": 5,
-        "name": "Ford Fiesta Rally2",
+        "name": "Fiesta Rally2",
+        "manufacturer_id": 1,
         "category_id": 21,
         "setup_blueprint_id": 5,
         "img_path": "WRC2/ford_fiesta_rally2.jpg"
     },
     {
         "_id": 99,
-        "name": "Hyundai i20 N Rally2",
+        "name": "i20 N Rally2",
+        "manufacturer_id": 2,
         "category_id": 21,
         "setup_blueprint_id": 99,
         "img_path": "WRC2/hyundai_i20_rally2.jpg"
     },
     {
         "_id": 8,
-        "name": "Skoda Fabia Rally2 Evo",
+        "name": "Fabia Rally2 Evo",
+        "manufacturer_id": 5,
         "category_id": 21,
         "setup_blueprint_id": 8,
         "img_path": "WRC2/skoda_fabia_evo_wrc2.jpg"
     },
     {
         "_id": 107,
-        "name": "Skoda Fabia RS Rally2",
+        "name": "Fabia RS Rally2",
+        "manufacturer_id": 5,
         "category_id": 21,
         "setup_blueprint_id": 107,
         "img_path": "WRC2/skoda_fabia_rs_wrc2.jpg"
     },
     {
         "_id": 9,
-        "name": "Volkswagen Polo GTI R5",
+        "name": "Polo GTI R5",
+        "manufacturer_id": 6,
         "category_id": 21,
         "setup_blueprint_id": 9,
         "img_path": "WRC2/vw_polo_wrc2.jpg"
     },
     {
         "_id": 106,
-        "name": "Ford Fiesta Rally3",
+        "name": "Fiesta Rally3",
+        "manufacturer_id": 1,
         "category_id": 20,
         "setup_blueprint_id": 106,
         "img_path": "JWRC/ford_fiesta_rally3.jpg"
     },
     {
         "_id": 118,
-        "name": "Ford Fiesta WRC",
+        "name": "Fiesta WRC",
+        "manufacturer_id": 1,
         "category_id": 17,
         "setup_blueprint_id": 118,
         "img_path": "WRC_2017_2021/ford_fiesta_wrc.jpg"
     },
     {
         "_id": 95,
-        "name": "Volkswagen Polo 2017",
+        "name": "Polo 2017",
+        "manufacturer_id": 6,
         "category_id": 17,
         "setup_blueprint_id": 95,
         "img_path": "WRC_2017_2021/vw_polo_2017.jpg"
     },
     {
         "_id": 112,
-        "name": "Ford Fiesta R5 MK7 Evo 2",
+        "name": "Fiesta R5 MK7 Evo 2",
+        "manufacturer_id": 1,
         "category_id": 14,
         "setup_blueprint_id": 112,
         "img_path": "Rally2/ford_fiesta_mk7_evo_2.jpg"
     },
     {
         "_id": 85,
-        "name": "Peugeot 208 T16 R5",
+        "name": "208 T16 R5",
+        "manufacturer_id": 7,
         "category_id": 14,
         "setup_blueprint_id": 85,
         "img_path": "Rally2/peugeot_208_t16_r5.jpg"
     },
     {
         "_id": 117,
-        "name": "Skoda Fabia Rally2 Evo",
+        "name": "Fabia Rally2 Evo",
+        "manufacturer_id": 5,
         "category_id": 14,
         "setup_blueprint_id": 117,
         "img_path": "Rally2/skoda_fabia_evo_rally2.jpg"
     },
     {
         "_id": 119,
-        "name": "Skoda Fabia RS Rally2",
+        "name": "Fabia RS Rally2",
+        "manufacturer_id": 5,
         "category_id": 14,
         "setup_blueprint_id": 119,
         "img_path": "Rally2/skoda_fabia_rs_rally2.jpg"
     },
     {
         "_id": 116,
-        "name": "Volkswagen Polo GTI R5",
+        "name": "Polo GTI R5",
+        "manufacturer_id": 6,
         "category_id": 14,
         "setup_blueprint_id": 116,
         "img_path": "Rally2/vw_polo_rally2.jpg"
     },
     {
         "_id": 45,
-        "name": "Ford Fiesta MK8 Rally4",
+        "name": "Fiesta MK8 Rally4",
+        "manufacturer_id": 1,
         "category_id": 8,
         "setup_blueprint_id": 45,
         "img_path": "Rally4/ford_fiesta_mk8_rally4.jpg"
     },
     {
         "_id": 46,
-        "name": "Opel Adam R2",
+        "name": "Adam R2",
+        "manufacturer_id": 8,
         "category_id": 8,
         "setup_blueprint_id": 46,
         "img_path": "Rally4/opel_adam.jpg"
     },
     {
         "_id": 7,
-        "name": "Peugeot 208 Rally4",
+        "name": "208 Rally4",
+        "manufacturer_id": 7,
         "category_id": 8,
         "setup_blueprint_id": 7,
         "img_path": "Rally4/peugeot_208_rally4.jpg"
     },
     {
         "_id": 48,
-        "name": "Renault Twingo II",
+        "name": "Twingo II",
+        "manufacturer_id": 9,
         "category_id": 8,
         "setup_blueprint_id": 48,
         "img_path": "Rally4/renault_twingo_II.jpg"
     },
     {
         "_id": 60,
-        "name": "Mitsubishi Lancer Evolution X",
+        "name": "Lancer Evolution X",
+        "manufacturer_id": 10,
         "category_id": 7,
         "setup_blueprint_id": 60,
         "img_path": "NR4_R4/mitsubishi_lancer_evo_X.jpg"
     },
     {
         "_id": 62,
-        "name": "DJM Motorsport McRae R4",
+        "name": "McRae R4",
+        "manufacturer_id": 11,
         "category_id": 7,
         "setup_blueprint_id": 62,
         "img_path": "NR4_R4/djm_mcrae_r4.jpg"
     },
     {
         "_id": 61,
-        "name": "Subaru WRX STI NR4",
+        "name": "WRX STI NR4",
+        "manufacturer_id": 12,
         "category_id": 7,
         "setup_blueprint_id": 61,
         "img_path": "NR4_R4/subaru_wrx_sti.jpg"
     },
     {
         "_id": 35,
-        "name": "Fiat Grande Punto Abarth S2000",
+        "name": "Grande Punto Abarth S2000",
+        "manufacturer_id": 13,
         "category_id": 10,
         "setup_blueprint_id": 35,
         "img_path": "S2000/fiat_grande_punto.jpg"
     },
     {
         "_id": 87,
-        "name": "Opel Corsa S2000",
+        "name": "Corsa S2000",
+        "manufacturer_id": 8,
         "category_id": 10,
         "setup_blueprint_id": 87,
         "img_path": "S2000/opel_corsa.jpg"
     },
     {
         "_id": 36,
-        "name": "Peugeot 207 S2000",
+        "name": "207 S2000",
+        "manufacturer_id": 7,
         "category_id": 10,
         "setup_blueprint_id": 36,
         "img_path": "S2000/peugeot_207.jpg"
     },
     {
         "_id": 13,
-        "name": "Citroën Xsara WRC",
+        "name": "Xsara WRC",
+        "manufacturer_id": 4,
         "category_id": 13,
         "setup_blueprint_id": 13,
         "img_path": "WRC_1997_2011/citroen_xsara_wrc.jpg"
     },
     {
         "_id": 12,
-        "name": "Citroën C4 WRC",
+        "name": "C4 WRC",
+        "manufacturer_id": 4,
         "category_id": 13,
         "setup_blueprint_id": 12,
         "img_path": "WRC_1997_2011/citroen_c4_wrc.jpg"
     },
     {
         "_id": 14,
-        "name": "Ford Focus RS Rally 2001",
+        "name": "Focus RS Rally 2001",
+        "manufacturer_id": 1,
         "category_id": 13,
         "setup_blueprint_id": 14,
         "img_path": "WRC_1997_2011/ford_focus_2001.jpg"
     },
     {
         "_id": 15,
-        "name": "Ford Focus RS Rally 2008",
+        "name": "Focus RS Rally 2008",
+        "manufacturer_id": 1,
         "category_id": 13,
         "setup_blueprint_id": 15,
         "img_path": "WRC_1997_2011/ford_focus_2008.jpg"
     },
     {
         "_id": 24,
-        "name": "Mitsubishi Lancer Evolution VI",
+        "name": "Lancer Evolution VI",
+        "manufacturer_id": 10,
         "category_id": 13,
         "setup_blueprint_id": 24,
         "img_path": "WRC_1997_2011/mitsubishi_lancer_evo_vi.jpg"
     },
     {
         "_id": 86,
-        "name": "Mini Countryman Rally Edition",
+        "name": "Countryman Rally Edition",
+        "manufacturer_id": 14,
         "category_id": 13,
         "setup_blueprint_id": 86,
         "img_path": "WRC_1997_2011/mini_countryman.jpg"
     },
     {
         "_id": 16,
-        "name": "Peugeot 206 Rally",
+        "name": "206 Rally",
+        "manufacturer_id": 7,
         "category_id": 13,
         "setup_blueprint_id": 16,
         "img_path": "WRC_1997_2011/peugeot_206.jpg"
     },
     {
         "_id": 21,
-        "name": "Seat Córdoba WRC",
+        "name": "Córdoba WRC",
+        "manufacturer_id": 15,
         "category_id": 13,
         "setup_blueprint_id": 21,
         "img_path": "WRC_1997_2011/seat_cordoba_wrc.jpg"
     },
     {
         "_id": 17,
-        "name": "Skoda Fabia WRC",
+        "name": "Fabia WRC",
+        "manufacturer_id": 5,
         "category_id": 13,
         "setup_blueprint_id": 17,
         "img_path": "WRC_1997_2011/skoda_fabia_wrc.jpg"
     },
     {
         "_id": 19,
-        "name": "Subaru Impreza 1998",
+        "name": "Impreza 1998",
+        "manufacturer_id": 12,
         "category_id": 13,
         "setup_blueprint_id": 19,
         "img_path": "WRC_1997_2011/subaru_impreza_1998.jpg"
     },
     {
         "_id": 18,
-        "name": "Subaru Impreza 2001",
+        "name": "Impreza 2001",
+        "manufacturer_id": 12,
         "category_id": 13,
         "setup_blueprint_id": 18,
         "img_path": "WRC_1997_2011/subaru_impreza_2001.jpg"
     },
     {
         "_id": 20,
-        "name": "Subaru Impreza 2008",
+        "name": "Impreza 2008",
+        "manufacturer_id": 12,
         "category_id": 13,
         "setup_blueprint_id": 20,
         "img_path": "WRC_1997_2011/subaru_impreza_2008.jpg"
     },
     {
         "_id": 41,
-        "name": "Citroën Saxo Super 1600",
+        "name": "Saxo Super 1600",
+        "manufacturer_id": 4,
         "category_id": 9,
         "setup_blueprint_id": 41,
         "img_path": "S1600/citroen_saxo_s1600.jpg"
     },
     {
         "_id": 44,
-        "name": "Citroën C2 Super 1600",
+        "name": "C2 Super 1600",
+        "manufacturer_id": 4,
         "category_id": 9,
         "setup_blueprint_id": 44,
         "img_path": "S1600/citroen_c2_s1600.jpg"
     },
     {
         "_id": 43,
-        "name": "Ford Puma S1600",
+        "name": "Puma S1600",
+        "manufacturer_id": 1,
         "category_id": 9,
         "setup_blueprint_id": 43,
         "img_path": "S1600/ford_puma_s1600.jpg"
     },
     {
         "_id": 42,
-        "name": "Renault Clio S1600",
+        "name": "Clio S1600",
+        "manufacturer_id": 9,
         "category_id": 9,
         "setup_blueprint_id": 42,
         "img_path": "S1600/renault_clio_s1600.jpg"
     },
     {
         "_id": 33,
-        "name": "Ford Escort Mk 6 Maxi",
+        "name": "Escort Mk 6 Maxi",
+        "manufacturer_id": 1,
         "category_id": 11,
         "setup_blueprint_id": 33,
         "img_path": "F2_KitCar/ford_escort_mk6_maxi.jpg"
     },
     {
         "_id": 29,
-        "name": "Peugeot 306 Maxi",
+        "name": "306 Maxi",
+        "manufacturer_id": 7,
         "category_id": 11,
         "setup_blueprint_id": 29,
         "img_path": "F2_KitCar/peugeot_306_maxi.jpg"
     },
     {
         "_id": 34,
-        "name": "Renault Maxi Mégane",
+        "name": "Maxi Mégane",
+        "manufacturer_id": 9,
         "category_id": 11,
         "setup_blueprint_id": 34,
         "img_path": "F2_KitCar/renault_maxi_megane.jpg"
     },
     {
         "_id": 31,
-        "name": "Seat Ibiza Kit Car",
+        "name": "Ibiza Kit Car",
+        "manufacturer_id": 15,
         "category_id": 11,
         "setup_blueprint_id": 31,
         "img_path": "F2_KitCar/seat_ibiza_kitcar.jpg"
     },
     {
         "_id": 32,
-        "name": "Vauxhall Astra Rally Car",
+        "name": "Astra Rally Car",
+        "manufacturer_id": 16,
         "category_id": 11,
         "setup_blueprint_id": 32,
         "img_path": "F2_KitCar/vauxhall_astra.jpg"
     },
     {
         "_id": 30,
-        "name": "Volkswagen Golf IV Kit Car",
+        "name": "Golf IV Kit Car",
+        "manufacturer_id": 6,
         "category_id": 11,
         "setup_blueprint_id": 30,
         "img_path": "F2_KitCar/vw_golf_iv.jpg"
     },
     {
         "_id": 22,
-        "name": "Ford Escort RS Cosworth",
+        "name": "Escort RS Cosworth",
+        "manufacturer_id": 1,
         "category_id": 12,
         "setup_blueprint_id": 22,
         "img_path": "Group_A/ford_escort_rs_cosworth.jpg"
     },
     {
         "_id": 23,
-        "name": "Lancia Delta HF Integrale",
+        "name": "Delta HF Integrale",
+        "manufacturer_id": 17,
         "category_id": 12,
         "setup_blueprint_id": 23,
         "img_path": "Group_A/lancia_delta_integrale.jpg"
     },
     {
         "_id": 83,
-        "name": "Mitsubishi Galant VR4",
+        "name": "Galant VR4",
+        "manufacturer_id": 10,
         "category_id": 12,
         "setup_blueprint_id": 83,
         "img_path": "Group_A/mistubishi_gallant.jpg"
     },
     {
         "_id": 26,
-        "name": "Subaru Legacy RS",
+        "name": "Legacy RS",
+        "manufacturer_id": 12,
         "category_id": 12,
         "setup_blueprint_id": 26,
         "img_path": "Group_A/subaru_legacy_rs.jpg"
     },
     {
         "_id": 89,
-        "name": "Subaru Impreza 1995",
+        "name": "Impreza 1995",
+        "manufacturer_id": 12,
         "category_id": 12,
         "setup_blueprint_id": 89,
         "img_path": "Group_A/subaru_impreza_1995.jpg"
     },
     {
         "_id": 50,
-        "name": "Audi Sport Quattro S1 (E2)",
+        "name": "Sport Quattro S1 (E2)",
+        "manufacturer_id": 18,
         "category_id": 6,
         "setup_blueprint_id": 50,
         "img_path": "Group_B_4WD/audi_quattro.jpg"
     },
     {
         "_id": 51,
-        "name": "Ford RS200",
+        "name": "RS200",
+        "manufacturer_id": 1,
         "category_id": 6,
         "setup_blueprint_id": 51,
         "img_path": "Group_B_4WD/ford_rs200.jpg"
     },
     {
         "_id": 52,
-        "name": "Lancia Delta S4",
+        "name": "Delta S4",
+        "manufacturer_id": 17,
         "category_id": 6,
         "setup_blueprint_id": 52,
         "img_path": "Group_B_4WD/lancia_delta_s4.jpg"
     },
     {
         "_id": 53,
-        "name": "MG Metro 6R4",
+        "name": "Metro 6R4",
+        "manufacturer_id": 19,
         "category_id": 6,
         "setup_blueprint_id": 53,
         "img_path": "Group_B_4WD/mg_metro.jpg"
     },
     {
         "_id": 54,
-        "name": "Peugeot 205 T16 Evo 2",
+        "name": "205 T16 Evo 2",
+        "manufacturer_id": 7,
         "category_id": 6,
         "setup_blueprint_id": 54,
         "img_path": "Group_B_4WD/peugeot_205_t16.jpg"
     },
     {
         "_id": 55,
-        "name": "BMW M1 Procar Rally",
+        "name": "M1 Procar Rally",
+        "manufacturer_id": 20,
         "category_id": 5,
         "setup_blueprint_id": 55,
         "img_path": "Group_B_RWD/bmw_m1_procar.jpg"
     },
     {
         "_id": 57,
-        "name": "Lancia 037 Evo 2",
+        "name": "037 Evo 2",
+        "manufacturer_id": 17,
         "category_id": 5,
         "setup_blueprint_id": 57,
         "img_path": "Group_B_RWD/lancia_037.jpg"
     },
     {
         "_id": 58,
-        "name": "Opel Manta 400",
+        "name": "Manta 400",
+        "manufacturer_id": 8,
         "category_id": 5,
         "setup_blueprint_id": 58,
         "img_path": "Group_B_RWD/opel_manta.jpg"
     },
     {
         "_id": 59,
-        "name": "Porsche 911 SC RS",
+        "name": "911 SC RS",
+        "manufacturer_id": 21,
         "category_id": 5,
         "setup_blueprint_id": 59,
         "img_path": "Group_B_RWD/porsche_911.jpg"
     },
     {
         "_id": 81,
-        "name": "Lancia Fulvia HF",
+        "name": "Fulvia HF",
+        "manufacturer_id": 17,
         "category_id": 1,
         "setup_blueprint_id": 81,
         "img_path": "H1_FWD/lancia_fulvia.jpg"
     },
     {
         "_id": 82,
-        "name": "Mini Cooper S",
+        "name": "Cooper S",
+        "manufacturer_id": 14,
         "category_id": 1,
         "setup_blueprint_id": 82,
         "img_path": "H1_FWD/mini_cooper_s.jpg"
     },
     {
         "_id": 78,
-        "name": "Vauxhall Nova Sport",
+        "name": "Nova Sport",
+        "manufacturer_id": 16,
         "category_id": 1,
         "setup_blueprint_id": 78,
         "img_path": "H1_FWD/vauxhall_nova.jpg"
     },
     {
         "_id": 77,
-        "name": "Peugeot 309 GTI",
+        "name": "309 GTI",
+        "manufacturer_id": 7,
         "category_id": 2,
         "setup_blueprint_id": 77,
         "img_path": "H2_FWD/peugeot_309.jpg"
     },
     {
         "_id": 76,
-        "name": "Peugeot 205 GTI",
+        "name": "205 GTI",
+        "manufacturer_id": 7,
         "category_id": 2,
         "setup_blueprint_id": 76,
         "img_path": "H2_FWD/peugeot_205.jpg"
     },
     {
         "_id": 79,
-        "name": "Volkswagen Golf GTI",
+        "name": "Golf GTI",
+        "manufacturer_id": 6,
         "category_id": 2,
         "setup_blueprint_id": 79,
         "img_path": "H2_FWD/vw_golf.jpg"
     },
     {
         "_id": 75,
-        "name": "Alpine A110 1600 S",
+        "name": "A110 1600 S",
+        "manufacturer_id": 22,
         "category_id": 3,
         "setup_blueprint_id": 75,
         "img_path": "H2_RWD/alpine_a110.jpg"
     },
     {
         "_id": 71,
-        "name": "Fiat 131 Abarth Rally",
+        "name": "131 Abarth Rally",
+        "manufacturer_id": 13,
         "category_id": 3,
         "setup_blueprint_id": 71,
         "img_path": "H2_RWD/fiat_131_abarth.jpg"
     },
     {
         "_id": 70,
-        "name": "Ford Escort MK2",
+        "name": "Escort MK2",
+        "manufacturer_id": 1,
         "category_id": 3,
         "setup_blueprint_id": 70,
         "img_path": "H2_RWD/ford_mk2.jpg"
     },
     {
         "_id": 67,
-        "name": "Hillman Avenger",
+        "name": "Avenger",
+        "manufacturer_id": 23,
         "category_id": 3,
         "setup_blueprint_id": 67,
         "img_path": "H2_RWD/hillman_avenger.jpg"
     },
     {
         "_id": 73,
-        "name": "Opel Kadett C GT/E",
+        "name": "Kadett C GT/E",
+        "manufacturer_id": 8,
         "category_id": 3,
         "setup_blueprint_id": 73,
         "img_path": "H2_RWD/opel_kadett.jpg"
     },
     {
         "_id": 74,
-        "name": "Talbot Sunbeam Lotus",
+        "name": "Sunbeam Lotus",
+        "manufacturer_id": 24,
         "category_id": 3,
         "setup_blueprint_id": 74,
         "img_path": "H2_RWD/talbot_sunbeam_lotus.jpg"
     },
     {
         "_id": 63,
-        "name": "BMW M3 Evo Rally",
+        "name": "M3 Evo Rally",
+        "manufacturer_id": 20,
         "category_id": 4,
         "setup_blueprint_id": 63,
         "img_path": "H3_RWD/bmw_m3_evo.jpg"
     },
     {
         "_id": 65,
-        "name": "Ford Sierra Cosworth RS500",
+        "name": "Sierra Cosworth RS500",
+        "manufacturer_id": 1,
         "category_id": 4,
         "setup_blueprint_id": 65,
         "img_path": "H3_RWD/ford_sierra_cosworth_rs500.jpg"
     },
     {
         "_id": 94,
-        "name": "Ford Escort MK2 McRae Motorsport",
+        "name": "Escort MK2 McRae Motorsport",
+        "manufacturer_id": 1,
         "category_id": 4,
         "setup_blueprint_id": 94,
         "img_path": "H3_RWD/ford_mk2_mcrae.jpg"
     },
     {
         "_id": 69,
-        "name": "Renault 5 Turbo",
+        "name": "5 Turbo",
+        "manufacturer_id": 9,
         "category_id": 4,
         "setup_blueprint_id": 69,
         "img_path": "H3_RWD/renault_5_turbo.jpg"
     },
     {
         "_id": 64,
-        "name": "Lancia Stratos",
+        "name": "Stratos",
+        "manufacturer_id": 17,
         "category_id": 4,
         "setup_blueprint_id": 64,
         "img_path": "H3_RWD/lancia_stratos.jpg"
     },
     {
         "_id": 68,
-        "name": "Opel Ascona 400",
+        "name": "Ascona 400",
+        "manufacturer_id": 8,
         "category_id": 4,
         "setup_blueprint_id": 68,
         "img_path": "H3_RWD/opel_ascona_400.jpg"

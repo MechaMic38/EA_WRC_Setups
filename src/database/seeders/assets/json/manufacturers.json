@@ -1,0 +1,122 @@
+[
+    {
+        "_id": 1,
+        "name": "Ford",
+        "img_path": "ford.png"
+    },
+    {
+        "_id": 2,
+        "name": "Hyundai",
+        "img_path": "hyundai.png"
+    },
+    {
+        "_id": 3,
+        "name": "Toyota",
+        "img_path": "toyota.png"
+    },
+    {
+        "_id": 4,
+        "name": "Citroën",
+        "img_path": "citroen.png"
+    },
+    {
+        "_id": 5,
+        "name": "Skoda",
+        "img_path": "skoda.png"
+    },
+    {
+        "_id": 6,
+        "name": "Volkswagen",
+        "img_path": "volkswagen.png"
+    },
+    {
+        "_id": 7,
+        "name": "Peugeot",
+        "img_path": "peugeot.png"
+    },
+    {
+        "_id": 8,
+        "name": "Opel",
+        "img_path": "opel.png"
+    },
+    {
+        "_id": 9,
+        "name": "Renault",
+        "img_path": "renault.png"
+    },
+    {
+        "_id": 10,
+        "name": "Mitsubishi",
+        "img_path": "mitsubishi.png"
+    },
+    {
+        "_id": 11,
+        "name": "DJM Motorsport",
+        "img_path": "djm.png"
+    },
+    {
+        "_id": 12,
+        "name": "Subaru",
+        "img_path": "subaru.png"
+    },
+    {
+        "_id": 13,
+        "name": "Fiat",
+        "img_path": "fiat.png"
+    },
+    {
+        "_id": 14,
+        "name": "Mini",
+        "img_path": "mini.png"
+    },
+    {
+        "_id": 15,
+        "name": "Seat",
+        "img_path": "seat.png"
+    },
+    {
+        "_id": 16,
+        "name": "Vauxhall",
+        "img_path": "vauxhall.png"
+    },
+    {
+        "_id": 17,
+        "name": "Lancia",
+        "img_path": "lancia.png"
+    },
+    {
+        "_id": 18,
+        "name": "Audi",
+        "img_path": "audi.png"
+    },
+    {
+        "_id": 19,
+        "name": "MG",
+        "img_path": "mg.png"
+    },
+    {
+        "_id": 20,
+        "name": "BMW",
+        "img_path": "bmw.png"
+    },
+    {
+        "_id": 21,
+        "name": "Porsche",
+        "img_path": "porsche.png"
+    },
+    {
+        "_id": 22,
+        "name": "Alpine",
+        "img_path": "alpine.png"
+    },
+    {
+        "_id": 23,
+        "name": "Hillman",
+        "img_path": "hillman.png"
+    },
+    {
+        "_id": 24,
+        "name": "Talbot",
+        "img_path": "talbot.png"
+    }
+]

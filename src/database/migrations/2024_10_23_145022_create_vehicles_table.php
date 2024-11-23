@@ -13,6 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::create('manufacturers', function (Blueprint $collection) {
+            $collection->index('name');
+        });
+
         Schema::create('vehicles', function (Blueprint $collection) {
             $collection->index('name');
         });
@@ -24,5 +28,6 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('vehicles');
+        Schema::dropIfExists('manufacturers');
     }
 };

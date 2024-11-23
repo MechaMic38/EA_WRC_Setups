@@ -2,22 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\LocationResource;
-use App\Models\Location;
+use App\Http\Resources\ManufacturerResource;
+use App\Models\Manufacturer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Inertia\Inertia;
-use Inertia\Response;
 
-class LocationController extends Controller
+use function PHPSTORM_META\map;
+
+class ManufacturerController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index()
     {
-        return Inertia::render('Dashboard/Locations', [
-            'locations' => Location::all()
+        return Inertia::render('Dashboard/Manufacturers', [
+            'manufacturers' => Manufacturer::all()
         ]);
     }
 
@@ -26,8 +27,8 @@ class LocationController extends Controller
      */
     public function indexApi(): ResourceCollection
     {
-        $locations = Location::all();
-        return LocationResource::collection($locations);
+        $manufacturers = Manufacturer::all();
+        return ManufacturerResource::collection($manufacturers);
     }
 
     /**
@@ -49,26 +50,26 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Location $location)
+    public function show(Manufacturer $manufacturer)
     {
         //
     }
 
-    public function showApi(string $location): LocationResource
+    public function showApi(string $manufacturer): ManufacturerResource
     {
-        $location = Location::find($location);
+        $manufacturer = Manufacturer::find($manufacturer);
 
-        if (!$location) {
-            return response()->json(['error' => 'Location not found.'], 404);
+        if (!$manufacturer) {
+            return response()->json(['error' => 'Manufacturer not found.'], 404);
         }
 
-        return new LocationResource($location);
+        return new ManufacturerResource($manufacturer);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Location $location)
+    public function edit(Manufacturer $manufacturer)
     {
         //
     }
@@ -76,7 +77,7 @@ class LocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Location $location)
+    public function update(Request $request, Manufacturer $manufacturer)
     {
         //
     }
@@ -84,7 +85,7 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Location $location)
+    public function destroy(Manufacturer $manufacturer)
     {
         //
     }

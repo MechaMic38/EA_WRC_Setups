@@ -7,11 +7,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
-class VehicleSeeder extends Seeder
+class ManufacturerSeeder extends Seeder
 {
-    private $collection = 'vehicles';
-    private $folder = 'vehicles';
-    private $fileName = 'vehicles.json';
+    private $collection = 'manufacturers';
+    private $folder = 'manufacturers';
+    private $fileName = 'manufacturers.json';
 
     /**
      * Run the database seeds.
@@ -46,12 +46,9 @@ class VehicleSeeder extends Seeder
 
             // Cast IDs to strings
             $item['_id'] = (string) $item['_id'];
-            $item['category_id'] = (string) $item['category_id'];
-            $item['manufacturer_id'] = (string) $item['manufacturer_id'];
-            $item['setup_blueprint_id'] = (string) $item['setup_blueprint_id'];
 
             // Insert the item into the database
-            DB::table($this->collection)->insert($item);
+            DB::table($this->collection)->insertGetId($item);
         }
     }
 }

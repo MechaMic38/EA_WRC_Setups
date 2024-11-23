@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             CategorySeeder::class,
             LocationSeeder::class,
+            ManufacturerSeeder::class,
             VehicleSeeder::class,
             SetupBlueprintSeeder::class
         ]);

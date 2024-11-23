@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -23,10 +24,10 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function indexApi(): JsonResponse
+    public function indexApi(): ResourceCollection
     {
         $categories = Category::all();
-        return response()->json($categories);
+        return CategoryResource::collection($categories);
     }
 
     /**
@@ -53,7 +54,7 @@ class CategoryController extends Controller
         //
     }
 
-    public function showApi(string $category): JsonResponse
+    public function showApi(string $category): CategoryResource
     {
         $category = Category::find($category);
 
@@ -61,7 +62,7 @@ class CategoryController extends Controller
             return response()->json(['error' => 'Category not found.'], 404);
         }
 
-        return response()->json($category);
+        return new CategoryResource($category);
     }
 
     /**

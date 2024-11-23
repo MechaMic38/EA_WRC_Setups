@@ -2,22 +2,24 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps } from "@/types";
 import { Head } from "@inertiajs/react";
 
-interface Category {
+interface Manufacturer {
     id: string;
     name: string;
     img_path: string;
 }
 
-const Categories = ({ categories }: PageProps<{ categories: Category[] }>) => {
+const Manufacturers = ({
+    manufacturers,
+}: PageProps<{ manufacturers: Manufacturer[] }>) => {
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
-                    Categories
+                    Manufacturers
                 </h2>
             }
         >
-            <Head title="Categories" />
+            <Head title="Manufacturers" />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -33,20 +35,22 @@ const Categories = ({ categories }: PageProps<{ categories: Category[] }>) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {categories.map((category) => (
+                            {manufacturers.map((manufacturer) => (
                                 <tr
-                                    key={category.id}
+                                    key={manufacturer.id}
                                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                                 >
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
-                                        <img
-                                            src={`/storage/${category.img_path}`} // TODO: provide from backend
-                                            alt={category.name}
-                                            className="w-20 h-auto object-cover rounded"
-                                        />
+                                        <div className="max-w-[20%] h-12 flex items-center justify-center">
+                                            <img
+                                                src={`/storage/${manufacturer.img_path}`} // TODO: provide from backend
+                                                alt={manufacturer.name}
+                                                className="max-h-[100%] object-contain mx-auto"
+                                            />
+                                        </div>
                                     </td>
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                                        {category.name}
+                                        {manufacturer.name}
                                     </td>
                                 </tr>
                             ))}
@@ -58,4 +62,4 @@ const Categories = ({ categories }: PageProps<{ categories: Category[] }>) => {
     );
 };
 
-export default Categories;
+export default Manufacturers;

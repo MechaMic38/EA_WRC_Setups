@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,10 +21,10 @@ class VehicleController extends Controller
         ]);
     }
 
-    public function indexApi(): JsonResponse
+    public function indexApi(): ResourceCollection
     {
         $vehicles = Vehicle::all();
-        return response()->json($vehicles);
+        return VehicleResource::collection($vehicles);
     }
 
     /**
@@ -50,7 +51,7 @@ class VehicleController extends Controller
         //
     }
 
-    public function showApi(string $vehicle): JsonResponse
+    public function showApi(string $vehicle): VehicleResource
     {
         $vehicle = Vehicle::find($vehicle);
 
@@ -58,7 +59,7 @@ class VehicleController extends Controller
             return response()->json(['error' => 'Vehicle not found.'], 404);
         }
 
-        return response()->json($vehicle);
+        return new VehicleResource($vehicle);
     }
 
     /**

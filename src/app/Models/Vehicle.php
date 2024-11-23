@@ -24,6 +24,14 @@ class Vehicle extends Model
     }
 
     /**
+     * Get the manufacturer that the vehicle belongs to.
+     */
+    public function manufacturer(): BelongsTo
+    {
+        return $this->belongsTo(Manufacturer::class);
+    }
+
+    /**
      * Get the setup blueprint associated with the vehicle.
      */
     public function setupBlueprint(): HasOne
