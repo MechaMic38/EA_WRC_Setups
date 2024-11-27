@@ -1,16 +1,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PageProps } from "@/types";
+import { Manufacturer, PageProps, PaginatedData } from "@/types";
 import { Head } from "@inertiajs/react";
-
-interface Manufacturer {
-    id: string;
-    name: string;
-    img_path: string;
-}
 
 const Manufacturers = ({
     manufacturers,
-}: PageProps<{ manufacturers: Manufacturer[] }>) => {
+}: PageProps<{ manufacturers: PaginatedData<Manufacturer> }>) => {
     return (
         <AuthenticatedLayout
             header={
@@ -35,7 +29,7 @@ const Manufacturers = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {manufacturers.map((manufacturer) => (
+                            {manufacturers.data.map((manufacturer) => (
                                 <tr
                                     key={manufacturer.id}
                                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
@@ -43,7 +37,7 @@ const Manufacturers = ({
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                         <div className="max-w-[20%] h-12 flex items-center justify-center">
                                             <img
-                                                src={`/storage/${manufacturer.img_path}`} // TODO: provide from backend
+                                                src={manufacturer.img_path}
                                                 alt={manufacturer.name}
                                                 className="max-h-[100%] object-contain mx-auto"
                                             />

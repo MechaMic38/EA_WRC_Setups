@@ -1,17 +1,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PageProps } from "@/types";
+import { Location, PageProps, PaginatedData } from "@/types";
 import { Head } from "@inertiajs/react";
 
-interface Location {
-    id: string;
-    name: string;
-    description: string;
-    surface_type: string;
-    img_banner_path: string;
-    img_bg_path: string;
-}
-
-const Locations = ({ locations }: PageProps<{ locations: Location[] }>) => {
+const Locations = ({
+    locations,
+}: PageProps<{ locations: PaginatedData<Location> }>) => {
     return (
         <AuthenticatedLayout
             header={
@@ -42,14 +35,14 @@ const Locations = ({ locations }: PageProps<{ locations: Location[] }>) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {locations.map((location) => (
+                            {locations.data.map((location) => (
                                 <tr
                                     key={location.id}
                                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                                 >
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                         <img
-                                            src={`/storage/${location.img_banner_path}`} // TODO: provide from backend
+                                            src={location.img_banner_path}
                                             alt={location.name}
                                             className="w-20 h-auto object-cover rounded"
                                         />

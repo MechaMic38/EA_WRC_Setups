@@ -17,8 +17,10 @@ class ManufacturerController extends Controller
      */
     public function index()
     {
+        $paginated = Manufacturer::paginate(15);
+
         return Inertia::render('Dashboard/Manufacturers', [
-            'manufacturers' => Manufacturer::all()
+            'manufacturers' => ManufacturerResource::collection($paginated)
         ]);
     }
 

@@ -16,8 +16,10 @@ class VehicleController extends Controller
      */
     public function index(): Response
     {
+        $paginated = Vehicle::paginate(15);
+
         return Inertia::render('Dashboard/Vehicles', [
-            'vehicles' => Vehicle::all()
+            'vehicles' => VehicleResource::collection($paginated)
         ]);
     }
 
@@ -53,7 +55,7 @@ class VehicleController extends Controller
 
     public function showApi(string $vehicle): VehicleResource
     {
-        $vehicle = Vehicle::find($vehicle);
+        $vehicle = Vehicle::with(['manufacturer', 'category'])->find($vehicle);
 
         if (!$vehicle) {
             return response()->json(['error' => 'Vehicle not found.'], 404);

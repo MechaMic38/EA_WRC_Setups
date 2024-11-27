@@ -1,15 +1,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PageProps } from "@/types";
+import { PageProps, PaginatedData, Vehicle } from "@/types";
 import { Head } from "@inertiajs/react";
 
-interface Vehicle {
-    id: string;
-    name: string;
-    category_id: string;
-    img_path: string;
-}
-
-const Vehicles = ({ vehicles }: PageProps<{ vehicles: Vehicle[] }>) => {
+const Vehicles = ({
+    vehicles,
+}: PageProps<{ vehicles: PaginatedData<Vehicle> }>) => {
     return (
         <AuthenticatedLayout
             header={
@@ -37,23 +32,28 @@ const Vehicles = ({ vehicles }: PageProps<{ vehicles: Vehicle[] }>) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {vehicles.map((vehicle) => (
+                            {vehicles.data.map((vehicle) => (
                                 <tr
                                     key={vehicle.id}
                                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                                 >
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                                        <img
-                                            src={`/storage/${vehicle.img_path}`} // TODO: provide from backend
-                                            alt={vehicle.name}
-                                            className="w-20 h-auto object-cover rounded"
-                                        />
+                                        <div className="max-w-[20%] h-12 flex items-center justify-center">
+                                            <img
+                                                src={
+                                                    vehicle.manufacturer
+                                                        .img_path
+                                                }
+                                                alt={vehicle.manufacturer.name}
+                                                className="max-h-[100%] object-contain mx-auto"
+                                            />
+                                        </div>
                                     </td>
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
                                         {vehicle.name}
                                     </td>
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                                        {vehicle.category_id}
+                                        {vehicle.category.name}
                                     </td>
                                 </tr>
                             ))}

@@ -16,8 +16,10 @@ class LocationController extends Controller
      */
     public function index(): Response
     {
+        $paginated = Location::paginate(15);
+
         return Inertia::render('Dashboard/Locations', [
-            'locations' => Location::all()
+            'locations' => LocationResource::collection($paginated)
         ]);
     }
 

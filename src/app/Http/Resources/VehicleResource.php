@@ -2,14 +2,14 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Category;
-use App\Models\Manufacturer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\URL;
 
 class VehicleResource extends JsonResource
 {
+    public static $wrap = false;
+
     /**
      * Transform the resource into an array.
      *
@@ -21,10 +21,10 @@ class VehicleResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'manufacturer' => new ManufacturerResource(
-                Manufacturer::find($this->manufacturer_id)
+                $this->manufacturer
             ),
             'category' => new CategoryResource(
-                Category::find($this->category_id)
+                $this->category
             ),
             'img_path' => URL::asset('storage' . '/' . $this->img_path)
         ];

@@ -1,14 +1,10 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { PageProps } from "@/types";
+import { Category, PageProps, PaginatedData } from "@/types";
 import { Head } from "@inertiajs/react";
 
-interface Category {
-    id: string;
-    name: string;
-    img_path: string;
-}
-
-const Categories = ({ categories }: PageProps<{ categories: Category[] }>) => {
+const Categories = ({
+    categories,
+}: PageProps<{ categories: PaginatedData<Category> }>) => {
     return (
         <AuthenticatedLayout
             header={
@@ -33,14 +29,14 @@ const Categories = ({ categories }: PageProps<{ categories: Category[] }>) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {categories.map((category) => (
+                            {categories.data.map((category) => (
                                 <tr
                                     key={category.id}
                                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                                 >
                                     <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                         <img
-                                            src={`/storage/${category.img_path}`} // TODO: provide from backend
+                                            src={category.img_path}
                                             alt={category.name}
                                             className="w-20 h-auto object-cover rounded"
                                         />
