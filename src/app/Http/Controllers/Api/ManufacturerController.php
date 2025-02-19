@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ManufacturerResource;
 use App\Models\Manufacturer;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -30,7 +31,7 @@ class ManufacturerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $manufacturer): ManufacturerResource
+    public function show(string $manufacturer): JsonResponse
     {
         $manufacturer = Manufacturer::find($manufacturer);
 

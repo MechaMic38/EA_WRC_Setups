@@ -24,14 +24,6 @@ class SetupBlueprintController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(SetupBlueprint $setupBlueprint)
@@ -43,22 +35,6 @@ class SetupBlueprintController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(SetupBlueprint $setupBlueprint)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, SetupBlueprint $setupBlueprint)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SetupBlueprint $setupBlueprint)
     {
         //
     }

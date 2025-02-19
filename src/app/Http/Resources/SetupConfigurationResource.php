@@ -1,0 +1,28 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class SetupConfigurationResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'alignment' => $this->alignment,
+            'braking' => $this->braking,
+            'differentials' => $this->differentials,
+            'gears' => $this->gears,
+            'damping' => $this->damping,
+            'springs' => $this->springs,
+            'setup' => new SetupResource($this->setup)
+        ];
+    }
+}

@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\LocationResource;
-use App\Models\Location;
+use App\Http\Resources\SetupResource;
+use App\Models\Setup;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class LocationController extends Controller
+class SetupController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index(): ResourceCollection
     {
-        $locations = Location::paginate(15);
-        return LocationResource::collection($locations);
+        $setups = Setup::paginate(15);
+        return SetupResource::collection($setups);
     }
 
     /**
@@ -31,21 +31,21 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $location): JsonResponse
+    public function show(string $setup): JsonResponse
     {
-        $location = Location::find($location);
+        $setup = Setup::with(['user', 'location', 'vehicle'])->find($setup);
 
-        if (!$location) {
-            return response()->json(['error' => 'Location not found.'], 404);
+        if (!$setup) {
+            return response()->json(['error' => 'Setup not found.'], 404);
         }
 
-        return new LocationResource($location);
+        return new SetupResource($setup);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Location $location)
+    public function update(Request $request, Setup $setup)
     {
         //
     }
@@ -53,7 +53,7 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Location $location)
+    public function destroy(Setup $setup)
     {
         //
     }

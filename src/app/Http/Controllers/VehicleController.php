@@ -15,11 +15,7 @@ class VehicleController extends Controller
      */
     public function index(): Response
     {
-        $paginated = Vehicle::paginate(15);
-
-        return Inertia::render('Dashboard/Vehicles', [
-            'vehicles' => VehicleResource::collection($paginated)
-        ]);
+        return Inertia::render('Dashboard/Vehicles', []);
     }
 
     /**

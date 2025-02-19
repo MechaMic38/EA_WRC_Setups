@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -15,7 +16,7 @@ class CategoryController extends Controller
      */
     public function index(): ResourceCollection
     {
-        $categories = Category::all();
+        $categories = Category::paginate(15);
         return CategoryResource::collection($categories);
     }
 
@@ -30,7 +31,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $category): CategoryResource
+    public function show(string $category): JsonResponse
     {
         $category = Category::find($category);
 

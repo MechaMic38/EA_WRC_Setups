@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -15,7 +16,7 @@ class VehicleController extends Controller
      */
     public function index(): ResourceCollection
     {
-        $vehicles = Vehicle::all();
+        $vehicles = Vehicle::paginate(15);
         return VehicleResource::collection($vehicles);
     }
 
@@ -30,7 +31,7 @@ class VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $vehicle): VehicleResource
+    public function show(string $vehicle): JsonResponse
     {
         $vehicle = Vehicle::with(['manufacturer', 'category'])->find($vehicle);
 
