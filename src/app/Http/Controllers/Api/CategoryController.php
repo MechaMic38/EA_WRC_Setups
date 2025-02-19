@@ -1,33 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(): ResourceCollection
     {
-        $paginated = Category::paginate(15);
-
-        return Inertia::render('Dashboard/Categories', [
-            'categories' => CategoryResource::collection($paginated)
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $categories = Category::all();
+        return CategoryResource::collection($categories);
     }
 
     /**
@@ -41,17 +30,15 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Category $category)
+    public function show(string $category): CategoryResource
     {
-        //
-    }
+        $category = Category::find($category);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Category $category)
-    {
-        //
+        if (!$category) {
+            return response()->json(['error' => 'Category not found.'], 404);
+        }
+
+        return new CategoryResource($category);
     }
 
     /**

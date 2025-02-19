@@ -1,33 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\LocationResource;
 use App\Models\Location;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class LocationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(): ResourceCollection
     {
-        $paginated = Location::paginate(15);
-
-        return Inertia::render('Dashboard/Locations', [
-            'locations' => LocationResource::collection($paginated)
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $locations = Location::all();
+        return LocationResource::collection($locations);
     }
 
     /**
@@ -41,17 +30,15 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Location $location)
+    public function show(string $location): LocationResource
     {
-        //
-    }
+        $location = Location::find($location);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Location $location)
-    {
-        //
+        if (!$location) {
+            return response()->json(['error' => 'Location not found.'], 404);
+        }
+
+        return new LocationResource($location);
     }
 
     /**

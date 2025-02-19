@@ -60,11 +60,9 @@ const Manufacturers = () => {
                         </thead>
                         <tbody>
                             {isLoading
-                                ? Array(5)
-                                      .fill(null)
-                                      .map((_, index) => (
-                                          <SkeletonRow key={index} />
-                                      ))
+                                ? Array.from({ length: 10 }, (_, index) => (
+                                      <SkeletonRow key={index} />
+                                  ))
                                 : manufacturers.map((manufacturer) => (
                                       <tr
                                           key={manufacturer.id}

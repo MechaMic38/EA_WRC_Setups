@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Models\SetupBlueprint;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class SetupBlueprintController extends Controller
@@ -10,17 +12,10 @@ class SetupBlueprintController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $blueprints = SetupBlueprint::all();
+        return response()->json($blueprints);
     }
 
     /**
@@ -34,17 +29,15 @@ class SetupBlueprintController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SetupBlueprint $setupBlueprint)
+    public function show(string $setupBlueprint): JsonResponse
     {
-        //
-    }
+        $blueprint = SetupBlueprint::find($setupBlueprint);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(SetupBlueprint $setupBlueprint)
-    {
-        //
+        if (!$blueprint) {
+            return response()->json(['error' => 'Blueprint not found.'], 404);
+        }
+
+        return response()->json($blueprint);
     }
 
     /**

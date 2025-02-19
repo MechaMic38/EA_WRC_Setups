@@ -1,10 +1,40 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Category, PageProps, PaginatedData } from "@/types";
 import { Head } from "@inertiajs/react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
-const Categories = ({
-    categories,
-}: PageProps<{ categories: PaginatedData<Category> }>) => {
+const SkeletonRow = () => (
+    <tr>
+        <td className="py-3 px-4">
+            <div className="h-10 w-10 bg-gray-200 dark:bg-gray-700 rounded-full animate-pulse"></div>
+        </td>
+        <td className="py-3 px-4">
+            <div className="h-5 w-32 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"></div>
+        </td>
+    </tr>
+);
+
+const Categories = () => {
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            setIsLoading(true);
+            try {
+                const response = await axios.get("/api/categories");
+                setCategories(response.data.data);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
     return (
         <AuthenticatedLayout
             header={
@@ -29,23 +59,27 @@ const Categories = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {categories.data.map((category) => (
-                                <tr
-                                    key={category.id}
-                                    className="hover:bg-gray-50 dark:hover:bg-gray-700"
-                                >
-                                    <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
-                                        <img
-                                            src={category.img_path}
-                                            alt={category.name}
-                                            className="w-20 h-auto object-cover rounded"
-                                        />
-                                    </td>
-                                    <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                                        {category.name}
-                                    </td>
-                                </tr>
-                            ))}
+                            {isLoading
+                                ? Array.from({ length: 10 }, (_, index) => (
+                                      <SkeletonRow key={index} />
+                                  ))
+                                : categories.map((category) => (
+                                      <tr
+                                          key={category.id}
+                                          className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                                      >
+                                          <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
+                                              <img
+                                                  src={category.img_path}
+                                                  alt={category.name}
+                                                  className="w-20 h-auto object-cover rounded"
+                                              />
+                                          </td>
+                                          <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
+                                              {category.name}
+                                          </td>
+                                      </tr>
+                                  ))}
                         </tbody>
                     </table>
                 </div>

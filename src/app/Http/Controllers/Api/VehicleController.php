@@ -1,33 +1,22 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
-use Inertia\Response;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class VehicleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(): ResourceCollection
     {
-        $paginated = Vehicle::paginate(15);
-
-        return Inertia::render('Dashboard/Vehicles', [
-            'vehicles' => VehicleResource::collection($paginated)
-        ]);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $vehicles = Vehicle::all();
+        return VehicleResource::collection($vehicles);
     }
 
     /**
@@ -41,17 +30,15 @@ class VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Vehicle $vehicle)
+    public function show(string $vehicle): VehicleResource
     {
-        //
-    }
+        $vehicle = Vehicle::with(['manufacturer', 'category'])->find($vehicle);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Vehicle $vehicle)
-    {
-        //
+        if (!$vehicle) {
+            return response()->json(['error' => 'Vehicle not found.'], 404);
+        }
+
+        return new VehicleResource($vehicle);
     }
 
     /**
