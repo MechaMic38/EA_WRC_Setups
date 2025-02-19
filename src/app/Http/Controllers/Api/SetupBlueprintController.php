@@ -31,7 +31,7 @@ class SetupBlueprintController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $setupBlueprint): JsonResponse
+    public function show(string $setupBlueprint)
     {
         $blueprint = SetupBlueprint::find($setupBlueprint);
 
@@ -55,6 +55,8 @@ class SetupBlueprintController extends Controller
      */
     public function destroy(SetupBlueprint $setupBlueprint)
     {
-        //
+        // TODO: add gate policy to check if user can delete blueprint
+
+        $setupBlueprint->delete();
     }
 }

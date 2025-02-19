@@ -31,7 +31,7 @@ class ManufacturerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $manufacturer): JsonResponse
+    public function show(string $manufacturer)
     {
         $manufacturer = Manufacturer::find($manufacturer);
 
@@ -55,6 +55,8 @@ class ManufacturerController extends Controller
      */
     public function destroy(Manufacturer $manufacturer)
     {
-        //
+        // TODO: add gate policy to check if user can delete manufacturer
+
+        $manufacturer->delete();
     }
 }

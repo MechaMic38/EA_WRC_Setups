@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\ManufacturerController;
 use App\Http\Controllers\Api\SetupBlueprintController;
 use App\Http\Controllers\Api\SetupConfigurationController;
 use App\Http\Controllers\Api\SetupController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,9 @@ Route::get('/setup-blueprints/{setupBlueprint}', [SetupBlueprintController::clas
 
 Route::get('/setup-configurations', [SetupConfigurationController::class, 'index']);
 Route::get('/setup-configurations/{setupConfiguration}', [SetupConfigurationController::class, 'show']);
+
+Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/{user}', [UserController::class, 'show']);
 
 Route::get('/vehicles', [VehicleController::class, 'index']);
 Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);

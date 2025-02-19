@@ -31,7 +31,7 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $location): JsonResponse
+    public function show(string $location)
     {
         $location = Location::find($location);
 
@@ -55,6 +55,8 @@ class LocationController extends Controller
      */
     public function destroy(Location $location)
     {
-        //
+        // TODO: add gate policy to check if user can delete location
+
+        $location->delete();
     }
 }

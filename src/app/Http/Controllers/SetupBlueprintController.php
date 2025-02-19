@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SetupBlueprint;
-use Illuminate\Http\Request;
 
 class SetupBlueprintController extends Controller
 {

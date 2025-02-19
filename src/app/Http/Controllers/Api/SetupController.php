@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SetupResource;
 use App\Models\Setup;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class SetupController extends Controller
 {
@@ -25,13 +25,15 @@ class SetupController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Gate::authorize('create', Setup::class);
+
+        // TODO: add validation and store logic
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $setup): JsonResponse
+    public function show(string $setup)
     {
         $setup = Setup::with(['user', 'location', 'vehicle'])->find($setup);
 
@@ -47,7 +49,9 @@ class SetupController extends Controller
      */
     public function update(Request $request, Setup $setup)
     {
-        //
+        Gate::authorize('update', $setup);
+
+        // TODO: add validation and update logic
     }
 
     /**
@@ -55,6 +59,8 @@ class SetupController extends Controller
      */
     public function destroy(Setup $setup)
     {
-        //
+        Gate::authorize('delete', $setup);
+
+        $setup->delete();
     }
 }

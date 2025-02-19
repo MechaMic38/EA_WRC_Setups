@@ -31,7 +31,7 @@ class SetupConfigurationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $setupConfiguration): JsonResponse
+    public function show(string $setupConfiguration)
     {
         $configuration = SetupConfiguration::find($setupConfiguration);
 
@@ -55,6 +55,8 @@ class SetupConfigurationController extends Controller
      */
     public function destroy(SetupConfiguration $setupConfiguration)
     {
-        //
+        // TODO: add gate policy to check if user can delete setup configuration
+
+        $setupConfiguration->delete();
     }
 }

@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -31,7 +30,7 @@ class VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $vehicle): JsonResponse
+    public function show(string $vehicle)
     {
         $vehicle = Vehicle::with(['manufacturer', 'category'])->find($vehicle);
 
@@ -55,6 +54,8 @@ class VehicleController extends Controller
      */
     public function destroy(Vehicle $vehicle)
     {
-        //
+        // TODO: add gate policy to check if user can delete vehicle
+
+        $vehicle->delete();
     }
 }

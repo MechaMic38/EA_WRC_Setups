@@ -31,7 +31,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $category): JsonResponse
+    public function show(string $category)
     {
         $category = Category::find($category);
 
@@ -55,6 +55,8 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        // TODO: add gate policy to check if user can delete category
+
+        $category->delete();
     }
 }
