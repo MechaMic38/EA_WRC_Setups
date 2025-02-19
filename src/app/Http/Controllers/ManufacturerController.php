@@ -19,9 +19,7 @@ class ManufacturerController extends Controller
     {
         $paginated = Manufacturer::paginate(15);
 
-        return Inertia::render('Dashboard/Manufacturers', [
-            'manufacturers' => ManufacturerResource::collection($paginated)
-        ]);
+        return Inertia::render('Dashboard/Manufacturers', []);
     }
 
     /**
@@ -29,7 +27,7 @@ class ManufacturerController extends Controller
      */
     public function indexApi(): ResourceCollection
     {
-        $manufacturers = Manufacturer::all();
+        $manufacturers = Manufacturer::paginate(15);
         return ManufacturerResource::collection($manufacturers);
     }
 
