@@ -24,6 +24,20 @@ docker compose run --rm npm install
 docker compose run --rm npm run build
 ```
 
+Then, you need to create a symbolic link from source directory `storage/app/public` to target directory `public/storage`. This enables all files within the target directory to be accessible from the web. To do so, type:
+
+```bash
+php artisan storage:link
+```
+
+Finally, launch all application containers, and run the necessary migrations and seeders:
+
+```bash
+docker compose up
+docker compose run --rm artisan migrate
+docker compose run --rm artisan db:seed
+```
+
 ### Subsequent Launches
 
 For all subsequent launches, you just need to execute:
