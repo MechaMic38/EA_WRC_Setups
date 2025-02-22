@@ -12,6 +12,8 @@ class Vehicle extends Model
 
     protected $fillable = [
         'name',
+        'category_id',
+        'manufacturer_id',
         'img_path'
     ];
 

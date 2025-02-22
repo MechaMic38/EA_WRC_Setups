@@ -17,12 +17,21 @@ Route::get('/user', function (Request $request) {
 
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/categories/{category}', [CategoryController::class, 'show']);
+Route::post('/categories', [CategoryController::class, 'store']);
+Route::patch('/categories/{category}', [CategoryController::class, 'update']);
+Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
 
 Route::get('/locations', [LocationController::class, 'index']);
 Route::get('/locations/{location}', [LocationController::class, 'show']);
+Route::post('/locations', [LocationController::class, 'store']);
+Route::patch('/locations/{location}', [LocationController::class, 'update']);
+Route::delete('/locations/{location}', [LocationController::class, 'destroy']);
 
 Route::get('/manufacturers', [ManufacturerController::class, 'index']);
 Route::get('/manufacturers/{manufacturer}', [ManufacturerController::class, 'show']);
+Route::post('/manufacturers', [ManufacturerController::class, 'store']);
+Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update']);
+Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy']);
 
 Route::get('/setups', [SetupController::class, 'index']);
 Route::get('/setups/{setup}', [SetupController::class, 'show']);
@@ -38,3 +47,6 @@ Route::get('/users/{user}', [UserController::class, 'show']);
 
 Route::get('/vehicles', [VehicleController::class, 'index']);
 Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+Route::post('/vehicles', [VehicleController::class, 'store']);
+Route::patch('/vehicles/{vehicle}', [VehicleController::class, 'update']);
+Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
