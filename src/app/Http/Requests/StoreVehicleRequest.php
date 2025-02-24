@@ -2,17 +2,18 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Vehicle;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 
 class StoreVehicleRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        // TODO: add gate policy to check if user is admin
-        return true;
+        return Gate::authorize('create', Vehicle::class);
     }
 
     /**

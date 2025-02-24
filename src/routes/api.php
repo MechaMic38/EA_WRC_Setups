@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Api\AuthenticatedTokenController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LocationController;
@@ -49,7 +50,7 @@ Route::get('/setup-blueprints/{setupBlueprint}', [SetupBlueprintController::clas
 Route::get('/setup-configurations', [SetupConfigurationController::class, 'index']);
 Route::get('/setup-configurations/{setupConfiguration}', [SetupConfigurationController::class, 'show']);
 
-// Vehicles (GET only)
+// Vehicles
 Route::get('/vehicles', [VehicleController::class, 'index']);
 Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
 
@@ -100,7 +101,7 @@ Route::middleware('auth:sanctum')->group(function () {
 |
 */
 
-Route::middleware(['auth:sanctum', 'role:admin'])->group(function () {
+Route::middleware(['auth:sanctum', 'role:' . UserRole::Admin->value])->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::post('/users', [UserController::class, 'store']);

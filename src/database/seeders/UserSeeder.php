@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -22,7 +23,7 @@ class UserSeeder extends Seeder
         $admin->name = $adminName;
         $admin->email = $adminEmail;
         $admin->password = Hash::make($adminPassword);
-        $admin->role = 'admin';
+        $admin->role = UserRole::Admin;
         $admin->save();
     }
 }

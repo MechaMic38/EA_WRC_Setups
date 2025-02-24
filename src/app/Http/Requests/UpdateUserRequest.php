@@ -10,9 +10,9 @@ class UpdateUserRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
-        return Gate::allows('update', $this->route('user'));
+        return Gate::authorize('update', $this->route('user'));
     }
 
     /**

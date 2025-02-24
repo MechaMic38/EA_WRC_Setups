@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\Manufacturer;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
@@ -11,24 +12,30 @@ class ManufacturerPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user)
+    public function create(User $user): Response
     {
-        // TODO: Only admin can create manufacturers
+        return $user->role == UserRole::Admin
+            ? Response::allow()
+            : Response::deny('Unauthorized.');
     }
 
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Manufacturer $manufacturer)
+    public function update(User $user, Manufacturer $manufacturer): Response
     {
-        // TODO: Only admin can update manufacturers
+        return $user->role == UserRole::Admin
+            ? Response::allow()
+            : Response::deny('Unauthorized.');
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Manufacturer $manufacturer)
+    public function delete(User $user, Manufacturer $manufacturer): Response
     {
-        // TODO: Only admin can delete manufacturers
+        return $user->role == UserRole::Admin
+            ? Response::allow()
+            : Response::deny('Unauthorized.');
     }
 }

@@ -2,16 +2,20 @@
 
 namespace App\Policies;
 
+use App\Enums\UserRole;
 use App\Models\User;
+use Illuminate\Auth\Access\Response;
 
 class UserPolicy
 {
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user)
+    public function create(User $user): Response
     {
-        return $user->role == 'admin';
+        return $user->role == UserRole::Admin
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -19,7 +23,9 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return $user->role === 'admin' || $user->id === $model->id;
+        return ($user->role == UserRole::Admin || $user->id === $model->id)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 
     /**
@@ -27,6 +33,8 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        return $user->role === 'admin' || $user->id === $model->id;
+        return ($user->role == UserRole::Admin || $user->id === $model->id)
+            ? Response::allow()
+            : Response::denyAsNotFound();
     }
 }
