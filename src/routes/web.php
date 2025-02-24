@@ -24,14 +24,18 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('dashboard')
+    ->middleware(['auth', 'verified', 'role:admin'])
+    ->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('Dashboard');
+        })->name('dashboard');
 
-Route::get('/dashboard/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
-Route::get('/dashboard/locations', [LocationController::class, 'index'])->name('dashboard.locations');
-Route::get('/dashboard/manufacturers', [ManufacturerController::class, 'index'])->name('dashboard.manufacturers');
-Route::get('/dashboard/vehicles', [VehicleController::class, 'index'])->name('dashboard.vehicles');
+        Route::get('/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
+        Route::get('/locations', [LocationController::class, 'index'])->name('dashboard.locations');
+        Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('dashboard.manufacturers');
+        Route::get('/vehicles', [VehicleController::class, 'index'])->name('dashboard.vehicles');
+    });
 
 
 require __DIR__ . '/auth.php';
