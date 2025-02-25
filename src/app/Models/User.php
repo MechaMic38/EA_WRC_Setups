@@ -68,4 +68,15 @@ class User extends Authenticatable
     {
         return $this->role == UserRole::Admin;
     }
+
+    /**
+     * Determine if the user has a given role.
+     *
+     * @param UserRole|string $role
+     * @return bool
+     */
+    public function hasRole($role): bool
+    {
+        return $this->role == $role;
+    }
 }

@@ -13,7 +13,7 @@ class UserPolicy
      */
     public function create(User $user): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::denyAsNotFound();
     }
@@ -23,7 +23,7 @@ class UserPolicy
      */
     public function update(User $user, User $model)
     {
-        return ($user->role == UserRole::Admin || $user->id === $model->id)
+        return ($user->isAdmin() || $user->id === $model->id)
             ? Response::allow()
             : Response::denyAsNotFound();
     }
@@ -33,7 +33,7 @@ class UserPolicy
      */
     public function delete(User $user, User $model)
     {
-        return ($user->role == UserRole::Admin || $user->id === $model->id)
+        return ($user->isAdmin() || $user->id === $model->id)
             ? Response::allow()
             : Response::denyAsNotFound();
     }

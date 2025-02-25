@@ -14,7 +14,7 @@ class LocationPolicy
      */
     public function create(User $user): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
@@ -24,7 +24,7 @@ class LocationPolicy
      */
     public function update(User $user, Location $location): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
@@ -34,7 +34,7 @@ class LocationPolicy
      */
     public function delete(User $user, Location $location): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }

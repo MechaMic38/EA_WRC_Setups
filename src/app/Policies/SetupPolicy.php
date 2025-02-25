@@ -14,7 +14,7 @@ class SetupPolicy
      */
     public function create(User $user): Response
     {
-        return $user->role == UserRole::User
+        return $user->hasRole(UserRole::User)
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }

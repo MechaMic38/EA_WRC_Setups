@@ -14,7 +14,7 @@ class CategoryPolicy
      */
     public function create(User $user): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
@@ -24,7 +24,7 @@ class CategoryPolicy
      */
     public function update(User $user, Category $category): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
@@ -34,7 +34,7 @@ class CategoryPolicy
      */
     public function delete(User $user, Category $category): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }

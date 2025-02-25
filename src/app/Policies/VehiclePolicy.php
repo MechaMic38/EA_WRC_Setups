@@ -14,7 +14,7 @@ class VehiclePolicy
      */
     public function create(User $user): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
@@ -24,7 +24,7 @@ class VehiclePolicy
      */
     public function update(User $user, Vehicle $vehicle): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
@@ -34,7 +34,7 @@ class VehiclePolicy
      */
     public function delete(User $user, Vehicle $vehicle): Response
     {
-        return $user->role == UserRole::Admin
+        return $user->isAdmin()
             ? Response::allow()
             : Response::deny('Unauthorized.');
     }
