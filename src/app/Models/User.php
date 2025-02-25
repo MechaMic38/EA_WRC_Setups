@@ -58,4 +58,14 @@ class User extends Authenticatable
             'role' => UserRole::class,
         ];
     }
+
+    /**
+     * Determine if the user is an administrator.
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role == UserRole::Admin;
+    }
 }

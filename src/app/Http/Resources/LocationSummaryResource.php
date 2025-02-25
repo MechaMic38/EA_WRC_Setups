@@ -4,8 +4,9 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\URL;
 
-class UserResource extends JsonResource
+class LocationSummaryResource extends JsonResource
 {
     public static $wrap = false;
 
@@ -19,10 +20,10 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            $this->mergeWhen($request->user() && $request->user()->isAdmin(), [
-                'email' => $this->email,
-                'role' => $this->role,
-            ]),
+            'description' => $this->description,
+            'surface_type' => $this->surface_type,
+            'img_banner_path' => URL::asset('storage' . '/' . $this->img_banner_path),
+            'img_bg_path' => URL::asset('storage' . '/' . $this->img_bg_path)
         ];
     }
 }

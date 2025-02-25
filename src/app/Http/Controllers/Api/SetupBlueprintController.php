@@ -21,14 +21,6 @@ class SetupBlueprintController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $setupBlueprint)
@@ -40,23 +32,5 @@ class SetupBlueprintController extends Controller
         }
 
         return new SetupBlueprintResource($blueprint);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, SetupBlueprint $setupBlueprint)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SetupBlueprint $setupBlueprint)
-    {
-        // TODO: add gate policy to check if user can delete blueprint
-
-        $setupBlueprint->delete();
     }
 }

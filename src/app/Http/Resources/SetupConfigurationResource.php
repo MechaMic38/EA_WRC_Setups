@@ -23,8 +23,7 @@ class SetupConfigurationResource extends JsonResource
             'differentials' => $this->differentials,
             'gears' => $this->gears,
             'damping' => $this->damping,
-            'springs' => $this->springs,
-            'setup' => new SetupResource($this->setup)
+            'springs' => $this->springs
         ];
     }
 }

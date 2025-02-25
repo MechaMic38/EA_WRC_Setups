@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SetupResource extends JsonResource
+class SetupWithConfigResource extends JsonResource
 {
     public static $wrap = false;
 
@@ -23,7 +23,8 @@ class SetupResource extends JsonResource
             'tyres' => $this->tyres,
             'user' => new UserResource($this->user),
             'location' => new LocationSummaryResource($this->location),
-            'vehicle' => new VehicleResource($this->vehicle)
+            'vehicle' => new VehicleResource($this->vehicle),
+            'configuration' => new SetupConfigurationResource($this->configuration)
         ];
     }
 }

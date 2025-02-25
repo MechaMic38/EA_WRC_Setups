@@ -13,7 +13,11 @@ class Setup extends Model
     protected $fillable = [
         'surface_condition',
         'season',
-        'tyres'
+        'tyres',
+        'location_id',
+        'vehicle_id',
+        'config_id',
+        'user_id',
     ];
 
     /**

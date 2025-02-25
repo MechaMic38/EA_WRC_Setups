@@ -23,9 +23,27 @@ class StoreSetupRequest extends FormRequest
      */
     public function rules(): array
     {
-        // TODO: add validation rules for setup
         return [
-            //
+            'surface_condition' => ['required', 'string'],
+            'season' => ['required', 'string'],
+            'tyres' => ['required', 'string'],
+            // Relationships
+            'location_id' => ['required', 'string', 'exists:locations,id'],
+            'vehicle_id' => ['required', 'string', 'exists:vehicles,id'],
+            // Configuration
+            'configuration' => ['required', 'array'],
+            'configuration.alignment' => ['required', 'array'],
+            'configuration.alignment.*' => ['required', 'numeric'],
+            'configuration.braking' => ['required', 'array'],
+            'configuration.braking.*' => ['required', 'numeric'],
+            'configuration.differentials' => ['required', 'array'],
+            'configuration.differentials.*' => ['required', 'numeric'],
+            'configuration.gears' => ['required', 'array'],
+            'configuration.gears.*' => ['required', 'numeric'],
+            'configuration.damping' => ['required', 'array'],
+            'configuration.damping.*' => ['required', 'numeric'],
+            'configuration.springs' => ['required', 'array'],
+            'configuration.springs.*' => ['required', 'numeric'],
         ];
     }
 }

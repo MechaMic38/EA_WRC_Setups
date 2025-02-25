@@ -85,6 +85,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update']);
     Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy']);
 
+    // Setups
+    Route::post('/setups', [SetupController::class, 'store']);
+    Route::patch('/setups/{setup}', [SetupController::class, 'update']);
+    Route::delete('/setups/{setup}', [SetupController::class, 'destroy']);
+
     // Vehicles
     Route::post('/vehicles', [VehicleController::class, 'store']);
     Route::patch('/vehicles/{vehicle}', [VehicleController::class, 'update']);

@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreSetupRequest;
+use App\Http\Requests\UpdateSetupRequest;
 use App\Http\Resources\SetupResource;
+use App\Http\Resources\SetupWithConfigResource;
 use App\Models\Setup;
+use App\Models\SetupConfiguration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
@@ -23,11 +27,28 @@ class SetupController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreSetupRequest $request)
     {
-        Gate::authorize('create', Setup::class);
+        $validated = $request->validated();
+        $configuration = $validated['configuration'];
+        $data = collect($validated)->except('configuration')->toArray();
 
-        // TODO: add validation and store logic
+        // Create a new setup record
+        $setup = new Setup();
+        $setup->fill($data);
+        $setup->user_id = request()->user()->id;
+        $setup->save();
+
+        // Create a new setup configuration record
+        $config = new SetupConfiguration();
+        $config->fill($configuration);
+        $config['_id'] = $setup->id;
+        $config->save();
+
+        // Update the setup record with the configuration id
+        $setup->update(['config_id' => $config->id]);
+
+        return new SetupWithConfigResource($setup);
     }
 
     /**
@@ -35,23 +56,32 @@ class SetupController extends Controller
      */
     public function show(string $setup)
     {
-        $setup = Setup::with(['user', 'location', 'vehicle'])->find($setup);
+        $setup = Setup::with(['user', 'location', 'vehicle', 'configuration'])->find($setup);
 
         if (!$setup) {
             return response()->json(['error' => 'Setup not found.'], 404);
         }
 
-        return new SetupResource($setup);
+        return new SetupWithConfigResource($setup);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Setup $setup)
+    public function update(UpdateSetupRequest $request, Setup $setup)
     {
-        Gate::authorize('update', $setup);
+        $data = $request->validated();
 
-        // TODO: add validation and update logic
+        // Update the setup configuration record
+        if (isset($data['configuration'])) {
+            $setup->configuration->update($data['configuration']);
+            $data = collect($data)->except('configuration')->toArray();
+        }
+
+        // Update the setup record
+        $setup->update($data);
+
+        return new SetupWithConfigResource($setup);
     }
 
     /**
@@ -61,6 +91,10 @@ class SetupController extends Controller
     {
         Gate::authorize('delete', $setup);
 
+        // Delete the setup configuration record
+        $setup->configuration->delete();
+
+        // Delete the setup record
         $setup->delete();
     }
 }

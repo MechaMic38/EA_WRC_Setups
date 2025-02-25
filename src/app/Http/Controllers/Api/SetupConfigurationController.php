@@ -21,14 +21,6 @@ class SetupConfigurationController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
      * Display the specified resource.
      */
     public function show(string $setupConfiguration)
@@ -40,23 +32,5 @@ class SetupConfigurationController extends Controller
         }
 
         return new SetupConfigurationResource($configuration);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, SetupConfiguration $setupConfiguration)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(SetupConfiguration $setupConfiguration)
-    {
-        // TODO: add gate policy to check if user can delete setup configuration
-
-        $setupConfiguration->delete();
     }
 }
