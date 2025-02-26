@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use App\Models\Setup;
+use App\Validation\ValidateSetupConfiguration;
+use App\Validation\ValidateSetupLocationData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -44,6 +46,17 @@ class StoreSetupRequest extends FormRequest
             'configuration.damping.*' => ['required', 'numeric'],
             'configuration.springs' => ['required', 'array'],
             'configuration.springs.*' => ['required', 'numeric'],
+        ];
+    }
+
+    /**
+     * Get the "after" validation callables for the request.
+     */
+    public function after(): array
+    {
+        return [
+            new ValidateSetupLocationData,
+            new ValidateSetupConfiguration,
         ];
     }
 }
