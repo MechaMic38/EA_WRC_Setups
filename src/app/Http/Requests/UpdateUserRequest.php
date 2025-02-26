@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateUserRequest extends FormRequest
 {
@@ -24,7 +26,7 @@ class UpdateUserRequest extends FormRequest
     {
         return [
             'email' => 'sometimes|email|max:255',
-            'role' => 'sometimes|string|in:admin,user',
+            'role' => ['sometimes', 'string', new Enum(UserRole::class)],
         ];
     }
 }

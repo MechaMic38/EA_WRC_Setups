@@ -58,6 +58,12 @@ class LocationSeeder extends Seeder
             $item['updated_at'] = $timestamp;
             $item['created_at'] = $timestamp;
 
+            // Lowercase all seasons, tyres, and surface conditions
+            $item['seasons'] = array_map('strtolower', $item['seasons']);
+            $item['tyres'] = array_map('strtolower', $item['tyres']);
+            $item['surface_conditions'] = array_map('strtolower', $item['surface_conditions']);
+            $item['surface_type'] = strtolower($item['surface_type']);
+
             // Cast IDs to strings
             $item['_id'] = (string) $item['_id'];
 

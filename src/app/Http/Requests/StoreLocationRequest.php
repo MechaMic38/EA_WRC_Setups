@@ -2,9 +2,14 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\SeasonEnum;
+use App\Enums\SurfaceConditionEnum;
+use App\Enums\SurfaceTypeEnum;
+use App\Enums\TyresEnum;
 use App\Models\Location;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreLocationRequest extends FormRequest
 {
@@ -27,12 +32,12 @@ class StoreLocationRequest extends FormRequest
             'name' => 'required|string|unique:locations|max:255',
             'description' => 'required|string',
             'seasons' => 'required|array',
-            'seasons.*' => 'string',
+            'seasons.*' => ['string', new Enum(SeasonEnum::class)],
             'tyres' => 'required|array',
-            'tyres.*' => 'string',
+            'tyres.*' => ['string', new Enum(TyresEnum::class)],
             'surface_conditions' => 'required|array',
-            'surface_conditions.*' => 'string',
-            'surface_type' => 'required|string',
+            'surface_conditions.*' => ['string', new Enum(SurfaceConditionEnum::class)],
+            'surface_type' => ['required', 'string', new Enum(SurfaceTypeEnum::class)],
             'img_banner' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
             'img_bg' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
