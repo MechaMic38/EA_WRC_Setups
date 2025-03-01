@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreVehicleRequest;
 use App\Http\Requests\UpdateVehicleRequest;
 use App\Http\Resources\VehicleResource;
+use App\Models\SetupBlueprint;
 use App\Models\Vehicle;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -51,6 +52,9 @@ class VehicleController extends Controller
         $vehicle->update([
             'img_path' => $imgPath,
         ]);
+
+        // Create a new vehicle setup blueprint, using the given setup options
+        $this->createVehicleSetupBlueprint($vehicle, $validated['setup_options']);
 
         return new VehicleResource($vehicle);
     }
@@ -111,7 +115,48 @@ class VehicleController extends Controller
             $this->deleteImage($vehicle->img_path);
         }
 
+        // Delete vehicle setup blueprint
+        $vehicle->setupBlueprint->delete();
+
         // Delete the vehicle record
         $vehicle->delete();
+    }
+
+    /**
+     * Create a new vehicle setup blueprint for the given vehicle.
+     */
+    private function createVehicleSetupBlueprint(Vehicle $vehicle, array $providedOptions)
+    {
+        // Load the setup options
+        $options = config('setup-options');
+
+        // Create a new setup blueprint record
+        $blueprint = new SetupBlueprint();
+
+        // Create base data array, using the setup blueprint groups as keys
+        $data = [];
+        foreach (SetupBlueprint::GROUPS as $group) {
+            $data[$group] = [];
+        }
+
+        // Retrieve option rules;
+        foreach ($providedOptions as $option) {
+            foreach ($options as $group => $rules) {
+                if (array_key_exists($option, $rules)) {
+                    $data[$group][$option] = [
+                        'min_value' => $rules[$option]['min_value'],
+                        'max_value' => $rules[$option]['max_value'],
+                        'default_value' => $rules[$option]['default_value'],
+                        'steps' => $rules[$option]['steps'],
+                    ];
+                    break;
+                }
+            }
+        }
+
+        // Set blueprint ID as vehicle ID
+        $blueprint['_id'] = $vehicle->id;
+        $blueprint->fill($data);
+        $blueprint->save();
     }
 }

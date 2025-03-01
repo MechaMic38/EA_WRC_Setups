@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SetupConfigurationController;
 use App\Http\Controllers\Api\SetupController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
+use App\Http\Controllers\Api\SetupOptionsController;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,9 @@ Route::get('/setups/{setup}', [SetupController::class, 'show']);
 
 // Setup configurations
 Route::get('/setups/{setup}/configuration', [SetupConfigurationController::class, 'show']);
+
+// Setup options
+Route::get('/setup-options', [SetupOptionsController::class, 'index']);
 
 // Vehicles
 Route::get('/vehicles', [VehicleController::class, 'index']);

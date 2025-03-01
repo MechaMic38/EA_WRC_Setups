@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Vehicle;
+use App\Validation\ValidateSetupOptions;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
@@ -25,9 +26,21 @@ class StoreVehicleRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
+            'setup_options' => 'required|array',
+            'setup_options.*' => 'string',
             'manufacturer_id' => 'required|string|exists:manufacturers,id',
             'category_id' => 'required|string|exists:categories,id',
             'img' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+        ];
+    }
+
+    /**
+     * Get the "after" validation callables for the request.
+     */
+    public function after(): array
+    {
+        return [
+            new ValidateSetupOptions,
         ];
     }
 }
