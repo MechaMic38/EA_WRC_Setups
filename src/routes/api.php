@@ -68,6 +68,23 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::get('/logout', [AuthenticatedTokenController::class, 'logout']);
 
+    // Setups
+    Route::post('/setups', [SetupController::class, 'store']);
+    Route::patch('/setups/{setup}', [SetupController::class, 'update']);
+    Route::delete('/setups/{setup}', [SetupController::class, 'destroy']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin-Only Routes
+|--------------------------------------------------------------------------
+|
+| These routes require the user to be authenticated and to have the admin
+| role.
+|
+*/
+
+Route::middleware(['auth:sanctum', 'role:' . UserRole::Admin->value])->group(function () {
     // Categories
     Route::post('/categories', [CategoryController::class, 'store']);
     Route::patch('/categories/{category}', [CategoryController::class, 'update']);
@@ -83,10 +100,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update']);
     Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy']);
 
-    // Setups
-    Route::post('/setups', [SetupController::class, 'store']);
-    Route::patch('/setups/{setup}', [SetupController::class, 'update']);
-    Route::delete('/setups/{setup}', [SetupController::class, 'destroy']);
+    // Users
+    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::patch('/users/{user}', [UserController::class, 'update']);
+    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 
     // Vehicles
     Route::post('/vehicles', [VehicleController::class, 'store']);
@@ -95,22 +114,4 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Vehicle blueprints
     Route::patch('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'update']);
-});
-
-/*
-|--------------------------------------------------------------------------
-| Admin-Only Routes
-|--------------------------------------------------------------------------
-|
-| These routes require the user to be authenticated and to have the admin
-| role.
-|
-*/
-
-Route::middleware(['auth:sanctum', 'role:' . UserRole::Admin->value])->group(function () {
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::patch('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
 });
