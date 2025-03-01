@@ -8,22 +8,19 @@ use Illuminate\Validation\Validator;
 
 class ValidateSetupConfiguration
 {
-    private $groups = [
-        'alignment',
-        'braking',
-        'differentials',
-        'gears',
-        'damping',
-        'springs',
-    ];
+    protected $vehicle;
+
+    public function __construct(Vehicle $vehicle)
+    {
+        $this->vehicle = $vehicle;
+    }
 
     public function __invoke(Validator $validator)
     {
         $data = $validator->validated();
 
         // Retrieve the vehicle setup blueprint
-        $vehicle = Vehicle::find($data['vehicle_id']);
-        $blueprint = $vehicle->setupBlueprint;
+        $blueprint = $this->vehicle->setupBlueprint;
 
         // Validate the setup configuration against the blueprint
         $this->validateRequiredFields($validator, $blueprint, $data['configuration']);
@@ -39,7 +36,7 @@ class ValidateSetupConfiguration
      */
     private function validateRequiredFields(Validator $validator, SetupBlueprint $blueprint, array $configuration)
     {
-        foreach ($this->groups as $group) {
+        foreach (SetupBlueprint::GROUPS as $group) {
             foreach ($blueprint[$group] as $field => $rules) {
                 // Check if the field exists in the configuration
                 if (! array_key_exists($field, $configuration[$group])) {
@@ -67,7 +64,7 @@ class ValidateSetupConfiguration
      */
     private function validateNoExtraFields(Validator $validator, SetupBlueprint $blueprint, array $configuration)
     {
-        foreach ($this->groups as $group) {
+        foreach (SetupBlueprint::GROUPS as $group) {
             foreach ($configuration[$group] as $field => $value) {
                 if (! array_key_exists($field, $blueprint[$group])) {
                     $validator->errors()->add($field, 'This field is not allowed.');

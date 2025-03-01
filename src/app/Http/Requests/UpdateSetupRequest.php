@@ -50,9 +50,16 @@ class UpdateSetupRequest extends FormRequest
      */
     public function after(): array
     {
-        return [
-            new ValidateSetupLocationData,
-            new ValidateSetupConfiguration,
+        $setup = $this->route('setup');
+
+        $validators = [
+            new ValidateSetupLocationData($setup->location)
         ];
+
+        if ($this->has('configuration')) {
+            $validators[] = new ValidateSetupConfiguration($setup->vehicle);
+        }
+
+        return $validators;
     }
 }

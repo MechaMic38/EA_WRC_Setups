@@ -42,17 +42,15 @@ Route::get('/manufacturers/{manufacturer}', [ManufacturerController::class, 'sho
 Route::get('/setups', [SetupController::class, 'index']);
 Route::get('/setups/{setup}', [SetupController::class, 'show']);
 
-// Setup Blueprints
-Route::get('/setup-blueprints', [SetupBlueprintController::class, 'index']);
-Route::get('/setup-blueprints/{setupBlueprint}', [SetupBlueprintController::class, 'show']);
-
-// Setup Configurations
-Route::get('/setup-configurations', [SetupConfigurationController::class, 'index']);
-Route::get('/setup-configurations/{setupConfiguration}', [SetupConfigurationController::class, 'show']);
+// Setup configurations
+Route::get('/setups/{setup}/configuration', [SetupConfigurationController::class, 'show']);
 
 // Vehicles
 Route::get('/vehicles', [VehicleController::class, 'index']);
 Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+
+// Vehicle blueprints
+Route::get('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +92,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/vehicles', [VehicleController::class, 'store']);
     Route::patch('/vehicles/{vehicle}', [VehicleController::class, 'update']);
     Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+
+    // Vehicle blueprints
+    Route::patch('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'update']);
 });
 
 /*

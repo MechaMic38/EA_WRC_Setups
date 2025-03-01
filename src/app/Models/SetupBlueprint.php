@@ -18,6 +18,15 @@ class SetupBlueprint extends Model
         'springs'
     ];
 
+    public const GROUPS = [
+        'alignment',
+        'braking',
+        'differentials',
+        'gears',
+        'damping',
+        'springs',
+    ];
+
     /**
      * Get the vehicle associated with the setup blueprint.
      */

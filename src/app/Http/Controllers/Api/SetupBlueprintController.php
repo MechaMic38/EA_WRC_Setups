@@ -3,34 +3,34 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\UpdateVehicleBlueprintRequest;
 use App\Http\Resources\SetupBlueprintResource;
-use App\Models\SetupBlueprint;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use App\Models\Vehicle;
 
 class SetupBlueprintController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Get the blueprint for the specified vehicle.
      */
-    public function index(): ResourceCollection
+    public function show(Vehicle $vehicle)
     {
-        $blueprints = SetupBlueprint::paginate(15);
-        return SetupBlueprintResource::collection($blueprints);
+        if (is_null($vehicle->setupBlueprint)) {
+            return response()->json(['error' => 'Setup blueprint not found.'], 404);
+        }
+
+        return new SetupBlueprintResource($vehicle->setupBlueprint);
     }
 
     /**
-     * Display the specified resource.
+     * Update the blueprint for the specified vehicle.
      */
-    public function show(string $setupBlueprint)
+    public function update(UpdateVehicleBlueprintRequest $request, Vehicle $vehicle)
     {
-        $blueprint = SetupBlueprint::find($setupBlueprint);
+        $data = $request->validated();
 
-        if (!$blueprint) {
-            return response()->json(['error' => 'Blueprint not found.'], 404);
-        }
+        // Update the vehicle's setup blueprint
+        $vehicle->setupBlueprint->update($data);
 
-        return new SetupBlueprintResource($blueprint);
+        return new SetupBlueprintResource($vehicle->setupBlueprint);
     }
 }

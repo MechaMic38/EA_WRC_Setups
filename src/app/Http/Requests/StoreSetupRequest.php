@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Location;
 use App\Models\Setup;
+use App\Models\Vehicle;
 use App\Validation\ValidateSetupConfiguration;
 use App\Validation\ValidateSetupLocationData;
 use Illuminate\Foundation\Http\FormRequest;
@@ -54,9 +56,17 @@ class StoreSetupRequest extends FormRequest
      */
     public function after(): array
     {
+        $location = Location::find($this->input('location_id'));
+        $vehicle = Vehicle::find($this->input('vehicle_id'));
+
+        // Check if the location and vehicle exist
+        if (is_null($location) || is_null($vehicle)) {
+            return [];
+        }
+
         return [
-            new ValidateSetupLocationData,
-            new ValidateSetupConfiguration,
+            new ValidateSetupLocationData($location),
+            new ValidateSetupConfiguration($vehicle),
         ];
     }
 }
