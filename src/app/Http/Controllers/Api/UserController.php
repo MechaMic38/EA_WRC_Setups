@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -16,9 +17,23 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $users = User::paginate(15);
+        $users = User::query()
+            // Filter by name (case-insensitive partial match)
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            })
+            // Filter by email (case-insensitive partial match)
+            ->when($request->email, function ($query, $email) {
+                $query->where('email', 'like', '%' . $email . '%');
+            })
+            // Filter by role (exact match)
+            ->when($request->role, function ($query, $role) {
+                $query->where('role', $role);
+            })
+            ->paginate(15);
+
         return UserResource::collection($users);
     }
 
@@ -39,14 +54,8 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $user)
+    public function show(User $user)
     {
-        $user = User::find($user);
-
-        if (!$user) {
-            return response()->json(['error' => 'User not found.'], 404);
-        }
-
         return new UserResource($user);
     }
 

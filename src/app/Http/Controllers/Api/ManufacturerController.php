@@ -7,6 +7,7 @@ use App\Http\Requests\StoreManufacturerRequest;
 use App\Http\Requests\UpdateManufacturerRequest;
 use App\Http\Resources\ManufacturerResource;
 use App\Models\Manufacturer;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ManufacturerController extends Controller
@@ -16,9 +17,15 @@ class ManufacturerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $manufacturers = Manufacturer::paginate(15);
+        $manufacturers = Manufacturer::query()
+            // Filter by name (case-insensitive partial match)
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            })
+            ->paginate(15);
+
         return ManufacturerResource::collection($manufacturers);
     }
 
@@ -56,14 +63,8 @@ class ManufacturerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $manufacturer)
+    public function show(Manufacturer $manufacturer)
     {
-        $manufacturer = Manufacturer::find($manufacturer);
-
-        if (!$manufacturer) {
-            return response()->json(['error' => 'Manufacturer not found.'], 404);
-        }
-
         return new ManufacturerResource($manufacturer);
     }
 

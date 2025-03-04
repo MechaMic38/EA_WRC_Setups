@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateVehicleRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\SetupBlueprint;
 use App\Models\Vehicle;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class VehicleController extends Controller
@@ -17,9 +18,23 @@ class VehicleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $vehicles = Vehicle::paginate(15);
+        $vehicles = Vehicle::query()
+            // Filter by name (case-insensitive partial match)
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            })
+            // Filter by category_id (exact match)
+            ->when($request->category_id, function ($query, $categoryId) {
+                $query->where('category_id', $categoryId);
+            })
+            // Filter by manufacturer_id (exact match)
+            ->when($request->manufacturer_id, function ($query, $manufacturerId) {
+                $query->where('manufacturer_id', $manufacturerId);
+            })
+            ->paginate(15);
+
         return VehicleResource::collection($vehicles);
     }
 
@@ -62,14 +77,8 @@ class VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $vehicle)
+    public function show(Vehicle $vehicle)
     {
-        $vehicle = Vehicle::with(['manufacturer', 'category'])->find($vehicle);
-
-        if (!$vehicle) {
-            return response()->json(['error' => 'Vehicle not found.'], 404);
-        }
-
         return new VehicleResource($vehicle);
     }
 

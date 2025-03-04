@@ -7,6 +7,7 @@ use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CategoryController extends Controller
@@ -16,9 +17,15 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $categories = Category::paginate(15);
+        $categories = Category::query()
+            // Filter by name (case-insensitive partial match)
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            })
+            ->paginate(15);
+
         return CategoryResource::collection($categories);
     }
 
@@ -56,14 +63,8 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $category)
+    public function show(Category $category)
     {
-        $category = Category::find($category);
-
-        if (!$category) {
-            return response()->json(['error' => 'Category not found.'], 404);
-        }
-
         return new CategoryResource($category);
     }
 

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreLocationRequest;
 use App\Http\Requests\UpdateLocationRequest;
 use App\Http\Resources\LocationResource;
+use App\Http\Resources\LocationSummaryResource;
 use App\Models\Location;
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class LocationController extends Controller
@@ -17,10 +19,20 @@ class LocationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $locations = Location::paginate(15);
-        return LocationResource::collection($locations);
+        $locations = Location::query()
+            // Filter by name (case-insensitive partial match)
+            ->when($request->name, function ($query, $name) {
+                $query->where('name', 'like', '%' . $name . '%');
+            })
+            // Filter by surface type (exact match)
+            ->when($request->surface_type, function ($query, $surfaceType) {
+                $query->where('surface_type', $surfaceType);
+            })
+            ->paginate(15);
+
+        return LocationSummaryResource::collection($locations);
     }
 
     /**
@@ -70,14 +82,8 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $location)
+    public function show(Location $location)
     {
-        $location = Location::find($location);
-
-        if (!$location) {
-            return response()->json(['error' => 'Location not found.'], 404);
-        }
-
         return new LocationResource($location);
     }
 

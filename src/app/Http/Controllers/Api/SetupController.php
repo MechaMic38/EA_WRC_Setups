@@ -18,9 +18,23 @@ class SetupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): ResourceCollection
+    public function index(Request $request): ResourceCollection
     {
-        $setups = Setup::paginate(15);
+        $setups = Setup::query()
+            // Filter by user_id (exact match)
+            ->when($request->user_id, function ($query, $userId) {
+                $query->where('user_id', $userId);
+            })
+            // Filter by location_id (exact match)
+            ->when($request->location_id, function ($query, $locationId) {
+                $query->where('location_id', $locationId);
+            })
+            // Filter by vehicle_id (exact match)
+            ->when($request->vehicle_id, function ($query, $vehicleId) {
+                $query->where('vehicle_id', $vehicleId);
+            })
+            ->paginate(15);
+
         return SetupResource::collection($setups);
     }
 
@@ -54,14 +68,8 @@ class SetupController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $setup)
+    public function show(Setup $setup)
     {
-        $setup = Setup::with(['user', 'location', 'vehicle', 'configuration'])->find($setup);
-
-        if (!$setup) {
-            return response()->json(['error' => 'Setup not found.'], 404);
-        }
-
         return new SetupWithConfigResource($setup);
     }
 
