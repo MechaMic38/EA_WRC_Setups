@@ -31,6 +31,13 @@ export interface Manufacturer {
     img_path: string;
 }
 
+export interface User {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+}
+
 export interface Vehicle {
     id: string;
     name: string;

@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\ManufacturerController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\VehicleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,7 @@ Route::prefix('dashboard')
         Route::get('/categories', [CategoryController::class, 'index'])->name('dashboard.categories');
         Route::get('/locations', [LocationController::class, 'index'])->name('dashboard.locations');
         Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('dashboard.manufacturers');
+        Route::get('/users', [UserController::class, 'index'])->name('dashboard.users');
         Route::get('/vehicles', [VehicleController::class, 'index'])->name('dashboard.vehicles');
     });
 

@@ -58,6 +58,12 @@ export default function Authenticated({
                                     Manufacturers
                                 </NavLink>
                                 <NavLink
+                                    href={route("dashboard.users")}
+                                    active={route().current("dashboard.users")}
+                                >
+                                    Users
+                                </NavLink>
+                                <NavLink
                                     href={route("dashboard.vehicles")}
                                     active={route().current(
                                         "dashboard.vehicles"
@@ -186,6 +192,12 @@ export default function Authenticated({
                             active={route().current("dashboard.manufacturers")}
                         >
                             Manufacturers
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink
+                            href={route("dashboard.users")}
+                            active={route().current("dashboard.users")}
+                        >
+                            Users
                         </ResponsiveNavLink>
                         <ResponsiveNavLink
                             href={route("dashboard.vehicles")}
