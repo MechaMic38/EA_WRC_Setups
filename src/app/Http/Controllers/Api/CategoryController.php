@@ -12,8 +12,6 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class CategoryController extends Controller
 {
-    private $folder = 'categories';
-
     /**
      * Display a listing of the resource.
      */
@@ -47,7 +45,7 @@ class CategoryController extends Controller
         // Save the uploaded image
         $img = $request->file('img');
         $imgPath = $img->storeAs(
-            $this->folder,
+            Category::STORAGE_IMG_PATH,
             $category->id . '.' . $img->extension(),
             'public'
         );
@@ -85,7 +83,7 @@ class CategoryController extends Controller
             // Save the new image
             $img = $request->file('img');
             $imgPath = $img->storeAs(
-                $this->folder,
+                Category::STORAGE_IMG_PATH,
                 $category->id . '.' . $img->extension(),
                 'public'
             );

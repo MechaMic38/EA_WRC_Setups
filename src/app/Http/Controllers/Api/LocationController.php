@@ -13,9 +13,6 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class LocationController extends Controller
 {
-    private $bannerFolder = 'locations_banner';
-    private $bgFolder = 'locations_bg';
-
     /**
      * Display a listing of the resource.
      */
@@ -58,14 +55,14 @@ class LocationController extends Controller
         // Save the uploaded images
         $imgBanner = $request->file('img_banner');
         $imgBannerPath = $imgBanner->storeAs(
-            $this->bannerFolder,
+            Location::STORAGE_IMG_BANNER_PATH,
             $location->id . '.' . $imgBanner->extension(),
             'public'
         );
 
         $imgBg = $request->file('img_bg');
         $imgBgPath = $imgBg->storeAs(
-            $this->bgFolder,
+            Location::STORAGE_IMG_BG_PATH,
             $location->id . '.' . $imgBg->extension(),
             'public'
         );
@@ -103,7 +100,7 @@ class LocationController extends Controller
 
             $imgBanner = $request->file('img_banner');
             $imgBannerPath = $imgBanner->storeAs(
-                $this->bannerFolder,
+                Location::STORAGE_IMG_BANNER_PATH,
                 $location->id . '.' . $imgBanner->extension(),
                 'public'
             );
@@ -118,7 +115,7 @@ class LocationController extends Controller
 
             $imgBg = $request->file('img_bg');
             $imgBgPath = $imgBg->storeAs(
-                $this->bgFolder,
+                Location::STORAGE_IMG_BG_PATH,
                 $location->id . '.' . $imgBg->extension(),
                 'public'
             );

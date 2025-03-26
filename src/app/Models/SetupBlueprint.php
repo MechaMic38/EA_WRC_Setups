@@ -7,17 +7,11 @@ use MongoDB\Laravel\Relations\BelongsTo;
 
 class SetupBlueprint extends Model
 {
-    protected $table = 'setup_blueprints';
-
-    protected $fillable = [
-        'alignment',
-        'braking',
-        'differentials',
-        'gears',
-        'damping',
-        'springs'
-    ];
-
+    /**
+     * The groups of setup options.
+     *
+     * @var array<string>
+     */
     public const GROUPS = [
         'alignment',
         'braking',
@@ -25,6 +19,27 @@ class SetupBlueprint extends Model
         'gears',
         'damping',
         'springs',
+    ];
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'setup_blueprints';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
+    protected $fillable = [
+        'alignment',
+        'braking',
+        'differentials',
+        'gears',
+        'damping',
+        'springs'
     ];
 
     /**

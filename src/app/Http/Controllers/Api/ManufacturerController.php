@@ -12,8 +12,6 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ManufacturerController extends Controller
 {
-    private $folder = 'manufacturers';
-
     /**
      * Display a listing of the resource.
      */
@@ -47,7 +45,7 @@ class ManufacturerController extends Controller
         // Save the uploaded image
         $img = $request->file('img');
         $imgPath = $img->storeAs(
-            $this->folder,
+            Manufacturer::STORAGE_IMG_PATH,
             $manufacturer->id . '.' . $img->extension(),
             'public'
         );
@@ -85,7 +83,7 @@ class ManufacturerController extends Controller
             // Save the new image
             $img = $request->file('img');
             $imgPath = $img->storeAs(
-                $this->folder,
+                Manufacturer::STORAGE_IMG_PATH,
                 $manufacturer->id . '.' . $img->extension(),
                 'public'
             );

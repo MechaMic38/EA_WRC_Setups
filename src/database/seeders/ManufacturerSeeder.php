@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Manufacturer;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,27 +28,30 @@ class ManufacturerSeeder extends Seeder
 
         // Process and insert data into the database
         foreach ($data as $item) {
-            // Handle the image
-            $imgPath = $item['img_path'];
-            $imagePath = $imageDirectory . '/' . $imgPath;
-
-            if (File::exists($imagePath)) {
-                $imageName = $item['_id'] . '.' . File::extension($imgPath);
-                Storage::disk('public')->put($this->folder . '/' . $imageName, File::get($imagePath));
-                $item['img_path'] = $this->folder . '/' . $imageName;
-            } else {
-                $item['img_path'] = null;
-            }
-
-            $timestamp = now();
-            $item['updated_at'] = $timestamp;
-            $item['created_at'] = $timestamp;
-
             // Cast IDs to strings
             $item['_id'] = (string) $item['_id'];
 
             // Insert the item into the database
-            DB::table($this->collection)->insertGetId($item);
+            $manufacturer = Manufacturer::create($item);
+
+            // Handle the image
+            $imgAssetPath = $imageDirectory . '/' . $item['img_path'];
+
+            if (File::exists($imgAssetPath)) {
+                $imageName = $manufacturer->id . '.' . File::extension($imgAssetPath);
+                $imgPath = Manufacturer::STORAGE_IMG_PATH . '/' . $imageName;
+                Storage::disk('public')->put(
+                    $imgPath,
+                    File::get($imgAssetPath)
+                );
+            } else {
+                $imgPath = null;
+            }
+
+            // Update the item with the image path
+            $manufacturer->update([
+                'img_path' => $imgPath,
+            ]);
         }
     }
 }

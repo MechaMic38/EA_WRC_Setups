@@ -8,8 +8,18 @@ use MongoDB\Laravel\Relations\HasOne;
 
 class Setup extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'setups';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'surface_condition',
         'season',

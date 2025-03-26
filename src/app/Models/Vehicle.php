@@ -8,8 +8,23 @@ use MongoDB\Laravel\Relations\HasOne;
 
 class Vehicle extends Model
 {
+    /**
+     * The path to the storage folder for vehicle images.
+     */
+    public const STORAGE_IMG_PATH = 'images/vehicles';
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'vehicles';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'name',
         'category_id',

@@ -13,8 +13,6 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class VehicleController extends Controller
 {
-    private $folder = 'vehicles';
-
     /**
      * Display a listing of the resource.
      */
@@ -58,7 +56,7 @@ class VehicleController extends Controller
         // Save the vehicle image
         $img = $request->file('img');
         $imgPath = $img->storeAs(
-            $this->folder,
+            Vehicle::STORAGE_IMG_PATH,
             $vehicle->id . '.' . $img->extension(),
             'public'
         );
@@ -99,7 +97,7 @@ class VehicleController extends Controller
             // Save the new image
             $img = $request->file('img');
             $imgPath = $img->storeAs(
-                $this->folder,
+                Vehicle::STORAGE_IMG_PATH,
                 $vehicle->id . '.' . $img->extension(),
                 'public'
             );

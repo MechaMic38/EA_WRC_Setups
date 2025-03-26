@@ -7,8 +7,18 @@ use MongoDB\Laravel\Relations\BelongsTo;
 
 class SetupConfiguration extends Model
 {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'setup_configurations';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'alignment',
         'braking',

@@ -7,8 +7,23 @@ use MongoDB\Laravel\Relations\HasMany;
 
 class Category extends Model
 {
+    /**
+     * The path to the storage folder for category images.
+     */
+    public const STORAGE_IMG_PATH = 'images/categories';
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = 'categories';
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array<string>
+     */
     protected $fillable = [
         'name',
         'img_path'
