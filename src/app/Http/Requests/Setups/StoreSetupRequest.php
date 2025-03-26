@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Setups;
 
 use App\Models\Location;
 use App\Models\Setup;

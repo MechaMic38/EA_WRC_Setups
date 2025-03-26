@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreVehicleRequest;
-use App\Http\Requests\UpdateVehicleRequest;
+use App\Http\Requests\Vehicles\StoreVehicleRequest;
+use App\Http\Requests\Vehicles\UpdateVehicleRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\SetupBlueprint;
 use App\Models\Vehicle;

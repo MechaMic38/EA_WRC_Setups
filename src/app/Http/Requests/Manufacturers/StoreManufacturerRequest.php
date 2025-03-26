@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Manufacturers;
 
+use App\Models\Manufacturer;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class UpdateVehicleRequest extends FormRequest
+class StoreManufacturerRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize()
     {
-        return Gate::authorize('update', $this->route('vehicle'));
+        return Gate::authorize('create', Manufacturer::class);
     }
 
     /**
@@ -23,10 +24,8 @@ class UpdateVehicleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'manufacturer_id' => 'sometimes|string|exists:manufacturers,id',
-            'category_id' => 'sometimes|string|exists:categories,id',
-            'img' => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name' => 'required|string|unique:manufacturers|max:255',
+            'img' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 }

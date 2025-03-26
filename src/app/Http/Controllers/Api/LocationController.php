@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreLocationRequest;
-use App\Http\Requests\UpdateLocationRequest;
+use App\Http\Requests\Locations\StoreLocationRequest;
+use App\Http\Requests\Locations\UpdateLocationRequest;
 use App\Http\Resources\LocationResource;
 use App\Http\Resources\LocationSummaryResource;
 use App\Models\Location;

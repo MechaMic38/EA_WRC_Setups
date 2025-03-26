@@ -1,19 +1,18 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Categories;
 
-use App\Models\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class StoreCategoryRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize()
     {
-        return Gate::authorize('create', Category::class);
+        return Gate::authorize('update', $this->route('category'));
     }
 
     /**
@@ -24,8 +23,8 @@ class StoreCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required|string|unique:categories|max:255',
-            'img' => 'required|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'name' => 'sometimes|string|unique:categories|max:255',
+            'img' => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 }

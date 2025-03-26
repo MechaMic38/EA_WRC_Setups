@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreManufacturerRequest;
-use App\Http\Requests\UpdateManufacturerRequest;
+use App\Http\Requests\Manufacturers\StoreManufacturerRequest;
+use App\Http\Requests\Manufacturers\UpdateManufacturerRequest;
 use App\Http\Resources\ManufacturerResource;
 use App\Models\Manufacturer;
 use Illuminate\Http\Request;

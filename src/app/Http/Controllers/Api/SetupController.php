@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreSetupRequest;
-use App\Http\Requests\UpdateSetupRequest;
+use App\Http\Requests\Setups\StoreSetupRequest;
+use App\Http\Requests\Setups\UpdateSetupRequest;
 use App\Http\Resources\SetupResource;
 use App\Http\Resources\SetupWithConfigResource;
 use App\Models\Setup;
