@@ -8,6 +8,7 @@ use App\Http\Requests\Vehicles\UpdateVehicleRequest;
 use App\Http\Resources\VehicleResource;
 use App\Models\SetupBlueprint;
 use App\Models\Vehicle;
+use App\Services\VehicleService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -41,7 +42,7 @@ class VehicleController extends Controller
      * Store a newly created resource in storage.
      * TODO: turn into transaction
      */
-    public function store(StoreVehicleRequest $request)
+    public function store(StoreVehicleRequest $request, VehicleService $vehicleService)
     {
         $validated = $request->validated();
 
@@ -85,7 +86,7 @@ class VehicleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateVehicleRequest $request, Vehicle $vehicle)
+    public function update(UpdateVehicleRequest $request, Vehicle $vehicle, VehicleService $vehicleService)
     {
         $data = $request->validated();
 
@@ -115,7 +116,7 @@ class VehicleController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Vehicle $vehicle)
+    public function destroy(Vehicle $vehicle, VehicleService $vehicleService)
     {
         // TODO: add gate policy to check if user can delete vehicle
 

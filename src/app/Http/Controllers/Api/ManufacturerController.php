@@ -7,8 +7,10 @@ use App\Http\Requests\Manufacturers\StoreManufacturerRequest;
 use App\Http\Requests\Manufacturers\UpdateManufacturerRequest;
 use App\Http\Resources\ManufacturerResource;
 use App\Models\Manufacturer;
+use App\Services\ManufacturerService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class ManufacturerController extends Controller
 {
@@ -31,29 +33,11 @@ class ManufacturerController extends Controller
      * Store a newly created resource in storage.
      * TODO: turn into transaction
      */
-    public function store(StoreManufacturerRequest $request)
+    public function store(StoreManufacturerRequest $request, ManufacturerService $manufacturerService)
     {
         $validated = $request->validated();
 
-        // Create a new manufacturer record
-        $manufacturer = new Manufacturer();
-        $manufacturer->name = $validated['name'];
-
-        // Save the manufacturer record
-        $manufacturer->save();
-
-        // Save the uploaded image
-        $img = $request->file('img');
-        $imgPath = $img->storeAs(
-            Manufacturer::STORAGE_IMG_PATH,
-            $manufacturer->id . '.' . $img->extension(),
-            'public'
-        );
-
-        // Update the manufacturer record with the image path
-        $manufacturer->update([
-            'img_path' => $imgPath,
-        ]);
+        $manufacturer = $manufacturerService->createManufacturer($validated, $request->file('img'));
 
         return new ManufacturerResource($manufacturer);
     }
@@ -69,29 +53,11 @@ class ManufacturerController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateManufacturerRequest $request, Manufacturer $manufacturer)
+    public function update(UpdateManufacturerRequest $request, Manufacturer $manufacturer, ManufacturerService $manufacturerService)
     {
         $data = $request->validated();
 
-        // Check if the user uploaded a new image
-        if ($request->hasFile('img')) {
-            // Remove the old image
-            if ($manufacturer->img_path) {
-                $this->deleteImage($manufacturer->img_path);
-            }
-
-            // Save the new image
-            $img = $request->file('img');
-            $imgPath = $img->storeAs(
-                Manufacturer::STORAGE_IMG_PATH,
-                $manufacturer->id . '.' . $img->extension(),
-                'public'
-            );
-            $data['img_path'] = $imgPath;
-        }
-
-        // Update the manufacturer with the new data
-        $manufacturer->update($data);
+        $manufacturer = $manufacturerService->updateManufacturer($manufacturer, $data, $request->file('img'));
 
         return new ManufacturerResource($manufacturer);
     }
@@ -99,16 +65,12 @@ class ManufacturerController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Manufacturer $manufacturer)
+    public function destroy(Manufacturer $manufacturer, ManufacturerService $manufacturerService)
     {
-        // TODO: add gate policy to check if user can delete manufacturer
+        Gate::authorize('delete', $manufacturer);
 
-        // Delete the manufacturer image if it exists
-        if ($manufacturer->img_path) {
-            $this->deleteImage($manufacturer->img_path);
-        }
+        $manufacturerService->deleteManufacturer($manufacturer);
 
-        // Delete the manufacturer record
-        $manufacturer->delete();
+        return response()->noContent();
     }
 }

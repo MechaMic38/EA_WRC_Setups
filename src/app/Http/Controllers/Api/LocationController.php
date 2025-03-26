@@ -8,6 +8,7 @@ use App\Http\Requests\Locations\UpdateLocationRequest;
 use App\Http\Resources\LocationResource;
 use App\Http\Resources\LocationSummaryResource;
 use App\Models\Location;
+use App\Services\LocationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -36,7 +37,7 @@ class LocationController extends Controller
      * Store a newly created resource in storage.
      * TODO: turn into transaction
      */
-    public function store(StoreLocationRequest $request)
+    public function store(StoreLocationRequest $request, LocationService $locationService)
     {
         $validated = $request->validated();
 
@@ -87,7 +88,7 @@ class LocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateLocationRequest $request, Location $location)
+    public function update(UpdateLocationRequest $request, Location $location, LocationService $locationService)
     {
         $data = $request->validated();
 
@@ -131,7 +132,7 @@ class LocationController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Location $location)
+    public function destroy(Location $location, LocationService $locationService)
     {
         // TODO: add gate policy to check if user can delete location
 

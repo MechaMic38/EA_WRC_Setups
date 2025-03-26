@@ -7,6 +7,7 @@ use App\Http\Requests\Categories\StoreCategoryRequest;
 use App\Http\Requests\Categories\UpdateCategoryRequest;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -31,7 +32,7 @@ class CategoryController extends Controller
      * Store a newly created resource in storage.
      * TODO: turn into transaction
      */
-    public function store(StoreCategoryRequest $request)
+    public function store(StoreCategoryRequest $request, CategoryService $categoryService)
     {
         $validated = $request->validated();
 
@@ -69,7 +70,7 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category, CategoryService $categoryService)
     {
         $data = $request->validated();
 
@@ -99,7 +100,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Category $category)
+    public function destroy(Category $category, CategoryService $categoryService)
     {
         // TODO: add gate policy to check if user can delete category
 

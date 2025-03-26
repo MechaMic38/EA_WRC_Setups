@@ -8,6 +8,7 @@ use App\Http\Requests\Setups\UpdateSetupRequest;
 use App\Http\Resources\SetupResource;
 use App\Models\Setup;
 use App\Models\SetupConfiguration;
+use App\Services\SetupService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
@@ -41,7 +42,7 @@ class SetupController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreSetupRequest $request)
+    public function store(StoreSetupRequest $request, SetupService $setupService)
     {
         $validated = $request->validated();
         $configuration = $validated['configuration'];
@@ -77,7 +78,7 @@ class SetupController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateSetupRequest $request, Setup $setup)
+    public function update(UpdateSetupRequest $request, Setup $setup, SetupService $setupService)
     {
         $data = $request->validated();
 
@@ -96,7 +97,7 @@ class SetupController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Setup $setup)
+    public function destroy(Setup $setup, SetupService $setupService)
     {
         Gate::authorize('delete', $setup);
 
