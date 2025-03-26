@@ -1,11 +1,11 @@
 <?php
 
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\LocationController;
-use App\Http\Controllers\ManufacturerController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\VehicleController;
+use App\Http\Controllers\Web\CategoryController;
+use App\Http\Controllers\Web\LocationController;
+use App\Http\Controllers\Web\ManufacturerController;
+use App\Http\Controllers\Web\ProfileController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\VehicleController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

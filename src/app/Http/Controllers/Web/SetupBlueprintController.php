@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Web;
 
-use App\Models\Manufacturer;
-use Inertia\Inertia;
+use App\Http\Controllers\Controller;
+use App\Models\SetupBlueprint;
 
-class ManufacturerController extends Controller
+class SetupBlueprintController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('Dashboard/Manufacturers', []);
+        //
     }
 
     /**
@@ -26,7 +26,7 @@ class ManufacturerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Manufacturer $manufacturer)
+    public function show(SetupBlueprint $setupBlueprint)
     {
         //
     }
@@ -34,7 +34,7 @@ class ManufacturerController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Manufacturer $manufacturer)
+    public function edit(SetupBlueprint $setupBlueprint)
     {
         //
     }
