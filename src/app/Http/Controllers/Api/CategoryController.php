@@ -10,6 +10,7 @@ use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class CategoryController extends Controller
 {
@@ -34,27 +35,9 @@ class CategoryController extends Controller
      */
     public function store(StoreCategoryRequest $request, CategoryService $categoryService)
     {
-        $validated = $request->validated();
+        $data = $request->validated();
 
-        // Create a new category record
-        $category = new Category();
-        $category->name = $validated['name'];
-
-        // Save the category record
-        $category->save();
-
-        // Save the uploaded image
-        $img = $request->file('img');
-        $imgPath = $img->storeAs(
-            Category::STORAGE_IMG_PATH,
-            $category->id . '.' . $img->extension(),
-            'public'
-        );
-
-        // Update the category record with the image path
-        $category->update([
-            'img_path' => $imgPath,
-        ]);
+        $category = $categoryService->createCategory($data, $request->file('img'));
 
         return new CategoryResource($category);
     }
@@ -74,25 +57,7 @@ class CategoryController extends Controller
     {
         $data = $request->validated();
 
-        // Check if the user uploaded a new image
-        if ($request->hasFile('img')) {
-            // Remove the old image
-            if ($category->img_path) {
-                $this->deleteImage($category->img_path);
-            }
-
-            // Save the new image
-            $img = $request->file('img');
-            $imgPath = $img->storeAs(
-                Category::STORAGE_IMG_PATH,
-                $category->id . '.' . $img->extension(),
-                'public'
-            );
-            $data['img_path'] = $imgPath;
-        }
-
-        // Update the category with the new data
-        $category->update($data);
+        $category = $categoryService->updateCategory($category, $data, $request->file('img'));
 
         return new CategoryResource($category);
     }
@@ -102,14 +67,10 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category, CategoryService $categoryService)
     {
-        // TODO: add gate policy to check if user can delete category
+        Gate::authorize('delete', $category);
 
-        // Delete the category image if it exists
-        if ($category->img_path) {
-            $this->deleteImage($category->img_path);
-        }
+        $categoryService->deleteCategory($category);
 
-        // Delete the category record
-        $category->delete();
+        return response()->noContent();
     }
 }

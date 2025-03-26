@@ -35,9 +35,9 @@ class ManufacturerController extends Controller
      */
     public function store(StoreManufacturerRequest $request, ManufacturerService $manufacturerService)
     {
-        $validated = $request->validated();
+        $data = $request->validated();
 
-        $manufacturer = $manufacturerService->createManufacturer($validated, $request->file('img'));
+        $manufacturer = $manufacturerService->createManufacturer($data, $request->file('img'));
 
         return new ManufacturerResource($manufacturer);
     }

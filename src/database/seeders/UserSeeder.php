@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
 
         // Create default admin user
         $admin = new User();
-        $admin->name = $adminName;
+        $admin->username = $adminName;
         $admin->email = $adminEmail;
         $admin->password = Hash::make($adminPassword);
         $admin->role = UserRole::Admin;

@@ -7,6 +7,7 @@ use App\Services\CategoryService;
 use App\Services\LocationService;
 use App\Services\ManufacturerService;
 use App\Services\SetupService;
+use App\Services\UserService;
 use App\Services\VehicleService;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
@@ -19,6 +20,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->singleton(UserService::class, function () {
+            return new UserService();
+        });
+
         $this->app->singleton(LocationService::class, function () {
             return new LocationService();
         });

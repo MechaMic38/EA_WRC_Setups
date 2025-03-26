@@ -7,7 +7,6 @@ use App\Http\Requests\Setups\StoreSetupRequest;
 use App\Http\Requests\Setups\UpdateSetupRequest;
 use App\Http\Resources\SetupResource;
 use App\Models\Setup;
-use App\Models\SetupConfiguration;
 use App\Services\SetupService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -44,24 +43,15 @@ class SetupController extends Controller
      */
     public function store(StoreSetupRequest $request, SetupService $setupService)
     {
-        $validated = $request->validated();
-        $configuration = $validated['configuration'];
-        $data = collect($validated)->except('configuration')->toArray();
+        $data = $request->validated();
 
-        // Create a new setup record
-        $setup = new Setup();
-        $setup->fill($data);
-        $setup->user_id = request()->user()->id;
-        $setup->save();
-
-        // Create a new setup configuration record
-        $config = new SetupConfiguration();
-        $config->fill($configuration);
-        $config['_id'] = $setup->id;
-        $config->save();
-
-        // Update the setup record with the configuration id
-        $setup->update(['config_id' => $config->id]);
+        $configuration = $data['configuration'];
+        $data = collect($data)->except('configuration')->toArray();
+        $setup = $setupService->createSetup(
+            $data,
+            $configuration,
+            $request->user()
+        );
 
         return new SetupResource($setup);
     }
@@ -82,14 +72,9 @@ class SetupController extends Controller
     {
         $data = $request->validated();
 
-        // Update the setup configuration record
-        if (isset($data['configuration'])) {
-            $setup->configuration->update($data['configuration']);
-            $data = collect($data)->except('configuration')->toArray();
-        }
-
-        // Update the setup record
-        $setup->update($data);
+        $configuration = $data['configuration'];
+        $data = collect($data)->except('configuration')->toArray();
+        $setup = $setupService->updateSetup($setup, $data, $configuration);
 
         return new SetupResource($setup);
     }
@@ -101,10 +86,8 @@ class SetupController extends Controller
     {
         Gate::authorize('delete', $setup);
 
-        // Delete the setup configuration record
-        $setup->configuration->delete();
+        $setupService->deleteSetup($setup);
 
-        // Delete the setup record
-        $setup->delete();
+        return response()->noContent();
     }
 }

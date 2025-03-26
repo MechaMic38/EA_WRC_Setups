@@ -7,6 +7,7 @@ use App\Http\Requests\Users\StoreUserRequest;
 use App\Http\Requests\Users\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Facades\Gate;
@@ -40,13 +41,11 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreUserRequest $request)
+    public function store(StoreUserRequest $request, UserService $userService)
     {
-        $validated = $request->validated();
+        $data = $request->validated();
 
-        $validated['password'] = Hash::make($validated['password']);
-
-        $user = User::create($validated);
+        $user = $userService->createUser($data);
 
         return new UserResource($user);
     }
@@ -62,9 +61,11 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateUserRequest $request, User $user)
+    public function update(UpdateUserRequest $request, User $user, UserService $userService)
     {
-        $user->update($request->validated());
+        $data = $request->validated();
+
+        $user = $userService->updateUser($user, $data);
 
         return new UserResource($user);
     }
@@ -72,10 +73,12 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(User $user)
+    public function destroy(User $user, UserService $userService)
     {
         Gate::authorize('delete', $user);
 
-        $user->delete();
+        $userService->deleteUser($user);
+
+        return response()->noContent();
     }
 }

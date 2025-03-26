@@ -11,6 +11,7 @@ use App\Models\Location;
 use App\Services\LocationService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class LocationController extends Controller
 {
@@ -39,40 +40,13 @@ class LocationController extends Controller
      */
     public function store(StoreLocationRequest $request, LocationService $locationService)
     {
-        $validated = $request->validated();
+        $data = $request->validated();
 
-        // Create a new location record
-        $location = new Location();
-        $location->name = $validated['name'];
-        $location->description = $validated['description'];
-        $location->seasons = $validated['seasons'];
-        $location->tyres = $validated['tyres'];
-        $location->surface_conditions = $validated['surface_conditions'];
-        $location->surface_type = $validated['surface_type'];
-
-        // Save the location record
-        $location->save();
-
-        // Save the uploaded images
-        $imgBanner = $request->file('img_banner');
-        $imgBannerPath = $imgBanner->storeAs(
-            Location::STORAGE_IMG_BANNER_PATH,
-            $location->id . '.' . $imgBanner->extension(),
-            'public'
+        $location = $locationService->createLocation(
+            $data,
+            $request->file('img_banner'),
+            $request->file('img_bg')
         );
-
-        $imgBg = $request->file('img_bg');
-        $imgBgPath = $imgBg->storeAs(
-            Location::STORAGE_IMG_BG_PATH,
-            $location->id . '.' . $imgBg->extension(),
-            'public'
-        );
-
-        // Update the location record with the image paths
-        $location->update([
-            'img_banner_path' => $imgBannerPath,
-            'img_bg_path' => $imgBgPath,
-        ]);
 
         return new LocationResource($location);
     }
@@ -92,39 +66,12 @@ class LocationController extends Controller
     {
         $data = $request->validated();
 
-        // Check if the user has uploaded new images
-        if ($request->hasFile('img_banner')) {
-            // Remove the old image
-            if ($location->img_banner_path) {
-                $this->deleteImage($location->img_banner_path);
-            }
-
-            $imgBanner = $request->file('img_banner');
-            $imgBannerPath = $imgBanner->storeAs(
-                Location::STORAGE_IMG_BANNER_PATH,
-                $location->id . '.' . $imgBanner->extension(),
-                'public'
-            );
-            $data['img_banner_path'] = $imgBannerPath;
-        }
-
-        if ($request->hasFile('img_bg')) {
-            // Remove the old image
-            if ($location->img_bg_path) {
-                $this->deleteImage($location->img_bg_path);
-            }
-
-            $imgBg = $request->file('img_bg');
-            $imgBgPath = $imgBg->storeAs(
-                Location::STORAGE_IMG_BG_PATH,
-                $location->id . '.' . $imgBg->extension(),
-                'public'
-            );
-            $data['img_bg_path'] = $imgBgPath;
-        }
-
-        // Update the location with the new data
-        $location->update($data);
+        $location = $locationService->updateLocation(
+            $location,
+            $data,
+            $request->file('img_banner'),
+            $request->file('img_bg')
+        );
 
         return new LocationResource($location);
     }
@@ -134,19 +81,10 @@ class LocationController extends Controller
      */
     public function destroy(Location $location, LocationService $locationService)
     {
-        // TODO: add gate policy to check if user can delete location
+        Gate::authorize('delete', $location);
 
-        // Delete banner image if it exists
-        if ($location->img_banner_path) {
-            $this->deleteImage($location->img_banner_path);
-        }
+        $locationService->deleteLocation($location);
 
-        // Delete background image if it exists
-        if ($location->img_bg_path) {
-            $this->deleteImage($location->img_bg_path);
-        }
-
-        // Delete the location record
-        $location->delete();
+        return response()->noContent();
     }
 }

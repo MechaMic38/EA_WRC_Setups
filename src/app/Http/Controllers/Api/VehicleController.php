@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use App\Services\VehicleService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Facades\Gate;
 
 class VehicleController extends Controller
 {
@@ -44,32 +45,9 @@ class VehicleController extends Controller
      */
     public function store(StoreVehicleRequest $request, VehicleService $vehicleService)
     {
-        $validated = $request->validated();
+        $data = $request->validated();
 
-        // Create a new vehicle record
-        $vehicle = new Vehicle();
-        $vehicle->name = $validated['name'];
-        $vehicle->manufacturer_id = $validated['manufacturer_id'];
-        $vehicle->category_id = $validated['category_id'];
-
-        // Save the vehicle record
-        $vehicle->save();
-
-        // Save the vehicle image
-        $img = $request->file('img');
-        $imgPath = $img->storeAs(
-            Vehicle::STORAGE_IMG_PATH,
-            $vehicle->id . '.' . $img->extension(),
-            'public'
-        );
-
-        // Update the vehicle record with the image path
-        $vehicle->update([
-            'img_path' => $imgPath,
-        ]);
-
-        // Create a new vehicle setup blueprint, using the given setup options
-        $this->createVehicleSetupBlueprint($vehicle, $validated['setup_options']);
+        $vehicle = $vehicleService->createVehicle($data, $request->file('img'));
 
         return new VehicleResource($vehicle);
     }
@@ -90,25 +68,7 @@ class VehicleController extends Controller
     {
         $data = $request->validated();
 
-        // Check if the user uploaded a new image
-        if ($request->hasFile('img')) {
-            // Remove the old image
-            if ($vehicle->img_path) {
-                $this->deleteImage($vehicle->img_path);
-            }
-
-            // Save the new image
-            $img = $request->file('img');
-            $imgPath = $img->storeAs(
-                Vehicle::STORAGE_IMG_PATH,
-                $vehicle->id . '.' . $img->extension(),
-                'public'
-            );
-            $vehicle->img_path = $imgPath;
-        }
-
-        // Update the vehicle with the new data
-        $vehicle->update($data);
+        $vehicle = $vehicleService->updateVehicle($vehicle, $data, $request->file('img'));
 
         return new VehicleResource($vehicle);
     }
@@ -118,55 +78,10 @@ class VehicleController extends Controller
      */
     public function destroy(Vehicle $vehicle, VehicleService $vehicleService)
     {
-        // TODO: add gate policy to check if user can delete vehicle
+        Gate::authorize('delete', $vehicle);
 
-        // Delete the vehicle image if it exists
-        if ($vehicle->img_path) {
-            $this->deleteImage($vehicle->img_path);
-        }
+        $vehicleService->deleteVehicle($vehicle);
 
-        // Delete vehicle setup blueprint
-        $vehicle->setupBlueprint->delete();
-
-        // Delete the vehicle record
-        $vehicle->delete();
-    }
-
-    /**
-     * Create a new vehicle setup blueprint for the given vehicle.
-     */
-    private function createVehicleSetupBlueprint(Vehicle $vehicle, array $providedOptions)
-    {
-        // Load the setup options
-        $options = config('setup-options');
-
-        // Create a new setup blueprint record
-        $blueprint = new SetupBlueprint();
-
-        // Create base data array, using the setup blueprint groups as keys
-        $data = [];
-        foreach (SetupBlueprint::GROUPS as $group) {
-            $data[$group] = [];
-        }
-
-        // Retrieve option rules;
-        foreach ($providedOptions as $option) {
-            foreach ($options as $group => $rules) {
-                if (array_key_exists($option, $rules)) {
-                    $data[$group][$option] = [
-                        'min_value' => $rules[$option]['min_value'],
-                        'max_value' => $rules[$option]['max_value'],
-                        'default_value' => $rules[$option]['default_value'],
-                        'steps' => $rules[$option]['steps'],
-                    ];
-                    break;
-                }
-            }
-        }
-
-        // Set blueprint ID as vehicle ID
-        $blueprint['_id'] = $vehicle->id;
-        $blueprint->fill($data);
-        $blueprint->save();
+        return response()->noContent();
     }
 }
