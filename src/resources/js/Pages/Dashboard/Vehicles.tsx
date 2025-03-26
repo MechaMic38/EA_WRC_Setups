@@ -76,7 +76,7 @@ const Vehicles = () => {
                                                   <img
                                                       src={
                                                           vehicle.manufacturer
-                                                              .img_path
+                                                              .imgPath
                                                       }
                                                       alt={
                                                           vehicle.manufacturer

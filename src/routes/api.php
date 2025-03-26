@@ -1,10 +1,12 @@
 <?php
 
 use App\Enums\UserRole;
-use App\Http\Controllers\Api\AuthenticatedTokenController;
+use App\Http\Controllers\Api\AuthTokenController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\ManufacturerController;
+use App\Http\Controllers\Api\PasswordController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\SetupBlueprintController;
 use App\Http\Controllers\Api\SetupConfigurationController;
 use App\Http\Controllers\Api\SetupController;
@@ -25,7 +27,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Authentication for external applications
-Route::post('/login', [AuthenticatedTokenController::class, 'login']);
+Route::post('/login', [AuthTokenController::class, 'login']);
+Route::post('/register', [AuthTokenController::class, 'register']);
 
 // Categories
 Route::get('/categories', [CategoryController::class, 'index']);
@@ -70,7 +73,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return new UserResource($request->user());
     });
-    Route::get('/logout', [AuthenticatedTokenController::class, 'logout']);
+    Route::get('/logout', [AuthTokenController::class, 'logout']);
+
+    // User profile
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::patch('/profile', [ProfileController::class, 'update']);
+    Route::patch('/profile/password', [PasswordController::class, 'update']);
+    Route::delete('/profile', [ProfileController::class, 'destroy']);
 
     // Setups
     Route::post('/setups', [SetupController::class, 'store']);

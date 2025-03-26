@@ -1,10 +1,3 @@
-export interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at?: string;
-}
-
 export type PaginatedData<T = any> = {
     data: T[],
     links: Record<string, string>
@@ -13,22 +6,22 @@ export type PaginatedData<T = any> = {
 export interface Category {
     id: string;
     name: string;
-    img_path: string;
+    imgPath: string;
 }
 
 export interface Location {
     id: string;
     name: string;
     description: string;
-    surface_type: string;
-    img_banner_path: string;
-    img_bg_path: string;
+    surfaceType: string;
+    imgBannerPath: string;
+    imgBgPath: string;
 }
 
 export interface Manufacturer {
     id: string;
     name: string;
-    img_path: string;
+    imgPath: string;
 }
 
 export interface User {
@@ -43,7 +36,7 @@ export interface Vehicle {
     name: string;
     manufacturer: Manufacturer,
     category: Category;
-    img_path: string;
+    imgPath: string;
 }
 
 export type PageProps<

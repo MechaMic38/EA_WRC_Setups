@@ -71,9 +71,7 @@ const Manufacturers = () => {
                                           <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                               <div className="max-w-[20%] h-12 flex items-center justify-center">
                                                   <img
-                                                      src={
-                                                          manufacturer.img_path
-                                                      }
+                                                      src={manufacturer.imgPath}
                                                       alt={manufacturer.name}
                                                       className="max-h-[100%] object-contain mx-auto"
                                                   />

@@ -76,7 +76,7 @@ const Locations = () => {
                                       >
                                           <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                               <img
-                                                  src={location.img_banner_path}
+                                                  src={location.imgBannerPath}
                                                   alt={location.name}
                                                   className="w-20 h-auto object-cover rounded"
                                               />
@@ -88,7 +88,7 @@ const Locations = () => {
                                               {location.description}
                                           </td>
                                           <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600 text-gray-900 dark:text-gray-100">
-                                              {location.surface_type}
+                                              {location.surfaceType}
                                           </td>
                                       </tr>
                                   ))}

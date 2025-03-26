@@ -70,7 +70,7 @@ const Categories = () => {
                                       >
                                           <td className="py-2 px-4 border-b border-gray-200 dark:border-gray-600">
                                               <img
-                                                  src={category.img_path}
+                                                  src={category.imgPath}
                                                   alt={category.name}
                                                   className="w-20 h-auto object-cover rounded"
                                               />
