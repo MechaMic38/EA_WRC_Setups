@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Setups\StoreSetupRequest;
 use App\Http\Requests\Setups\UpdateSetupRequest;
 use App\Http\Resources\SetupResource;
-use App\Http\Resources\SetupWithConfigResource;
 use App\Models\Setup;
 use App\Models\SetupConfiguration;
 use Illuminate\Http\Request;
@@ -21,6 +20,7 @@ class SetupController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $setups = Setup::query()
+            ->with(['user', 'location', 'vehicle'])
             // Filter by user_id (exact match)
             ->when($request->user_id, function ($query, $userId) {
                 $query->where('user_id', $userId);
@@ -62,7 +62,7 @@ class SetupController extends Controller
         // Update the setup record with the configuration id
         $setup->update(['config_id' => $config->id]);
 
-        return new SetupWithConfigResource($setup);
+        return new SetupResource($setup);
     }
 
     /**
@@ -70,7 +70,8 @@ class SetupController extends Controller
      */
     public function show(Setup $setup)
     {
-        return new SetupWithConfigResource($setup);
+        $setup->load(['user', 'location', 'vehicle', 'configuration']);
+        return new SetupResource($setup);
     }
 
     /**
@@ -89,7 +90,7 @@ class SetupController extends Controller
         // Update the setup record
         $setup->update($data);
 
-        return new SetupWithConfigResource($setup);
+        return new SetupResource($setup);
     }
 
     /**

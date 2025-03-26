@@ -23,10 +23,10 @@ class LocationResource extends JsonResource
             'description' => $this->description,
             'seasons' => $this->seasons,
             'tyres' => $this->tyres,
-            'surface_conditions' => $this->surface_conditions,
-            'surface_type' => $this->surface_type,
-            'img_banner_path' => URL::asset('storage' . '/' . $this->img_banner_path),
-            'img_bg_path' => URL::asset('storage' . '/' . $this->img_bg_path)
+            'surfaceConditions' => $this->surface_conditions,
+            'surfaceType' => $this->surface_type,
+            'imgBannerPath' => URL::asset('storage' . '/' . $this->img_banner_path),
+            'imgBgPath' => URL::asset('storage' . '/' . $this->img_bg_path)
         ];
     }
 }

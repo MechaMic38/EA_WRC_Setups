@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -18,12 +19,22 @@ class SetupResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'surface_condition' => $this->surface_condition,
+            'surfaceCondition' => $this->surface_condition,
             'season' => $this->season,
             'tyres' => $this->tyres,
-            'user' => new UserResource($this->user),
-            'location' => new LocationSummaryResource($this->location),
-            'vehicle' => new VehicleResource($this->vehicle)
+            'createdAt' => Carbon::parse($this->created_at)->toDateTimeLocalString(),
+            'user' => $this->whenLoaded('user', function () {
+                return new UserResource($this->user);
+            }),
+            'location' => $this->whenLoaded('location', function () {
+                return new LocationSummaryResource($this->location);
+            }),
+            'vehicle' => $this->whenLoaded('vehicle', function () {
+                return new VehicleResource($this->vehicle);
+            }),
+            'configuration' => $this->whenLoaded('configuration', function () {
+                return new SetupConfigurationResource($this->configuration);
+            }),
         ];
     }
 }

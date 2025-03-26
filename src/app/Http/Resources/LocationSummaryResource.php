@@ -21,9 +21,9 @@ class LocationSummaryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'surface_type' => $this->surface_type,
-            'img_banner_path' => URL::asset('storage' . '/' . $this->img_banner_path),
-            'img_bg_path' => URL::asset('storage' . '/' . $this->img_bg_path)
+            'surfaceType' => $this->surface_type,
+            'imgBannerPath' => URL::asset('storage' . '/' . $this->img_banner_path),
+            'imgBgPath' => URL::asset('storage' . '/' . $this->img_bg_path)
         ];
     }
 }

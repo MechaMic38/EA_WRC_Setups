@@ -20,13 +20,13 @@ class VehicleResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'manufacturer' => new ManufacturerResource(
-                $this->manufacturer
-            ),
-            'category' => new CategoryResource(
-                $this->category
-            ),
-            'img_path' => URL::asset('storage' . '/' . $this->img_path)
+            'manufacturer' => $this->whenLoaded('manufacturer', function () {
+                return new ManufacturerResource($this->manufacturer);
+            }),
+            'category' => $this->whenLoaded('category', function () {
+                return new CategoryResource($this->category);
+            }),
+            'imgPath' => URL::asset('storage' . '/' . $this->img_path)
         ];
     }
 }

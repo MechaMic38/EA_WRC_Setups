@@ -23,8 +23,7 @@ class SetupBlueprintResource extends JsonResource
             'differentials' => $this->differentials,
             'gears' => $this->gears,
             'damping' => $this->damping,
-            'springs' => $this->springs,
-            'vehicle' => new VehicleResource($this->vehicle)
+            'springs' => $this->springs
         ];
     }
 }

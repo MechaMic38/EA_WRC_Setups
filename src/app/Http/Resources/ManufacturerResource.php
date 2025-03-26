@@ -20,7 +20,7 @@ class ManufacturerResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'img_path' => URL::asset('storage' . '/' . $this->img_path)
+            'imgPath' => URL::asset('storage' . '/' . $this->img_path)
         ];
     }
 }

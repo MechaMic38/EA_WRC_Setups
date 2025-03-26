@@ -2,6 +2,9 @@
 
 namespace App\Http\Requests\Setups;
 
+use App\Enums\SeasonEnum;
+use App\Enums\SurfaceConditionEnum;
+use App\Enums\TyresEnum;
 use App\Models\Location;
 use App\Models\Setup;
 use App\Models\Vehicle;
@@ -9,6 +12,7 @@ use App\Validation\ValidateSetupConfiguration;
 use App\Validation\ValidateSetupLocationData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 
 class StoreSetupRequest extends FormRequest
 {
@@ -28,9 +32,9 @@ class StoreSetupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'surface_condition' => ['required', 'string'],
-            'season' => ['required', 'string'],
-            'tyres' => ['required', 'string'],
+            'surface_condition' => ['required', 'string', new Enum(SurfaceConditionEnum::class)],
+            'season' => ['required', 'string', new Enum(SeasonEnum::class)],
+            'tyres' => ['required', 'string', new Enum(TyresEnum::class)],
             // Relationships
             'location_id' => ['required', 'string', 'exists:locations,id'],
             'vehicle_id' => ['required', 'string', 'exists:vehicles,id'],

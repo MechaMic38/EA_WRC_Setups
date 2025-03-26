@@ -19,6 +19,7 @@ class VehicleController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $vehicles = Vehicle::query()
+            ->with(['category', 'manufacturer'])
             // Filter by name (case-insensitive partial match)
             ->when($request->name, function ($query, $name) {
                 $query->where('name', 'like', '%' . $name . '%');
@@ -77,6 +78,7 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
+        $vehicle->load(['category', 'manufacturer']);
         return new VehicleResource($vehicle);
     }
 

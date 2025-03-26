@@ -2,10 +2,14 @@
 
 namespace App\Http\Requests\Setups;
 
+use App\Enums\SeasonEnum;
+use App\Enums\SurfaceConditionEnum;
+use App\Enums\TyresEnum;
 use App\Validation\ValidateSetupConfiguration;
 use App\Validation\ValidateSetupLocationData;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateSetupRequest extends FormRequest
 {
@@ -25,9 +29,9 @@ class UpdateSetupRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'surface_condition' => ['sometimes', 'string'],
-            'season' => ['sometimes', 'string'],
-            'tyres' => ['sometimes', 'string'],
+            'surface_condition' => ['sometimes', 'string', new Enum(SurfaceConditionEnum::class)],
+            'season' => ['sometimes', 'string', new Enum(SeasonEnum::class)],
+            'tyres' => ['sometimes', 'string', new Enum(TyresEnum::class)],
             // Configuration
             'configuration' => ['sometimes', 'array'],
             'configuration.alignment' => ['required_with:configuration', 'array'],
