@@ -1,7 +1,7 @@
+import useAxiosForm from "@/Hooks/useAxiosForm";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps, PaginatedData, Vehicle } from "@/types";
 import { Head } from "@inertiajs/react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 const SkeletonRow = () => (
@@ -16,20 +16,20 @@ const SkeletonRow = () => (
 );
 
 const Vehicles = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<Vehicle>>([]);
+
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchVehicles = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get("/api/vehicles");
-                setVehicles(response.data.data);
-            } catch (error) {
-                console.error("Error fetching vehicles:", error);
-            } finally {
-                setIsLoading(false);
-            }
+            get(route("api.vehicles.index"), {
+                onSuccess: (response) => {
+                    setVehicles(response.data.data);
+                },
+                onError: (error) => {
+                    console.error("Error fetching vehicles:", error);
+                },
+            });
         };
 
         fetchVehicles();
@@ -62,7 +62,7 @@ const Vehicles = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading
+                            {isProcessing
                                 ? Array.from({ length: 10 }).map((_, i) => (
                                       <SkeletonRow key={i} />
                                   ))

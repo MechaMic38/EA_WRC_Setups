@@ -18,10 +18,10 @@ class SetupService extends Service
     public function createSetup(array $data, array $configuration, User $user): Setup
     {
         // Create a new setup record
-        $setup = $user->setups->create($data);
+        $setup = $user->setups()->create($data);
 
         // Create a new setup configuration record
-        $setup->configuration->create($configuration);
+        $setup->configuration()->create($configuration);
 
         return $setup;
     }
@@ -36,6 +36,7 @@ class SetupService extends Service
      */
     public function updateSetup(Setup $setup, array $data, array $configuration): Setup
     {
+        // TODO: separate the update of the setup record and the setup configuration record
         // Update the setup record
         $setup->update($data);
 

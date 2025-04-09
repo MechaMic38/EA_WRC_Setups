@@ -1,8 +1,8 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Manufacturer, PageProps, PaginatedData } from "@/types";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Head } from "@inertiajs/react";
+import useAxiosForm from "@/Hooks/useAxiosForm";
 
 const SkeletonRow = () => (
     <tr>
@@ -16,20 +16,20 @@ const SkeletonRow = () => (
 );
 
 const Manufacturers = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<Manufacturer>>([]);
+
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchManufacturers = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get("/api/manufacturers");
-                setManufacturers(response.data.data);
-            } catch (error) {
-                console.error("Error fetching manufacturers:", error);
-            } finally {
-                setIsLoading(false);
-            }
+            get(route("api.manufacturers.index"), {
+                onSuccess: (response) => {
+                    setManufacturers(response.data.data);
+                },
+                onError: (error) => {
+                    console.error("Error fetching manufacturers:", error);
+                },
+            });
         };
 
         fetchManufacturers();
@@ -59,7 +59,7 @@ const Manufacturers = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading
+                            {isProcessing
                                 ? Array.from({ length: 10 }, (_, index) => (
                                       <SkeletonRow key={index} />
                                   ))

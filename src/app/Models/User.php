@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use MongoDB\Laravel\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use MongoDB\Laravel\Relations\HasMany;
 
 class User extends Authenticatable
 {
@@ -78,5 +79,15 @@ class User extends Authenticatable
     public function hasRole($role): bool
     {
         return $this->role == $role;
+    }
+
+    /**
+     * Get the setups associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function setups(): HasMany
+    {
+        return $this->hasMany(Setup::class);
     }
 }

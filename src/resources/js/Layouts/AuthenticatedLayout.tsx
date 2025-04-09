@@ -108,7 +108,7 @@ export default function Authenticated({
                                             Profile
                                         </Dropdown.Link>
                                         <Dropdown.Link
-                                            href={route("logout")}
+                                            href={route("auth.logout")}
                                             method="post"
                                             as="button"
                                         >
@@ -223,7 +223,7 @@ export default function Authenticated({
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"
-                                href={route("logout")}
+                                href={route("auth.logout")}
                                 as="button"
                             >
                                 Log Out

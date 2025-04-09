@@ -13,8 +13,6 @@ use App\Http\Controllers\Api\SetupController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\VehicleController;
 use App\Http\Controllers\Api\SetupOptionsController;
-use App\Http\Resources\UserResource;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,37 +25,37 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Authentication for external applications
-Route::post('/login', [AuthTokenController::class, 'login']);
-Route::post('/register', [AuthTokenController::class, 'register']);
+Route::post('/login', [AuthTokenController::class, 'login'])->name('api.auth.login');
+Route::post('/register', [AuthTokenController::class, 'register'])->name('api.auth.register');
 
 // Categories
-Route::get('/categories', [CategoryController::class, 'index']);
-Route::get('/categories/{category}', [CategoryController::class, 'show']);
+Route::get('/categories', [CategoryController::class, 'index'])->name('api.categories.index');
+Route::get('/categories/{category}', [CategoryController::class, 'show'])->name('api.categories.show');
 
 // Locations
-Route::get('/locations', [LocationController::class, 'index']);
-Route::get('/locations/{location}', [LocationController::class, 'show']);
+Route::get('/locations', [LocationController::class, 'index'])->name('api.locations.index');
+Route::get('/locations/{location}', [LocationController::class, 'show'])->name('api.locations.show');
 
 // Manufacturers
-Route::get('/manufacturers', [ManufacturerController::class, 'index']);
-Route::get('/manufacturers/{manufacturer}', [ManufacturerController::class, 'show']);
+Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('api.manufacturers.index');
+Route::get('/manufacturers/{manufacturer}', [ManufacturerController::class, 'show'])->name('api.manufacturers.show');
 
 // Setups
-Route::get('/setups', [SetupController::class, 'index']);
-Route::get('/setups/{setup}', [SetupController::class, 'show']);
+Route::get('/setups', [SetupController::class, 'index'])->name('api.setups.index');
+Route::get('/setups/{setup}', [SetupController::class, 'show'])->name('api.setups.show');
 
 // Setup configurations
-Route::get('/setups/{setup}/configuration', [SetupConfigurationController::class, 'show']);
+Route::get('/setups/{setup}/configuration', [SetupConfigurationController::class, 'show'])->name('api.setups.configuration.show');
 
 // Setup options
-Route::get('/setup-options', [SetupOptionsController::class, 'index']);
+Route::get('/setup-options', [SetupOptionsController::class, 'index'])->name('api.setup-options.index');
 
 // Vehicles
-Route::get('/vehicles', [VehicleController::class, 'index']);
-Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+Route::get('/vehicles', [VehicleController::class, 'index'])->name('api.vehicles.index');
+Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show'])->name('api.vehicles.show');
 
 // Vehicle blueprints
-Route::get('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'show']);
+Route::get('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'show'])->name('api.vehicles.blueprint.show');
 
 /*
 |--------------------------------------------------------------------------
@@ -70,21 +68,18 @@ Route::get('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 's
 
 Route::middleware('auth:sanctum')->group(function () {
     // Authentication for external applications
-    Route::get('/user', function (Request $request) {
-        return new UserResource($request->user());
-    });
-    Route::get('/logout', [AuthTokenController::class, 'logout']);
+    Route::get('/logout', [AuthTokenController::class, 'logout'])->name('api.auth.logout');
 
     // User profile
-    Route::get('/profile', [ProfileController::class, 'show']);
-    Route::patch('/profile', [ProfileController::class, 'update']);
-    Route::patch('/profile/password', [PasswordController::class, 'update']);
-    Route::delete('/profile', [ProfileController::class, 'destroy']);
+    Route::get('/profile', [ProfileController::class, 'show'])->name('api.profile.show');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('api.profile.update');
+    Route::patch('/profile/password', [PasswordController::class, 'update'])->name('api.profile.password.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('api.profile.destroy');
 
     // Setups
-    Route::post('/setups', [SetupController::class, 'store']);
-    Route::patch('/setups/{setup}', [SetupController::class, 'update']);
-    Route::delete('/setups/{setup}', [SetupController::class, 'destroy']);
+    Route::post('/setups', [SetupController::class, 'store'])->name('api.setups.store');
+    Route::patch('/setups/{setup}', [SetupController::class, 'update'])->name('api.setups.update');
+    Route::delete('/setups/{setup}', [SetupController::class, 'destroy'])->name('api.setups.destroy');
 });
 
 /*
@@ -99,32 +94,32 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware(['auth:sanctum', 'role:' . UserRole::Admin->value])->group(function () {
     // Categories
-    Route::post('/categories', [CategoryController::class, 'store']);
-    Route::patch('/categories/{category}', [CategoryController::class, 'update']);
-    Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
+    Route::post('/categories', [CategoryController::class, 'store'])->name('api.categories.store');
+    Route::patch('/categories/{category}', [CategoryController::class, 'update'])->name('api.categories.update');
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy'])->name('api.categories.destroy');
 
     // Locations
-    Route::post('/locations', [LocationController::class, 'store']);
-    Route::patch('/locations/{location}', [LocationController::class, 'update']);
-    Route::delete('/locations/{location}', [LocationController::class, 'destroy']);
+    Route::post('/locations', [LocationController::class, 'store'])->name('api.locations.store');
+    Route::patch('/locations/{location}', [LocationController::class, 'update'])->name('api.locations.update');
+    Route::delete('/locations/{location}', [LocationController::class, 'destroy'])->name('api.locations.destroy');
 
     // Manufacturers
-    Route::post('/manufacturers', [ManufacturerController::class, 'store']);
-    Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update']);
-    Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy']);
+    Route::post('/manufacturers', [ManufacturerController::class, 'store'])->name('api.manufacturers.store');
+    Route::patch('/manufacturers/{manufacturer}', [ManufacturerController::class, 'update'])->name('api.manufacturers.update');
+    Route::delete('/manufacturers/{manufacturer}', [ManufacturerController::class, 'destroy'])->name('api.manufacturers.destroy');
 
     // Users
-    Route::get('/users', [UserController::class, 'index']);
-    Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::post('/users', [UserController::class, 'store']);
-    Route::patch('/users/{user}', [UserController::class, 'update']);
-    Route::delete('/users/{user}', [UserController::class, 'destroy']);
+    Route::get('/users', [UserController::class, 'index'])->name('api.users.index');
+    Route::get('/users/{user}', [UserController::class, 'show'])->name('api.users.show');
+    Route::post('/users', [UserController::class, 'store'])->name('api.users.store');
+    Route::patch('/users/{user}', [UserController::class, 'update'])->name('api.users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('api.users.destroy');
 
     // Vehicles
-    Route::post('/vehicles', [VehicleController::class, 'store']);
-    Route::patch('/vehicles/{vehicle}', [VehicleController::class, 'update']);
-    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
+    Route::post('/vehicles', [VehicleController::class, 'store'])->name('api.vehicles.store');
+    Route::patch('/vehicles/{vehicle}', [VehicleController::class, 'update'])->name('api.vehicles.update');
+    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy'])->name('api.vehicles.destroy');
 
     // Vehicle blueprints
-    Route::patch('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'update']);
+    Route::patch('/vehicles/{vehicle}/blueprint', [SetupBlueprintController::class, 'update'])->name('api.vehicles.blueprint.update');
 });

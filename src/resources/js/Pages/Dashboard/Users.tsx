@@ -1,8 +1,8 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { PageProps, PaginatedData, User } from "@/types";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Head } from "@inertiajs/react";
+import useAxiosForm from "@/Hooks/useAxiosForm";
 
 const SkeletonRow = () => (
     <tr>
@@ -16,20 +16,20 @@ const SkeletonRow = () => (
 );
 
 const Users = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<User>>([]);
+
     const [users, setUsers] = useState<User[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchUsers = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get("/api/users");
-                setUsers(response.data.data);
-            } catch (error) {
-                console.error("Error fetching manufacturers:", error);
-            } finally {
-                setIsLoading(false);
-            }
+            get(route("api.users.index"), {
+                onSuccess: (response) => {
+                    setUsers(response.data.data);
+                },
+                onError: (error) => {
+                    console.error("Error fetching users:", error);
+                },
+            });
         };
 
         fetchUsers();
@@ -62,7 +62,7 @@ const Users = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading
+                            {isProcessing
                                 ? Array.from({ length: 10 }, (_, index) => (
                                       <SkeletonRow key={index} />
                                   ))

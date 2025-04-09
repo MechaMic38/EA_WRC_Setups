@@ -2,9 +2,16 @@ import InputError from "@/Components/InputError";
 import InputLabel from "@/Components/InputLabel";
 import PrimaryButton from "@/Components/PrimaryButton";
 import TextInput from "@/Components/TextInput";
+import useAxiosForm from "@/Hooks/useAxiosForm";
+import { User } from "@/types";
 import { Transition } from "@headlessui/react";
-import { Link, useForm, usePage } from "@inertiajs/react";
-import { FormEventHandler } from "react";
+import { Link, usePage } from "@inertiajs/react";
+import { FormEventHandler, useRef } from "react";
+
+interface UpdateProfileInformationFormData {
+    username: string;
+    email: string;
+}
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
@@ -15,18 +22,44 @@ export default function UpdateProfileInformation({
     status?: string;
     className?: string;
 }) {
+    // Refs to manage focus on input fields
+    const usernameInput = useRef<HTMLInputElement>(null);
+    const emailInput = useRef<HTMLInputElement>(null);
+
+    // Get the user information from the page props
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
-        useForm({
-            name: user.username,
-            email: user.email,
-        });
+    // Form data and error management
+    const {
+        data,
+        setData,
+        patch,
+        errors,
+        reset,
+        isProcessing,
+        isRecentlySuccessful,
+    } = useAxiosForm<User, UpdateProfileInformationFormData>({
+        username: user.username,
+        email: user.email,
+    });
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        patch(route("profile.update"));
+        patch(route("api.profile.update"), {
+            onError: (error) => {
+                if (error.response?.status === 422) {
+                    if (errors.username) {
+                        reset("username");
+                        usernameInput.current?.focus();
+                    }
+                    if (errors.email) {
+                        reset("email");
+                        emailInput.current?.focus();
+                    }
+                }
+            },
+        });
     };
 
     return (
@@ -43,19 +76,20 @@ export default function UpdateProfileInformation({
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="username" value="Username" />
 
                     <TextInput
-                        id="name"
+                        id="username"
+                        ref={usernameInput}
                         className="mt-1 block w-full"
-                        value={data.name}
-                        onChange={(e) => setData("name", e.target.value)}
+                        value={data.username}
+                        onChange={(e) => setData("username", e.target.value)}
                         required
                         isFocused
-                        autoComplete="name"
+                        autoComplete="username"
                     />
 
-                    <InputError className="mt-2" message={errors.name} />
+                    <InputError className="mt-2" message={errors.username} />
                 </div>
 
                 <div>
@@ -63,6 +97,7 @@ export default function UpdateProfileInformation({
 
                     <TextInput
                         id="email"
+                        ref={emailInput}
                         type="email"
                         className="mt-1 block w-full"
                         value={data.email}
@@ -98,10 +133,10 @@ export default function UpdateProfileInformation({
                 )}
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={isProcessing}>Save</PrimaryButton>
 
                     <Transition
-                        show={recentlySuccessful}
+                        show={isRecentlySuccessful}
                         enter="transition ease-in-out"
                         enterFrom="opacity-0"
                         leave="transition ease-in-out"

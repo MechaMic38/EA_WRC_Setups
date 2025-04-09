@@ -1,7 +1,7 @@
+import useAxiosForm from "@/Hooks/useAxiosForm";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Category, PageProps, PaginatedData } from "@/types";
 import { Head } from "@inertiajs/react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 const SkeletonRow = () => (
@@ -16,20 +16,20 @@ const SkeletonRow = () => (
 );
 
 const Categories = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<Category>>([]);
+
     const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get("/api/categories");
-                setCategories(response.data.data);
-            } catch (error) {
-                console.error("Error fetching categories:", error);
-            } finally {
-                setIsLoading(false);
-            }
+        const fetchCategories = () => {
+            get(route("api.categories.index"), {
+                onSuccess: (response) => {
+                    setCategories(response.data.data);
+                },
+                onError: (error) => {
+                    console.error("Error fetching categories:", error);
+                },
+            });
         };
 
         fetchCategories();
@@ -59,7 +59,7 @@ const Categories = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading
+                            {isProcessing
                                 ? Array.from({ length: 10 }, (_, index) => (
                                       <SkeletonRow key={index} />
                                   ))

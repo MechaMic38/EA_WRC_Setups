@@ -1,7 +1,7 @@
+import useAxiosForm from "@/Hooks/useAxiosForm";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Location, PageProps, PaginatedData } from "@/types";
 import { Head } from "@inertiajs/react";
-import axios from "axios";
 import { useEffect, useState } from "react";
 
 const SkeletonRow = () => (
@@ -16,20 +16,20 @@ const SkeletonRow = () => (
 );
 
 const Locations = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<Location>>([]);
+
     const [locations, setLocations] = useState<Location[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchLocations = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get("/api/locations");
-                setLocations(response.data.data);
-            } catch (error) {
-                console.error("Error fetching locations:", error);
-            } finally {
-                setIsLoading(false);
-            }
+            get(route("api.locations.index"), {
+                onSuccess: (response) => {
+                    setLocations(response.data.data);
+                },
+                onError: (error) => {
+                    console.error("Error fetching locations:", error);
+                },
+            });
         };
 
         fetchLocations();
@@ -65,7 +65,7 @@ const Locations = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {isLoading
+                            {isProcessing
                                 ? Array.from({ length: 10 }, (_, i) => (
                                       <SkeletonRow key={i} />
                                   ))

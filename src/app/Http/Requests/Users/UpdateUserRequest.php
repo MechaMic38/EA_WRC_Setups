@@ -25,7 +25,6 @@ class UpdateUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'sometimes|email|max:255',
             'role' => ['sometimes', 'string', new Enum(UserRole::class)],
         ];
     }
