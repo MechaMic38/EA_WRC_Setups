@@ -9,7 +9,8 @@ return [
             "min_value" => -2.0,
             "max_value" => 2.0,
             "default_value" => 0.0,
-            "steps" => 41
+            "steps" => 41,
+            "precision" => 2
         ],
         "toe_rear" => [
             "label" => "(Rear) Toe Angle",
@@ -18,7 +19,8 @@ return [
             "min_value" => -2.0,
             "max_value" => 2.0,
             "default_value" => 0.0,
-            "steps" => 41
+            "steps" => 41,
+            "precision" => 2
         ],
         "camber_front" => [
             "label" => "(Front) Camber Angle",
@@ -27,7 +29,8 @@ return [
             "min_value" => -4.5,
             "max_value" => 0.0,
             "default_value" => -3.0,
-            "steps" => 22
+            "steps" => 22,
+            "precision" => 2
         ],
         "camber_rear" => [
             "label" => "(Rear) Camber Angle",
@@ -36,7 +39,8 @@ return [
             "min_value" => -3.5,
             "max_value" => 0.0,
             "default_value" => -2.0,
-            "steps" => 22
+            "steps" => 22,
+            "precision" => 2
         ]
     ],
     "braking" => [
@@ -47,7 +51,8 @@ return [
             "min_value" => 1500.00,
             "max_value" => 4500.00,
             "default_value" => 3000.00,
-            "steps" => 61
+            "steps" => 61,
+            "precision" => 2
         ],
         "brake_bias" => [
             "label" => "Brake Bias",
@@ -56,7 +61,8 @@ return [
             "min_value" => 30,
             "max_value" => 90,
             "default_value" => 70,
-            "steps" => 61
+            "steps" => 61,
+            "precision" => 0
         ],
         "handbrake_force" => [
             "label" => "Handbrake Force",
@@ -65,7 +71,8 @@ return [
             "min_value" => 1400.00,
             "max_value" => 3400.00,
             "default_value" => 2400.00,
-            "steps" => 61
+            "steps" => 61,
+            "precision" => 2
         ]
     ],
     "differentials" => [
@@ -76,7 +83,8 @@ return [
             "min_value" => 0,
             "max_value" => 50,
             "default_value" => 40,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "lsd_braking_front" => [
             "label" => "(Front) LSD Braking Lock",
@@ -85,7 +93,8 @@ return [
             "min_value" => 0,
             "max_value" => 50,
             "default_value" => 40,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "lsd_preload_front" => [
             "label" => "(Front) LSD Preload",
@@ -94,7 +103,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 99.0,
             "default_value" => 45.0,
-            "steps" => 12
+            "steps" => 12,
+            "precision" => 2
         ],
         "lsd_driving_centre" => [
             "label" => "(Centre) LSD Driving Lock",
@@ -103,7 +113,8 @@ return [
             "min_value" => 0,
             "max_value" => 50,
             "default_value" => 40,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "lsd_braking_centre" => [
             "label" => "(Centre) LSD Braking Lock",
@@ -112,7 +123,8 @@ return [
             "min_value" => 0,
             "max_value" => 50,
             "default_value" => 40,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "lsd_preload_centre" => [
             "label" => "(Centre) LSD Preload",
@@ -121,7 +133,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 99.0,
             "default_value" => 45.0,
-            "steps" => 12
+            "steps" => 12,
+            "precision" => 2
         ],
         "lsd_driving_rear" => [
             "label" => "(Rear) LSD Driving Lock",
@@ -130,7 +143,8 @@ return [
             "min_value" => 0,
             "max_value" => 50,
             "default_value" => 40,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "lsd_braking_rear" => [
             "label" => "(Rear) LSD Braking Lock",
@@ -139,7 +153,8 @@ return [
             "min_value" => 0,
             "max_value" => 50,
             "default_value" => 40,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "lsd_preload_rear" => [
             "label" => "(Rear) LSD Preload",
@@ -148,7 +163,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 99.0,
             "default_value" => 45.0,
-            "steps" => 12
+            "steps" => 12,
+            "precision" => 2
         ],
         "torque_bias_centre" => [
             "label" => "(Centre) Torque Bias",
@@ -157,7 +173,8 @@ return [
             "min_value" => 30,
             "max_value" => 70,
             "default_value" => 50,
-            "steps" => 33
+            "steps" => 33,
+            "precision" => 0
         ],
         "viscous_front" => [
             "label" => "(Front) Viscous Differential",
@@ -166,7 +183,8 @@ return [
             "min_value" => 4,
             "max_value" => 24,
             "default_value" => 8,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "viscous_centre" => [
             "label" => "(Centre) Viscous Differential",
@@ -175,7 +193,8 @@ return [
             "min_value" => 4,
             "max_value" => 24,
             "default_value" => 8,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ],
         "viscous_rear" => [
             "label" => "(Rear) Viscous Differential",
@@ -184,7 +203,8 @@ return [
             "min_value" => 4,
             "max_value" => 24,
             "default_value" => 8,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 0
         ]
     ],
     "gears" => [
@@ -195,7 +215,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.245,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "gear_2" => [
             "label" => "2nd Gear",
@@ -204,7 +225,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.34,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "gear_3" => [
             "label" => "3rd Gear",
@@ -213,7 +235,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.445,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "gear_4" => [
             "label" => "4th Gear",
@@ -222,7 +245,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.56,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "gear_5" => [
             "label" => "5th Gear",
@@ -231,7 +255,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.68,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "gear_6" => [
             "label" => "6th Gear",
@@ -240,7 +265,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.81,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "gear_7" => [
             "label" => "7th Gear",
@@ -249,7 +275,8 @@ return [
             "min_value" => 0.2,
             "max_value" => 1.2,
             "default_value" => 0.935,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ],
         "final_drive" => [
             "label" => "Final Drive",
@@ -258,7 +285,8 @@ return [
             "min_value" => 0.1,
             "max_value" => 0.3,
             "default_value" => 0.2,
-            "steps" => 201
+            "steps" => 201,
+            "precision" => 3
         ]
     ],
     "damping" => [
@@ -269,7 +297,8 @@ return [
             "min_value" => -5.0,
             "max_value" => 5.0,
             "default_value" => 0.0,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "fast_bump_front" => [
             "label" => "(Front) Fast Bump",
@@ -278,7 +307,8 @@ return [
             "min_value" => -5.0,
             "max_value" => 5.0,
             "default_value" => 0.0,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "bump_division_front" => [
             "label" => "(Front) Bump Division",
@@ -287,7 +317,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 0.4,
             "default_value" => 0.2,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "slow_rebound_front" => [
             "label" => "(Front) Slow Rebound",
@@ -296,7 +327,8 @@ return [
             "min_value" => -5.0,
             "max_value" => 5.0,
             "default_value" => 0.0,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "slow_bump_rear" => [
             "label" => "(Rear) Slow Bump",
@@ -305,7 +337,8 @@ return [
             "min_value" => -5.0,
             "max_value" => 5.0,
             "default_value" => 0.0,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "fast_bump_rear" => [
             "label" => "(Rear) Fast Bump",
@@ -314,7 +347,8 @@ return [
             "min_value" => -5.0,
             "max_value" => 5.0,
             "default_value" => 0.0,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "bump_division_rear" => [
             "label" => "(Rear) Bump Division",
@@ -323,7 +357,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 0.4,
             "default_value" => 0.2,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ],
         "slow_rebound_rear" => [
             "label" => "(Rear) Slow Rebound",
@@ -332,7 +367,8 @@ return [
             "min_value" => -5.0,
             "max_value" => 5.0,
             "default_value" => 0.0,
-            "steps" => 11
+            "steps" => 11,
+            "precision" => 2
         ]
     ],
     "springs" => [
@@ -343,7 +379,8 @@ return [
             "min_value" => -30.0,
             "max_value" => 10.0,
             "default_value" => -10.0,
-            "steps" => 21
+            "steps" => 21,
+            "precision" => 2
         ],
         "spring_front" => [
             "label" => "(Front) Spring Rate",
@@ -352,7 +389,8 @@ return [
             "min_value" => 60.0,
             "max_value" => 200.0,
             "default_value" => 116.0,
-            "steps" => 21
+            "steps" => 21,
+            "precision" => 2
         ],
         "antiroll_front" => [
             "label" => "(Front) Anti-roll Bar",
@@ -361,7 +399,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 66.0,
             "default_value" => 42.9,
-            "steps" => 22
+            "steps" => 22,
+            "precision" => 2
         ],
         "height_rear" => [
             "label" => "(Rear) Ride Height",
@@ -370,7 +409,8 @@ return [
             "min_value" => -30.0,
             "max_value" => 10.0,
             "default_value" => -10.0,
-            "steps" => 21
+            "steps" => 21,
+            "precision" => 2
         ],
         "spring_rear" => [
             "label" => "(Rear) Spring Rate",
@@ -379,7 +419,8 @@ return [
             "min_value" => 60.0,
             "max_value" => 200.0,
             "default_value" => 116.0,
-            "steps" => 21
+            "steps" => 21,
+            "precision" => 2
         ],
         "antiroll_rear" => [
             "label" => "(Rear) Anti-roll Bar",
@@ -388,7 +429,8 @@ return [
             "min_value" => 0.0,
             "max_value" => 66.0,
             "default_value" => 42.9,
-            "steps" => 21
+            "steps" => 21,
+            "precision" => 2
         ]
     ]
 ];
