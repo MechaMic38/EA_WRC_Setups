@@ -17,6 +17,12 @@ class SetupService extends Service
      */
     public function createSetup(array $data, array $configuration, User $user): Setup
     {
+        // Get the setup options configuration
+        $setupOptions = config('setup-options');
+
+        // Round all configuration values according to their precision
+        $configuration = $this->roundConfigurationValues($configuration, $setupOptions);
+
         // Create a new setup record
         $setup = $user->setups()->create($data);
 
@@ -37,6 +43,12 @@ class SetupService extends Service
     public function updateSetup(Setup $setup, array $data, array $configuration): Setup
     {
         // TODO: separate the update of the setup record and the setup configuration record
+        // Get the setup options configuration
+        $setupOptions = config('setup-options');
+
+        // Round all configuration values according to their precision
+        $configuration = $this->roundConfigurationValues($configuration, $setupOptions);
+
         // Update the setup record
         $setup->update($data);
 
@@ -59,5 +71,34 @@ class SetupService extends Service
 
         // Delete the setup record
         $setup->delete();
+    }
+
+    /**
+     * Round all configuration values according to their specified precision.
+     *
+     * @param array $configuration
+     * @param array $setupOptions
+     * @return array
+     */
+    protected function roundConfigurationValues(array $configuration, array $setupOptions): array
+    {
+        foreach ($configuration as $category => $values) {
+            // Skip if category doesn't exist in setup options
+            if (!isset($setupOptions[$category])) {
+                continue;
+            }
+
+            foreach ($values as $key => $value) {
+                // Skip if key doesn't exist in setup options or precision isn't defined
+                if (!isset($setupOptions[$category][$key]['precision'])) {
+                    continue;
+                }
+
+                $precision = $setupOptions[$category][$key]['precision'];
+                $configuration[$category][$key] = number_format($value, $precision, '.', '');
+            }
+        }
+
+        return $configuration;
     }
 }
