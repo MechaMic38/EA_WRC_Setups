@@ -20,6 +20,8 @@ class UserController extends Controller
      */
     public function index(Request $request): ResourceCollection
     {
+        $perPage = $request->input('per_page', 15);
+
         $users = User::query()
             // Filter by name (case-insensitive partial match)
             ->when($request->name, function ($query, $name) {
@@ -33,7 +35,7 @@ class UserController extends Controller
             ->when($request->role, function ($query, $role) {
                 $query->where('role', $role);
             })
-            ->paginate(15);
+            ->paginate($perPage);
 
         return UserResource::collection($users);
     }

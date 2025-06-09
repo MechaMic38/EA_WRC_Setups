@@ -20,6 +20,8 @@ class VehicleController extends Controller
      */
     public function index(Request $request): ResourceCollection
     {
+        $perPage = $request->input('per_page', 15);
+
         $vehicles = Vehicle::query()
             ->with(['category', 'manufacturer'])
             // Filter by name (case-insensitive partial match)
@@ -34,7 +36,7 @@ class VehicleController extends Controller
             ->when($request->manufacturer_id, function ($query, $manufacturerId) {
                 $query->where('manufacturer_id', $manufacturerId);
             })
-            ->paginate(15);
+            ->paginate($perPage);
 
         return VehicleResource::collection($vehicles);
     }

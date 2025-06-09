@@ -11,18 +11,26 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
+    return Inertia::render('Welcome', []);
 });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+Route::get('/about', function () {
+    return Inertia::render('About');
+})->name('about');
+Route::get('/locations', function () {
+    return Inertia::render('Locations');
+})->name('locations.index');
+Route::get('/setups', function () {
+    return Inertia::render('Setups');
+})->name('setups.index');
+Route::get('/vehicles', function () {
+    return Inertia::render('Vehicles');
+})->name('vehicles.index');
 
 Route::prefix('dashboard')
     ->middleware(['auth', 'verified', 'role:admin'])

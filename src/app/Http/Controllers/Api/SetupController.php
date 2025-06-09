@@ -19,6 +19,8 @@ class SetupController extends Controller
      */
     public function index(Request $request): ResourceCollection
     {
+        $perPage = $request->input('per_page', 15);
+
         $setups = Setup::query()
             ->with(['user', 'location', 'vehicle'])
             // Filter by user_id (exact match)
@@ -33,7 +35,7 @@ class SetupController extends Controller
             ->when($request->vehicle_id, function ($query, $vehicleId) {
                 $query->where('vehicle_id', $vehicleId);
             })
-            ->paginate(15);
+            ->paginate($perPage);
 
         return SetupResource::collection($setups);
     }
