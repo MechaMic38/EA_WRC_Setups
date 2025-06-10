@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,8 +39,10 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
-        return Inertia::render('Public/Vehicle', [
-            'vehicle' => $vehicle,
+        $vehicle->load(['category', 'manufacturer']);
+
+        return Inertia::render('Public/VehicleShow', [
+            'vehicle' => new VehicleResource($vehicle)
         ]);
     }
 

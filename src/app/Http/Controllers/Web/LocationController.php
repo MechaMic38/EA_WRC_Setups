@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LocationSummaryResource;
 use App\Models\Location;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -38,8 +39,8 @@ class LocationController extends Controller
      */
     public function show(Location $location)
     {
-        return Inertia::render('Public/Location', [
-            'location' => $location,
+        return Inertia::render('Public/LocationShow', [
+            'location' => new LocationSummaryResource($location),
         ]);
     }
 

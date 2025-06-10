@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\SetupResource;
 use App\Models\Setup;
 use Inertia\Inertia;
 
@@ -29,7 +30,11 @@ class SetupController extends Controller
      */
     public function show(Setup $setup)
     {
-        return Inertia::render('Public/Setup', ['setup' => $setup]);
+        $setup->load(['user', 'location', 'vehicle', 'configuration']);
+
+        return Inertia::render('Public/SetupShow', [
+            'setup' => new SetupResource($setup)
+        ]);
     }
 
     /**
