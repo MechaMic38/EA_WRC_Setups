@@ -14,7 +14,15 @@ class LocationController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Dashboard/Locations', []);
+        return Inertia::render('Public/LocationIndex', []);
+    }
+
+    /**
+     * Display a listing of the resource for admin.
+     */
+    public function adminIndex(): Response
+    {
+        return Inertia::render('Admin/LocationIndex', []);
     }
 
     /**
@@ -29,6 +37,16 @@ class LocationController extends Controller
      * Display the specified resource.
      */
     public function show(Location $location)
+    {
+        return Inertia::render('Public/Location', [
+            'location' => $location,
+        ]);
+    }
+
+    /**
+     * Display the specified resource for admin.
+     */
+    public function adminShow(Location $location)
     {
         //
     }

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Models\Manufacturer;
+use App\Models\Setup;
 use Inertia\Inertia;
 
-class ManufacturerController extends Controller
+class SetupController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Inertia::render('Admin/ManufacturerIndex', []);
+        return Inertia::render('Public/SetupIndex', []);
     }
 
     /**
@@ -27,15 +27,15 @@ class ManufacturerController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Manufacturer $manufacturer)
+    public function show(Setup $setup)
     {
-        //
+        return Inertia::render('Public/Setup', ['setup' => $setup]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Manufacturer $manufacturer)
+    public function edit(Setup $setup)
     {
         //
     }

@@ -24,39 +24,39 @@ export default function AdminLayout({ children }: PropsWithChildren) {
     const navigation = [
         {
             name: "Dashboard",
-            href: route("dashboard"),
+            href: route("admin"),
             icon: FiHome,
-            current: route().current("dashboard"),
+            current: route().current("admin"),
         },
         {
             name: "Categories",
-            href: route("dashboard.categories"),
+            href: route("admin.categories.index"),
             icon: FiGrid,
-            current: route().current("dashboard.categories"),
+            current: route().current("admin.categories.index"),
         },
         {
             name: "Locations",
-            href: route("dashboard.locations"),
+            href: route("admin.locations.index"),
             icon: FiMapPin,
-            current: route().current("dashboard.locations"),
+            current: route().current("admin.locations.index"),
         },
         {
             name: "Manufacturers",
-            href: route("dashboard.manufacturers"),
+            href: route("admin.manufacturers.index"),
             icon: FiTruck,
-            current: route().current("dashboard.manufacturers"),
+            current: route().current("admin.manufacturers.index"),
         },
         {
             name: "Users",
-            href: route("dashboard.users"),
+            href: route("admin.users.index"),
             icon: FiUsers,
-            current: route().current("dashboard.users"),
+            current: route().current("admin.users.index"),
         },
         {
             name: "Vehicles",
-            href: route("dashboard.vehicles"),
+            href: route("admin.vehicles.index"),
             icon: FiSettings,
-            current: route().current("dashboard.vehicles"),
+            current: route().current("admin.vehicles.index"),
         },
     ];
 

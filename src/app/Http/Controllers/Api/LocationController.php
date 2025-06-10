@@ -21,6 +21,7 @@ class LocationController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $perPage = $request->input('per_page', 15);
+        $paginate = $request->input('paginate', true);
 
         $locations = Location::query()
             // Filter by name (case-insensitive partial match)
@@ -30,8 +31,14 @@ class LocationController extends Controller
             // Filter by surface type (exact match)
             ->when($request->surface_type, function ($query, $surfaceType) {
                 $query->where('surface_type', $surfaceType);
-            })
-            ->paginate($perPage);
+            });
+
+        // If paginate is true, apply pagination
+        if ($paginate) {
+            $locations = $locations->paginate($perPage);
+        } else {
+            $locations = $locations->get();
+        }
 
         return LocationSummaryResource::collection($locations);
     }

@@ -16,7 +16,7 @@ const SkeletonRow = () => (
     </tr>
 );
 
-const Manufacturers = () => {
+const ManufacturerIndex = () => {
     const { get, isProcessing } = useAxiosForm<PaginatedData<Manufacturer>>([]);
     const [manufacturersData, setManufacturersData] = useState<
         PaginatedData<Manufacturer>
@@ -219,4 +219,4 @@ const Manufacturers = () => {
     );
 };
 
-export default Manufacturers;
+export default ManufacturerIndex;

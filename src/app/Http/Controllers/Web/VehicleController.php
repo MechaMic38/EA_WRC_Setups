@@ -14,7 +14,15 @@ class VehicleController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Dashboard/Vehicles', []);
+        return Inertia::render('Public/VehicleIndex', []);
+    }
+
+    /**
+     * Display a listing of the resource for admin.
+     */
+    public function adminIndex(): Response
+    {
+        return Inertia::render('Admin/VehicleIndex', []);
     }
 
     /**
@@ -29,6 +37,16 @@ class VehicleController extends Controller
      * Display the specified resource.
      */
     public function show(Vehicle $vehicle)
+    {
+        return Inertia::render('Public/Vehicle', [
+            'vehicle' => $vehicle,
+        ]);
+    }
+
+    /**
+     * Display the specified resource for admin.
+     */
+    public function adminShow(Vehicle $vehicle)
     {
         //
     }

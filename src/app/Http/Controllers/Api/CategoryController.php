@@ -20,13 +20,20 @@ class CategoryController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $perPage = $request->input('per_page', 15);
+        $paginate = $request->input('paginate', true);
 
         $categories = Category::query()
             // Filter by name (case-insensitive partial match)
             ->when($request->name, function ($query, $name) {
                 $query->where('name', 'like', '%' . $name . '%');
-            })
-            ->paginate($perPage);
+            });
+
+        // If paginate is true, apply pagination
+        if ($paginate) {
+            $categories = $categories->paginate($perPage);
+        } else {
+            $categories = $categories->get();
+        }
 
         return CategoryResource::collection($categories);
     }

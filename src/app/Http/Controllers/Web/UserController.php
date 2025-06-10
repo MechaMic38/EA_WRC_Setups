@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Dashboard/Users', []);
+        return Inertia::render('Admin/UserIndex', []);
     }
 
     /**

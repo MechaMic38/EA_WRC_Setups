@@ -21,6 +21,7 @@ class VehicleController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $perPage = $request->input('per_page', 15);
+        $paginate = $request->input('paginate', true);
 
         $vehicles = Vehicle::query()
             ->with(['category', 'manufacturer'])
@@ -35,8 +36,14 @@ class VehicleController extends Controller
             // Filter by manufacturer_id (exact match)
             ->when($request->manufacturer_id, function ($query, $manufacturerId) {
                 $query->where('manufacturer_id', $manufacturerId);
-            })
-            ->paginate($perPage);
+            });
+
+        // If paginate is true, apply pagination
+        if ($paginate) {
+            $vehicles = $vehicles->paginate($perPage);
+        } else {
+            $vehicles = $vehicles->get();
+        }
 
         return VehicleResource::collection($vehicles);
     }

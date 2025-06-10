@@ -1,6 +1,6 @@
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { Category, PageProps, PaginatedData } from "@/types";
+import { LocationSummary, PageProps, PaginatedData } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -13,13 +13,21 @@ const SkeletonRow = () => (
         <td className="px-6 py-4 whitespace-nowrap">
             <div className="h-5 w-32 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
+        <td className="px-6 py-4">
+            <div className="h-5 w-64 bg-surfaceContainer rounded animate-pulse"></div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+            <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
+        </td>
     </tr>
 );
 
-const Categories = () => {
-    const { get, isProcessing } = useAxiosForm<PaginatedData<Category>>([]);
-    const [categoriesData, setCategoriesData] = useState<
-        PaginatedData<Category>
+const LocationIndex = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<LocationSummary>>(
+        []
+    );
+    const [locationsData, setLocationsData] = useState<
+        PaginatedData<LocationSummary>
     >({
         data: [],
         links: {},
@@ -35,19 +43,19 @@ const Categories = () => {
         },
     });
 
-    const fetchCategories = async (url?: string) => {
-        get(url || route("api.categories.index"), {
+    const fetchLocations = async (url?: string) => {
+        get(url || route("api.locations.index"), {
             onSuccess: (response) => {
-                setCategoriesData(response.data);
+                setLocationsData(response.data);
             },
             onError: (error) => {
-                console.error("Error fetching categories:", error);
+                console.error("Error fetching locations:", error);
             },
         });
     };
 
     useEffect(() => {
-        fetchCategories();
+        fetchLocations();
     }, []);
 
     return (
@@ -64,13 +72,25 @@ const Categories = () => {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
-                                        Image
+                                        Banner
                                     </th>
                                     <th
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
                                         Name
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
+                                    >
+                                        Description
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
+                                    >
+                                        Surface
                                     </th>
                                 </tr>
                             </thead>
@@ -79,21 +99,33 @@ const Categories = () => {
                                     ? Array.from({ length: 5 }).map((_, i) => (
                                           <SkeletonRow key={i} />
                                       ))
-                                    : categoriesData.data.map((category) => (
+                                    : locationsData.data.map((location) => (
                                           <tr
-                                              key={category.id}
+                                              key={location.id}
                                               className="hover:bg-surfaceContainer transition-colors duration-150"
                                           >
                                               <td className="px-6 py-4 whitespace-nowrap">
                                                   <img
-                                                      src={category.imgPath}
-                                                      alt={category.name}
-                                                      className="h-12 w-20 object-contain"
+                                                      src={
+                                                          location.imgBannerPath
+                                                      }
+                                                      alt={location.name}
+                                                      className="h-12 w-20 object-cover rounded"
                                                   />
                                               </td>
                                               <td className="px-6 py-4 whitespace-nowrap">
                                                   <div className="text-sm font-medium text-onSurface">
-                                                      {category.name}
+                                                      {location.name}
+                                                  </div>
+                                              </td>
+                                              <td className="px-6 py-4">
+                                                  <div className="text-sm text-onSurface line-clamp-2">
+                                                      {location.description}
+                                                  </div>
+                                              </td>
+                                              <td className="px-6 py-4 whitespace-nowrap">
+                                                  <div className="text-sm text-onSurface">
+                                                      {location.surfaceType}
                                                   </div>
                                               </td>
                                           </tr>
@@ -102,22 +134,22 @@ const Categories = () => {
                         </table>
 
                         {/* Pagination */}
-                        {categoriesData.meta && (
+                        {locationsData.meta && (
                             <div className="bg-surfaceContainer px-4 py-3 flex items-center justify-between border-t border-surfaceContainer sm:px-6">
                                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-sm text-onSurface">
                                             Showing{" "}
                                             <span className="font-medium">
-                                                {categoriesData.meta.from}
+                                                {locationsData.meta.from}
                                             </span>{" "}
                                             to{" "}
                                             <span className="font-medium">
-                                                {categoriesData.meta.to}
+                                                {locationsData.meta.to}
                                             </span>{" "}
                                             of{" "}
                                             <span className="font-medium">
-                                                {categoriesData.meta.total}
+                                                {locationsData.meta.total}
                                             </span>{" "}
                                             results
                                         </p>
@@ -127,16 +159,15 @@ const Categories = () => {
                                             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                                             aria-label="Pagination"
                                         >
-                                            {categoriesData.links.prev && (
+                                            {locationsData.links.prev && (
                                                 <Link
                                                     href={
-                                                        categoriesData.links
-                                                            .prev
+                                                        locationsData.links.prev
                                                     }
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        fetchCategories(
-                                                            categoriesData.links
+                                                        fetchLocations(
+                                                            locationsData.links
                                                                 .prev
                                                         );
                                                     }}
@@ -152,7 +183,7 @@ const Categories = () => {
                                                 </Link>
                                             )}
 
-                                            {categoriesData.meta.links?.map(
+                                            {locationsData.meta.links?.map(
                                                 (link, index) => (
                                                     <Link
                                                         key={index}
@@ -160,7 +191,7 @@ const Categories = () => {
                                                         onClick={(e) => {
                                                             if (link.url) {
                                                                 e.preventDefault();
-                                                                fetchCategories(
+                                                                fetchLocations(
                                                                     link.url
                                                                 );
                                                             }
@@ -177,16 +208,15 @@ const Categories = () => {
                                                 )
                                             )}
 
-                                            {categoriesData.links.next && (
+                                            {locationsData.links.next && (
                                                 <Link
                                                     href={
-                                                        categoriesData.links
-                                                            .next
+                                                        locationsData.links.next
                                                     }
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        fetchCategories(
-                                                            categoriesData.links
+                                                        fetchLocations(
+                                                            locationsData.links
                                                                 .next
                                                         );
                                                     }}
@@ -213,4 +243,4 @@ const Categories = () => {
     );
 };
 
-export default Categories;
+export default LocationIndex;

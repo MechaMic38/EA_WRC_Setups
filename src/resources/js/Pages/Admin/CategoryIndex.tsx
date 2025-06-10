@@ -1,30 +1,26 @@
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { PageProps, PaginatedData, Vehicle } from "@/types";
+import { Category, PageProps, PaginatedData } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const SkeletonRow = () => (
     <tr>
-        <td className="py-4 px-4">
-            <div className="h-12 w-12 bg-surfaceContainer rounded-full animate-pulse"></div>
+        <td className="px-6 py-4 whitespace-nowrap">
+            <div className="h-12 w-20 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
-        <td className="py-4 px-4">
+        <td className="px-6 py-4 whitespace-nowrap">
             <div className="h-5 w-32 bg-surfaceContainer rounded animate-pulse"></div>
-        </td>
-        <td className="py-4 px-4">
-            <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
-        </td>
-        <td className="py-4 px-4">
-            <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
     </tr>
 );
 
-const Vehicles = () => {
-    const { get, isProcessing } = useAxiosForm<PaginatedData<Vehicle>>([]);
-    const [vehiclesData, setVehiclesData] = useState<PaginatedData<Vehicle>>({
+const CategoryIndex = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<Category>>([]);
+    const [categoriesData, setCategoriesData] = useState<
+        PaginatedData<Category>
+    >({
         data: [],
         links: {},
         meta: {
@@ -39,24 +35,24 @@ const Vehicles = () => {
         },
     });
 
-    const fetchVehicles = async (url?: string) => {
-        get(url || route("api.vehicles.index"), {
+    const fetchCategories = async (url?: string) => {
+        get(url || route("api.categories.index"), {
             onSuccess: (response) => {
-                setVehiclesData(response.data);
+                setCategoriesData(response.data);
             },
             onError: (error) => {
-                console.error("Error fetching vehicles:", error);
+                console.error("Error fetching categories:", error);
             },
         });
     };
 
     useEffect(() => {
-        fetchVehicles();
+        fetchCategories();
     }, []);
 
     return (
         <AdminLayout>
-            <Head title="Vehicles" />
+            <Head title="Locations" />
 
             <div className="py-6">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
@@ -74,19 +70,7 @@ const Vehicles = () => {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
-                                        Vehicle
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
-                                    >
-                                        Manufacturer
-                                    </th>
-                                    <th
-                                        scope="col"
-                                        className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
-                                    >
-                                        Category
+                                        Name
                                     </th>
                                 </tr>
                             </thead>
@@ -95,78 +79,21 @@ const Vehicles = () => {
                                     ? Array.from({ length: 5 }).map((_, i) => (
                                           <SkeletonRow key={i} />
                                       ))
-                                    : vehiclesData.data.map((vehicle) => (
+                                    : categoriesData.data.map((category) => (
                                           <tr
-                                              key={vehicle.id}
+                                              key={category.id}
                                               className="hover:bg-surfaceContainer transition-colors duration-150"
                                           >
                                               <td className="px-6 py-4 whitespace-nowrap">
-                                                  <div className="flex items-center">
-                                                      <div className="flex-shrink-0 h-10 w-10">
-                                                          <img
-                                                              className="h-10 w-10 rounded-full object-contain"
-                                                              src={
-                                                                  vehicle.imgPath
-                                                              }
-                                                              alt={vehicle.name}
-                                                          />
-                                                      </div>
-                                                  </div>
+                                                  <img
+                                                      src={category.imgPath}
+                                                      alt={category.name}
+                                                      className="h-12 w-20 object-contain"
+                                                  />
                                               </td>
                                               <td className="px-6 py-4 whitespace-nowrap">
                                                   <div className="text-sm font-medium text-onSurface">
-                                                      {vehicle.name}
-                                                  </div>
-                                              </td>
-                                              <td className="px-6 py-4 whitespace-nowrap">
-                                                  <div className="flex items-center">
-                                                      <div className="flex-shrink-0 h-5 w-5">
-                                                          <img
-                                                              className="h-5 w-5 object-contain"
-                                                              src={
-                                                                  vehicle
-                                                                      .manufacturer
-                                                                      .imgPath
-                                                              }
-                                                              alt={
-                                                                  vehicle
-                                                                      .manufacturer
-                                                                      .name
-                                                              }
-                                                          />
-                                                      </div>
-                                                      <div className="ml-2 text-sm text-onSurface">
-                                                          {
-                                                              vehicle
-                                                                  .manufacturer
-                                                                  .name
-                                                          }
-                                                      </div>
-                                                  </div>
-                                              </td>
-                                              <td className="px-6 py-4 whitespace-nowrap">
-                                                  <div className="flex items-center">
-                                                      <div className="flex-shrink-0 h-5 w-5">
-                                                          <img
-                                                              className="h-5 w-5 object-contain"
-                                                              src={
-                                                                  vehicle
-                                                                      .category
-                                                                      .imgPath
-                                                              }
-                                                              alt={
-                                                                  vehicle
-                                                                      .category
-                                                                      .name
-                                                              }
-                                                          />
-                                                      </div>
-                                                      <div className="ml-2 text-sm text-onSurface">
-                                                          {
-                                                              vehicle.category
-                                                                  .name
-                                                          }
-                                                      </div>
+                                                      {category.name}
                                                   </div>
                                               </td>
                                           </tr>
@@ -175,22 +102,22 @@ const Vehicles = () => {
                         </table>
 
                         {/* Pagination */}
-                        {vehiclesData.meta && (
+                        {categoriesData.meta && (
                             <div className="bg-surfaceContainer px-4 py-3 flex items-center justify-between border-t border-surfaceContainer sm:px-6">
                                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-sm text-onSurface">
                                             Showing{" "}
                                             <span className="font-medium">
-                                                {vehiclesData.meta.from}
+                                                {categoriesData.meta.from}
                                             </span>{" "}
                                             to{" "}
                                             <span className="font-medium">
-                                                {vehiclesData.meta.to}
+                                                {categoriesData.meta.to}
                                             </span>{" "}
                                             of{" "}
                                             <span className="font-medium">
-                                                {vehiclesData.meta.total}
+                                                {categoriesData.meta.total}
                                             </span>{" "}
                                             results
                                         </p>
@@ -200,15 +127,16 @@ const Vehicles = () => {
                                             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                                             aria-label="Pagination"
                                         >
-                                            {vehiclesData.links.prev && (
+                                            {categoriesData.links.prev && (
                                                 <Link
                                                     href={
-                                                        vehiclesData.links.prev
+                                                        categoriesData.links
+                                                            .prev
                                                     }
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        fetchVehicles(
-                                                            vehiclesData.links
+                                                        fetchCategories(
+                                                            categoriesData.links
                                                                 .prev
                                                         );
                                                     }}
@@ -224,7 +152,7 @@ const Vehicles = () => {
                                                 </Link>
                                             )}
 
-                                            {vehiclesData.meta.links?.map(
+                                            {categoriesData.meta.links?.map(
                                                 (link, index) => (
                                                     <Link
                                                         key={index}
@@ -232,7 +160,7 @@ const Vehicles = () => {
                                                         onClick={(e) => {
                                                             if (link.url) {
                                                                 e.preventDefault();
-                                                                fetchVehicles(
+                                                                fetchCategories(
                                                                     link.url
                                                                 );
                                                             }
@@ -249,15 +177,16 @@ const Vehicles = () => {
                                                 )
                                             )}
 
-                                            {vehiclesData.links.next && (
+                                            {categoriesData.links.next && (
                                                 <Link
                                                     href={
-                                                        vehiclesData.links.next
+                                                        categoriesData.links
+                                                            .next
                                                     }
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        fetchVehicles(
-                                                            vehiclesData.links
+                                                        fetchCategories(
+                                                            categoriesData.links
                                                                 .next
                                                         );
                                                     }}
@@ -284,4 +213,4 @@ const Vehicles = () => {
     );
 };
 
-export default Vehicles;
+export default CategoryIndex;

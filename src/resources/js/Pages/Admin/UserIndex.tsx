@@ -22,7 +22,7 @@ const SkeletonRow = () => (
     </tr>
 );
 
-const Users = () => {
+const UserIndex = () => {
     const { get, isProcessing } = useAxiosForm<PaginatedData<User>>([]);
     const [usersData, setUsersData] = useState<PaginatedData<User>>({
         data: [],
@@ -241,4 +241,4 @@ const Users = () => {
     );
 };
 
-export default Users;
+export default UserIndex;

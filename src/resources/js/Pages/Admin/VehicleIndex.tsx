@@ -1,34 +1,30 @@
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
-import { LocationSummary, PageProps, PaginatedData } from "@/types";
+import { PageProps, PaginatedData, Vehicle } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const SkeletonRow = () => (
     <tr>
-        <td className="px-6 py-4 whitespace-nowrap">
-            <div className="h-12 w-20 bg-surfaceContainer rounded animate-pulse"></div>
+        <td className="py-4 px-4">
+            <div className="h-12 w-12 bg-surfaceContainer rounded-full animate-pulse"></div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 px-4">
             <div className="h-5 w-32 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
-        <td className="px-6 py-4">
-            <div className="h-5 w-64 bg-surfaceContainer rounded animate-pulse"></div>
+        <td className="py-4 px-4">
+            <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
-        <td className="px-6 py-4 whitespace-nowrap">
+        <td className="py-4 px-4">
             <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
     </tr>
 );
 
-const Locations = () => {
-    const { get, isProcessing } = useAxiosForm<PaginatedData<LocationSummary>>(
-        []
-    );
-    const [locationsData, setLocationsData] = useState<
-        PaginatedData<LocationSummary>
-    >({
+const VehicleIndex = () => {
+    const { get, isProcessing } = useAxiosForm<PaginatedData<Vehicle>>([]);
+    const [vehiclesData, setVehiclesData] = useState<PaginatedData<Vehicle>>({
         data: [],
         links: {},
         meta: {
@@ -43,24 +39,24 @@ const Locations = () => {
         },
     });
 
-    const fetchLocations = async (url?: string) => {
-        get(url || route("api.locations.index"), {
+    const fetchVehicles = async (url?: string) => {
+        get(url || route("api.vehicles.index"), {
             onSuccess: (response) => {
-                setLocationsData(response.data);
+                setVehiclesData(response.data);
             },
             onError: (error) => {
-                console.error("Error fetching locations:", error);
+                console.error("Error fetching vehicles:", error);
             },
         });
     };
 
     useEffect(() => {
-        fetchLocations();
+        fetchVehicles();
     }, []);
 
     return (
         <AdminLayout>
-            <Head title="Locations" />
+            <Head title="Vehicles" />
 
             <div className="py-6">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
@@ -72,25 +68,25 @@ const Locations = () => {
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
-                                        Banner
+                                        Image
                                     </th>
                                     <th
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
-                                        Name
+                                        Vehicle
                                     </th>
                                     <th
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
-                                        Description
+                                        Manufacturer
                                     </th>
                                     <th
                                         scope="col"
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
-                                        Surface
+                                        Category
                                     </th>
                                 </tr>
                             </thead>
@@ -99,33 +95,78 @@ const Locations = () => {
                                     ? Array.from({ length: 5 }).map((_, i) => (
                                           <SkeletonRow key={i} />
                                       ))
-                                    : locationsData.data.map((location) => (
+                                    : vehiclesData.data.map((vehicle) => (
                                           <tr
-                                              key={location.id}
+                                              key={vehicle.id}
                                               className="hover:bg-surfaceContainer transition-colors duration-150"
                                           >
                                               <td className="px-6 py-4 whitespace-nowrap">
-                                                  <img
-                                                      src={
-                                                          location.imgBannerPath
-                                                      }
-                                                      alt={location.name}
-                                                      className="h-12 w-20 object-cover rounded"
-                                                  />
+                                                  <div className="flex items-center">
+                                                      <div className="flex-shrink-0 h-10 w-10">
+                                                          <img
+                                                              className="h-10 w-10 rounded-full object-contain"
+                                                              src={
+                                                                  vehicle.imgPath
+                                                              }
+                                                              alt={vehicle.name}
+                                                          />
+                                                      </div>
+                                                  </div>
                                               </td>
                                               <td className="px-6 py-4 whitespace-nowrap">
                                                   <div className="text-sm font-medium text-onSurface">
-                                                      {location.name}
-                                                  </div>
-                                              </td>
-                                              <td className="px-6 py-4">
-                                                  <div className="text-sm text-onSurface line-clamp-2">
-                                                      {location.description}
+                                                      {vehicle.name}
                                                   </div>
                                               </td>
                                               <td className="px-6 py-4 whitespace-nowrap">
-                                                  <div className="text-sm text-onSurface">
-                                                      {location.surfaceType}
+                                                  <div className="flex items-center">
+                                                      <div className="flex-shrink-0 h-5 w-5">
+                                                          <img
+                                                              className="h-5 w-5 object-contain"
+                                                              src={
+                                                                  vehicle
+                                                                      .manufacturer
+                                                                      .imgPath
+                                                              }
+                                                              alt={
+                                                                  vehicle
+                                                                      .manufacturer
+                                                                      .name
+                                                              }
+                                                          />
+                                                      </div>
+                                                      <div className="ml-2 text-sm text-onSurface">
+                                                          {
+                                                              vehicle
+                                                                  .manufacturer
+                                                                  .name
+                                                          }
+                                                      </div>
+                                                  </div>
+                                              </td>
+                                              <td className="px-6 py-4 whitespace-nowrap">
+                                                  <div className="flex items-center">
+                                                      <div className="flex-shrink-0 h-5 w-5">
+                                                          <img
+                                                              className="h-5 w-5 object-contain"
+                                                              src={
+                                                                  vehicle
+                                                                      .category
+                                                                      .imgPath
+                                                              }
+                                                              alt={
+                                                                  vehicle
+                                                                      .category
+                                                                      .name
+                                                              }
+                                                          />
+                                                      </div>
+                                                      <div className="ml-2 text-sm text-onSurface">
+                                                          {
+                                                              vehicle.category
+                                                                  .name
+                                                          }
+                                                      </div>
                                                   </div>
                                               </td>
                                           </tr>
@@ -134,22 +175,22 @@ const Locations = () => {
                         </table>
 
                         {/* Pagination */}
-                        {locationsData.meta && (
+                        {vehiclesData.meta && (
                             <div className="bg-surfaceContainer px-4 py-3 flex items-center justify-between border-t border-surfaceContainer sm:px-6">
                                 <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                                     <div>
                                         <p className="text-sm text-onSurface">
                                             Showing{" "}
                                             <span className="font-medium">
-                                                {locationsData.meta.from}
+                                                {vehiclesData.meta.from}
                                             </span>{" "}
                                             to{" "}
                                             <span className="font-medium">
-                                                {locationsData.meta.to}
+                                                {vehiclesData.meta.to}
                                             </span>{" "}
                                             of{" "}
                                             <span className="font-medium">
-                                                {locationsData.meta.total}
+                                                {vehiclesData.meta.total}
                                             </span>{" "}
                                             results
                                         </p>
@@ -159,15 +200,15 @@ const Locations = () => {
                                             className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
                                             aria-label="Pagination"
                                         >
-                                            {locationsData.links.prev && (
+                                            {vehiclesData.links.prev && (
                                                 <Link
                                                     href={
-                                                        locationsData.links.prev
+                                                        vehiclesData.links.prev
                                                     }
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        fetchLocations(
-                                                            locationsData.links
+                                                        fetchVehicles(
+                                                            vehiclesData.links
                                                                 .prev
                                                         );
                                                     }}
@@ -183,7 +224,7 @@ const Locations = () => {
                                                 </Link>
                                             )}
 
-                                            {locationsData.meta.links?.map(
+                                            {vehiclesData.meta.links?.map(
                                                 (link, index) => (
                                                     <Link
                                                         key={index}
@@ -191,7 +232,7 @@ const Locations = () => {
                                                         onClick={(e) => {
                                                             if (link.url) {
                                                                 e.preventDefault();
-                                                                fetchLocations(
+                                                                fetchVehicles(
                                                                     link.url
                                                                 );
                                                             }
@@ -208,15 +249,15 @@ const Locations = () => {
                                                 )
                                             )}
 
-                                            {locationsData.links.next && (
+                                            {vehiclesData.links.next && (
                                                 <Link
                                                     href={
-                                                        locationsData.links.next
+                                                        vehiclesData.links.next
                                                     }
                                                     onClick={(e) => {
                                                         e.preventDefault();
-                                                        fetchLocations(
-                                                            locationsData.links
+                                                        fetchVehicles(
+                                                            vehiclesData.links
                                                                 .next
                                                         );
                                                     }}
@@ -243,4 +284,4 @@ const Locations = () => {
     );
 };
 
-export default Locations;
+export default VehicleIndex;

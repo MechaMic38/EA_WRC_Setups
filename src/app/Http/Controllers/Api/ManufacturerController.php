@@ -20,13 +20,20 @@ class ManufacturerController extends Controller
     public function index(Request $request): ResourceCollection
     {
         $perPage = $request->input('per_page', 15);
+        $paginate = $request->input('paginate', true);
 
         $manufacturers = Manufacturer::query()
             // Filter by name (case-insensitive partial match)
             ->when($request->name, function ($query, $name) {
                 $query->where('name', 'like', '%' . $name . '%');
-            })
-            ->paginate($perPage);
+            });
+
+        // If paginate is true, apply pagination
+        if ($paginate) {
+            $manufacturers = $manufacturers->paginate($perPage);
+        } else {
+            $manufacturers = $manufacturers->get();
+        }
 
         return ManufacturerResource::collection($manufacturers);
     }

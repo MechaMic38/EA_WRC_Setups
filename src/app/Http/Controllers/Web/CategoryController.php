@@ -14,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index(): Response
     {
-        return Inertia::render('Dashboard/Categories', []);
+        return Inertia::render('Admin/CategoryIndex', []);
     }
 
     /**

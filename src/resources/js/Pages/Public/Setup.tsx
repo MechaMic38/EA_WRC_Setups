@@ -1,5 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
 
-export default function Setups() {
+export default function Setup() {
     return <div>LOL</div>;
 }
