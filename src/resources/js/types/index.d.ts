@@ -51,7 +51,15 @@ export interface Vehicle {
 // The setup options are used to define the parameters for the vehicle setup.
 // ==========================================================================
 
-export interface SetupOption {
+export type SetupSection =
+    | "alignment"
+    | "braking"
+    | "differentials"
+    | "gears"
+    | "damping"
+    | "springs";
+
+export type SetupOption = {
     label: string;
     description: string;
     unit: string;
@@ -59,15 +67,11 @@ export interface SetupOption {
     max_value: number;
     default_value: number;
     steps: number;
+    precision: number;
 }
 
-export interface SetupOptions {
-    alignment: Record<string, SetupOption>[];
-    braking: Record<string, SetupOption>[];
-    differentials: Record<string, SetupOption>[];
-    gears: Record<string, SetupOption>[];
-    damping: Record<string, SetupOption>[];
-    springs: Record<string, SetupOption>[];
+export type SetupOptions = {
+    [section in SetupSection]: Record<string, SetupOption>;
 }
 
 // ==========================================================================
@@ -84,24 +88,23 @@ export interface BlueprintRule {
     steps: number;
 }
 
-export interface SetupBlueprint {
+export interface SetupBlueprint extends SetupOptions {
     id: string;
-    alignment: Record<string, BlueprintRule>[];
-    braking: Record<string, BlueprintRule>[];
-    differentials: Record<string, BlueprintRule>[];
-    gears: Record<string, BlueprintRule>[];
-    damping: Record<string, BlueprintRule>[];
-    springs: Record<string, BlueprintRule>[];
 }
 
-export interface SetupConfiguration {
+/**
+ * This is the type for the setup configuration.
+ * The configuration contains the actual values for each parameter.
+ *
+ * The actual configuration values are stored as strings, to preserve
+ * the precision of the values.
+ */
+export type SetupConfigs = {
+    [section in SetupSection]: Record<string, string>;
+}
+
+export interface SetupConfiguration extends SetupConfigs {
     id: string;
-    alignment: Record<string, number>[];
-    braking: Record<string, number>[];
-    differentials: Record<string, number>[];
-    gears: Record<string, number>[];
-    damping: Record<string, number>[];
-    springs: Record<string, number>[];
 }
 
 export interface Setup {

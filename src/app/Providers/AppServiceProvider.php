@@ -6,6 +6,7 @@ use App\Models\PersonalAccessToken;
 use App\Services\CategoryService;
 use App\Services\LocationService;
 use App\Services\ManufacturerService;
+use App\Services\SetupBlueprintService;
 use App\Services\SetupService;
 use App\Services\UserService;
 use App\Services\VehicleService;
@@ -42,6 +43,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(SetupService::class, function () {
             return new SetupService();
+        });
+
+        $this->app->singleton(SetupBlueprintService::class, function () {
+            return new SetupBlueprintService();
         });
     }
 

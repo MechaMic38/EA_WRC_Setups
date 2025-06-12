@@ -13,37 +13,34 @@ import {
     FiCopy,
     FiDownload,
 } from "react-icons/fi";
-import { Setup, SetupOptions } from "@/types";
-
-type SetupSection =
-    | "alignment"
-    | "braking"
-    | "differentials"
-    | "gears"
-    | "damping"
-    | "springs";
+import { Setup, SetupBlueprint, SetupSection } from "@/types";
 
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
-    const { get: getSetup, isProcessing: isProcessingSetup } =
-        useAxiosForm<Setup>(initialSetup);
-    const { get: getSetupOptions, isProcessing: isProcessingSetupOptions } =
-        useAxiosForm<SetupOptions>([]);
-    const [setup, setSetup] = useState<Setup | null>(initialSetup);
-    const [setupOptions, setSetupOptions] = useState<SetupOptions | null>(null);
+    const { get: getSetupBlueprint, isProcessing } =
+        useAxiosForm<SetupBlueprint>([]);
+    const [setup, setSetup] = useState<Setup>(initialSetup);
+    const [setupBlueprint, setSetupBlueprint] = useState<SetupBlueprint | null>(
+        null
+    );
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
 
     useEffect(() => {
         // Fetch setup options if not already loaded
-        if (!setupOptions) {
-            getSetupOptions(route("api.setup-options.index"), {
-                onSuccess: (response) => {
-                    setSetupOptions(response.data);
-                },
-            });
+        if (!setupBlueprint) {
+            getSetupBlueprint(
+                route("api.vehicles.blueprint.show", {
+                    vehicle: setup?.vehicle.id,
+                }),
+                {
+                    onSuccess: (response) => {
+                        setSetupBlueprint(response.data);
+                    },
+                }
+            );
         }
     }, []);
 
-    if (!setup || !setupOptions) {
+    if (!setupBlueprint) {
         return (
             <UserLayout>
                 <Head title="Loading Setup..." />
@@ -59,7 +56,7 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
         key: string,
         value: string
     ) => {
-        const option = setupOptions[section]?.[key];
+        const option = setupBlueprint[section]?.[key];
         if (!option) return null;
 
         const numericValue = parseFloat(value);
@@ -113,14 +110,17 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                     {section.replace("_", " ")}
                 </h3>
                 {Object.entries(setup.configuration[section]).map(
-                    ([key, value]) =>
-                        renderSlider(section, key, value as string)
+                    ([key, value]) => renderSlider(section, key, value)
                 )}
             </div>
         );
     };
 
-    const configurationTabs = [
+    const configurationTabs: {
+        id: SetupSection;
+        icon: JSX.Element;
+        label: string;
+    }[] = [
         { id: "alignment", icon: <FiSettings />, label: "Alignment" },
         { id: "braking", icon: <FiSettings />, label: "Braking" },
         { id: "differentials", icon: <FiSettings />, label: "Differentials" },
