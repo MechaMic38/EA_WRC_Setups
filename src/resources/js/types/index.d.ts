@@ -103,6 +103,10 @@ export type SetupConfigs = {
     [section in SetupSection]: Record<string, string>;
 }
 
+export type SetupConfigsNumeric = {
+    [section in SetupSection]: Record<string, number>;
+}
+
 export interface SetupConfiguration extends SetupConfigs {
     id: string;
 }

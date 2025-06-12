@@ -49,6 +49,12 @@ Route::get('/vehicles/{vehicle}/setups', [VehicleController::class, 'show'])->na
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // Setup creation wizard
+    Route::get('/setups/create/location', [SetupController::class, 'createLocation'])->name('setups.create.location');
+    Route::get('/setups/create/vehicle', [SetupController::class, 'createVehicle'])->name('setups.create.vehicle');
+    Route::get('/setups/create/options', [SetupController::class, 'createOptions'])->name('setups.create.options');
+    Route::get('/setups/create/configuration', [SetupController::class, 'createConfiguration'])->name('setups.create.configuration');
 });
 
 /*

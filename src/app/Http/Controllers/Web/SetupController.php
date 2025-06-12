@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\SetupResource;
 use App\Models\Setup;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class SetupController extends Controller
@@ -17,12 +18,74 @@ class SetupController extends Controller
         return Inertia::render('Public/SetupIndex', []);
     }
 
+
     /**
-     * Show the form for creating a new resource.
+     * Show the location page of the setup creation wizard.
      */
-    public function create()
+    public function createLocation()
     {
-        //
+        return Inertia::render('SetupWizard/Location');
+    }
+
+    /**
+     * Show the vehicle page of the setup creation wizard.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Inertia\Response
+     */
+    public function createVehicle(Request $request)
+    {
+        $data = $request->validate([
+            'location_id' => 'required|exists:locations,id'
+        ]);
+
+        return Inertia::render('SetupWizard/Vehicle', [
+            'location_id' => $data['location_id'],
+        ]);
+    }
+
+    /**
+     * Show the options page of the setup creation wizard.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Inertia\Response
+     */
+    public function createOptions(Request $request)
+    {
+        $data = $request->validate([
+            'location_id' => 'required|exists:locations,id',
+            'vehicle_id' => 'required|exists:vehicles,id'
+        ]);
+
+        return Inertia::render('SetupWizard/Options', [
+            'location_id' => $data['location_id'],
+            'vehicle_id' => $data['vehicle_id'],
+        ]);
+    }
+
+    /**
+     * Show the configurations page of the setup creation wizard.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Inertia\Response
+     */
+    public function createConfiguration(Request $request)
+    {
+        $data = $request->validate([
+            'location_id' => 'required|exists:locations,id',
+            'vehicle_id' => 'required|exists:vehicles,id',
+            'surface_condition' => 'required|string',
+            'season' => 'required|string',
+            'tyres' => 'required|string',
+        ]);
+
+        return Inertia::render('SetupWizard/SetupCreation', [
+            'location_id' => $data['location_id'],
+            'vehicle_id' => $data['vehicle_id'],
+            'surface_condition' => $data['surface_condition'],
+            'season' => $data['season'],
+            'tyres' => $data['tyres'],
+        ]);
     }
 
     /**
