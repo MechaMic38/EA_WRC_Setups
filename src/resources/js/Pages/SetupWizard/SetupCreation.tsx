@@ -66,14 +66,6 @@ export default function SetupCreation({
 
     const [blueprint, setBlueprint] = useState<SetupBlueprint | null>(null);
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
-    const [config, setConfig] = useState<SetupConfigsNumeric>({
-        alignment: {},
-        braking: {},
-        differentials: {},
-        gears: {},
-        damping: {},
-        springs: {},
-    });
     const [showDescription, setShowDescription] = useState<string | null>(null);
 
     // Fetch vehicle blueprint
@@ -115,7 +107,10 @@ export default function SetupCreation({
             });
         });
 
-        setConfig(initialConfig);
+        setData((prev) => ({
+            ...prev,
+            configuration: initialConfig,
+        }));
     };
 
     // Handle slider change
@@ -124,26 +119,20 @@ export default function SetupCreation({
         setting: string,
         value: string
     ) => {
-        setConfig((prev: any) => ({
+        setData((prev) => ({
             ...prev,
-            [section]: {
-                ...prev[section],
-                [setting]: parseFloat(value),
+            configuration: {
+                ...prev.configuration,
+                [section]: {
+                    ...prev.configuration[section],
+                    [setting]: parseFloat(value),
+                },
             },
         }));
     };
 
     // Submit the setup
     const submitSetup = () => {
-        const setupData = {
-            surface_condition,
-            season,
-            tyres,
-            location_id,
-            vehicle_id,
-            configuration: config,
-        };
-
         postConfiguration(route("api.setups.store"), {
             onSuccess: (response) => {
                 // Redirect to setup show page or dashboard
@@ -158,7 +147,8 @@ export default function SetupCreation({
         setting: string,
         option: any
     ) => {
-        const value = config[section]?.[setting] || option.default_value;
+        const value =
+            data.configuration[section]?.[setting] || option.default_value;
 
         return (
             <div key={setting} className="mb-6">
@@ -254,9 +244,12 @@ export default function SetupCreation({
                                 }
                             );
 
-                            setConfig((prev: any) => ({
+                            setData((prev) => ({
                                 ...prev,
-                                [section]: sectionDefaults,
+                                configuration: {
+                                    ...prev.configuration,
+                                    [section]: sectionDefaults,
+                                },
                             }));
                         }}
                         className="text-sm text-primary hover:text-primary-600"

@@ -35,7 +35,7 @@ export default function Welcome() {
                             <FiDownload className="mr-2" /> Browse Setups
                         </Link>
                         <Link
-                            href={route("register")}
+                            href={route("setups.create.location")}
                             className="inline-flex items-center px-6 py-3 border border-primary text-base font-medium rounded-md text-primary bg-surface hover:bg-surfaceContainer"
                         >
                             <FiUpload className="mr-2" /> Share Your Setup

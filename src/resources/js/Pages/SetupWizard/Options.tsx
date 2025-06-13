@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Head, Link, router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import {
@@ -8,6 +8,8 @@ import {
     FiCalendar,
     FiSettings,
 } from "react-icons/fi";
+import useAxiosForm from "@/Hooks/useAxiosForm";
+import { Location } from "@/types";
 
 export default function SetupCreateOptions({
     location_id,
@@ -16,32 +18,30 @@ export default function SetupCreateOptions({
     location_id: string;
     vehicle_id: string;
 }) {
+    const { get: getLocation, isProcessing } = useAxiosForm<Location>([]);
+
+    const [location, setLocation] = useState<Location | null>(null);
     const [options, setOptions] = useState({
-        surface_condition: "dry",
-        season: "summer",
-        tyres: "medium",
+        surface_condition: "",
+        season: "",
+        tyres: "",
     });
 
-    const surfaceConditions = [
-        { id: "dry", name: "Dry" },
-        { id: "wet", name: "Wet" },
-        { id: "mixed", name: "Mixed" },
-    ];
+    // Fetch location details
+    useEffect(() => {
+        getLocation(route("api.locations.show", location_id), {
+            onSuccess: (response) => {
+                setLocation(response.data);
 
-    const seasons = [
-        { id: "summer", name: "Summer" },
-        { id: "autumn", name: "Autumn" },
-        { id: "winter", name: "Winter" },
-        { id: "spring", name: "Spring" },
-    ];
-
-    const tyreOptions = [
-        { id: "soft", name: "Soft" },
-        { id: "medium", name: "Medium" },
-        { id: "hard", name: "Hard" },
-        { id: "wet", name: "Wet" },
-        { id: "winter", name: "Winter" },
-    ];
+                // Set default options based on location data
+                setOptions({
+                    surface_condition: response.data.surfaceConditions[0] || "",
+                    season: response.data.seasons[0] || "",
+                    tyres: response.data.tyres[0] || "",
+                });
+            },
+        });
+    }, []);
 
     const proceedToConfiguration = () => {
         // Will implement this later
@@ -116,23 +116,22 @@ export default function SetupCreateOptions({
                             Surface Condition
                         </h3>
                         <div className="grid grid-cols-3 gap-3">
-                            {surfaceConditions.map((condition) => (
+                            {location?.surfaceConditions.map((condition) => (
                                 <button
-                                    key={condition.id}
+                                    key={condition}
                                     onClick={() =>
                                         setOptions({
                                             ...options,
-                                            surface_condition: condition.id,
+                                            surface_condition: condition,
                                         })
                                     }
                                     className={`py-3 rounded-md ${
-                                        options.surface_condition ===
-                                        condition.id
+                                        options.surface_condition === condition
                                             ? "bg-primary text-surfaceContainer"
                                             : "bg-surface text-onSurface hover:bg-surfaceContainer"
                                     }`}
                                 >
-                                    {condition.name}
+                                    {condition}
                                 </button>
                             ))}
                         </div>
@@ -144,22 +143,22 @@ export default function SetupCreateOptions({
                             Season
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {seasons.map((season) => (
+                            {location?.seasons.map((season) => (
                                 <button
-                                    key={season.id}
+                                    key={season}
                                     onClick={() =>
                                         setOptions({
                                             ...options,
-                                            season: season.id,
+                                            season: season,
                                         })
                                     }
                                     className={`py-3 rounded-md ${
-                                        options.season === season.id
+                                        options.season === season
                                             ? "bg-primary text-surfaceContainer"
                                             : "bg-surface text-onSurface hover:bg-surfaceContainer"
                                     }`}
                                 >
-                                    {season.name}
+                                    {season}
                                 </button>
                             ))}
                         </div>
@@ -171,22 +170,22 @@ export default function SetupCreateOptions({
                             Tyre Compound
                         </h3>
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                            {tyreOptions.map((tyre) => (
+                            {location?.tyres.map((tyre) => (
                                 <button
-                                    key={tyre.id}
+                                    key={tyre}
                                     onClick={() =>
                                         setOptions({
                                             ...options,
-                                            tyres: tyre.id,
+                                            tyres: tyre,
                                         })
                                     }
                                     className={`py-3 rounded-md ${
-                                        options.tyres === tyre.id
+                                        options.tyres === tyre
                                             ? "bg-primary text-surfaceContainer"
                                             : "bg-surface text-onSurface hover:bg-surfaceContainer"
                                     }`}
                                 >
-                                    {tyre.name}
+                                    {tyre}
                                 </button>
                             ))}
                         </div>
