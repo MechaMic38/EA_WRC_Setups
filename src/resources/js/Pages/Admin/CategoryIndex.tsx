@@ -1,7 +1,7 @@
-import CategoryCreateModal from "@/Components/Modals/CategoryCreateModal";
-import CategoryDeleteModal from "@/Components/Modals/CategoryDeleteModal";
-import CategoryEditModal from "@/Components/Modals/CategoryEditModal";
-import CategoryShowModal from "@/Components/Modals/CategoryShowModal";
+import CategoryCreateModal from "@/Components/Modals/Category/CategoryCreateModal";
+import CategoryDeleteModal from "@/Components/Modals/Category/CategoryDeleteModal";
+import CategoryEditModal from "@/Components/Modals/Category/CategoryEditModal";
+import CategoryShowModal from "@/Components/Modals/Category/CategoryShowModal";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Category, PageProps, PaginatedData } from "@/types";

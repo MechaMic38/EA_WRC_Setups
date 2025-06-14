@@ -3,8 +3,18 @@ import { PageProps, PaginatedData, User } from "@/types";
 import { useEffect, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
-import UserCreateModal from "@/Components/Modals/UserCreateModal";
+import {
+    FiChevronLeft,
+    FiChevronRight,
+    FiEdit,
+    FiEye,
+    FiPlus,
+    FiTrash2,
+} from "react-icons/fi";
+import UserCreateModal from "@/Components/Modals/User/UserCreateModal";
+import UserEditModal from "@/Components/Modals/User/UserEditModal";
+import UserShowModal from "@/Components/Modals/User/UserShowModal";
+import UserDeleteModal from "@/Components/Modals/User/UserDeleteModal";
 
 const SkeletonRow = () => (
     <tr>
@@ -40,7 +50,10 @@ const UserIndex = () => {
         },
     });
 
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [showModalType, setShowModalType] = useState<
+        "create" | "show" | "edit" | "delete" | null
+    >(null);
 
     const fetchUsers = async (url?: string) => {
         get(url || route("api.users.index"), {
@@ -57,18 +70,49 @@ const UserIndex = () => {
         fetchUsers();
     }, []);
 
+    const handleCreateUser = () => {
+        setSelectedUser(null);
+        setShowModalType("create");
+    };
+
+    const handleShowUser = (user: User) => {
+        setSelectedUser(user);
+        setShowModalType("show");
+    };
+
+    const handleEditUser = (user: User) => {
+        setSelectedUser(user);
+        setShowModalType("edit");
+    };
+
+    const handleDeleteUser = (user: User) => {
+        setSelectedUser(user);
+        setShowModalType("delete");
+    };
+
+    const handleDeletedUser = () => {
+        setSelectedUser(null);
+        setShowModalType(null);
+        fetchUsers();
+    };
+
     return (
         <AdminLayout>
             <Head title="Users" />
 
             <div className="py-6">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
-                    <button
-                        onClick={() => setIsCreateModalOpen(true)}
-                        className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600"
-                    >
-                        <FiPlus className="mr-2" /> Create User
-                    </button>
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-2xl font-bold text-onSurface">
+                            Users
+                        </h1>
+                        <button
+                            onClick={handleCreateUser}
+                            className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600 transition-colors"
+                        >
+                            <FiPlus className="mr-2" /> Create User
+                        </button>
+                    </div>
 
                     <div className="overflow-hidden border border-surfaceContainer rounded-lg">
                         <table className="min-w-full divide-y divide-surfaceContainer">
@@ -97,6 +141,12 @@ const UserIndex = () => {
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
                                         Role
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
+                                    >
+                                        Actions
                                     </th>
                                 </tr>
                             </thead>
@@ -141,6 +191,43 @@ const UserIndex = () => {
                                                   >
                                                       {user.role}
                                                   </span>
+                                              </td>
+                                              <td className="px-6 py-4 whitespace-nowrap text-sm text-onSurface">
+                                                  <div className="flex space-x-2">
+                                                      <button
+                                                          onClick={() =>
+                                                              handleShowUser(
+                                                                  user
+                                                              )
+                                                          }
+                                                          className="p-2 bg-surfaceContainer rounded-md text-onSurface hover:bg-surfaceContainer/80 transition-colors"
+                                                          title="View details"
+                                                      >
+                                                          <FiEye />
+                                                      </button>
+                                                      <button
+                                                          onClick={() =>
+                                                              handleEditUser(
+                                                                  user
+                                                              )
+                                                          }
+                                                          className="p-2 bg-surfaceContainer rounded-md text-onSurface hover:bg-surfaceContainer/80 transition-colors"
+                                                          title="Edit category"
+                                                      >
+                                                          <FiEdit />
+                                                      </button>
+                                                      <button
+                                                          onClick={() =>
+                                                              handleDeleteUser(
+                                                                  user
+                                                              )
+                                                          }
+                                                          className="p-2 bg-surfaceContainer rounded-md text-red-500 hover:bg-red-500/10 transition-colors"
+                                                          title="Delete category"
+                                                      >
+                                                          <FiTrash2 />
+                                                      </button>
+                                                  </div>
                                               </td>
                                           </tr>
                                       ))}
@@ -246,11 +333,32 @@ const UserIndex = () => {
                         )}
                     </div>
 
-                    {/* Create Vehicle Modal */}
-                    {isCreateModalOpen && (
+                    {/* Modals */}
+                    {showModalType === "create" && (
                         <UserCreateModal
-                            isOpen={isCreateModalOpen}
-                            onClose={() => setIsCreateModalOpen(false)}
+                            isOpen={true}
+                            onClose={() => setShowModalType(null)}
+                        />
+                    )}
+                    {showModalType === "edit" && selectedUser && (
+                        <UserEditModal
+                            isOpen={true}
+                            onClose={() => setShowModalType(null)}
+                            user={selectedUser}
+                        />
+                    )}
+                    {showModalType === "show" && selectedUser && (
+                        <UserShowModal
+                            isOpen={true}
+                            onClose={() => setShowModalType(null)}
+                            user={selectedUser}
+                        />
+                    )}
+                    {showModalType === "delete" && selectedUser && (
+                        <UserDeleteModal
+                            isOpen={true}
+                            onClose={handleDeletedUser}
+                            user={selectedUser}
                         />
                     )}
                 </div>

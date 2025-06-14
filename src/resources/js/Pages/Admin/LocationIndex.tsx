@@ -1,10 +1,20 @@
-import LocationCreateModal from "@/Components/Modals/LocationCreateModal";
+import LocationCreateModal from "@/Components/Modals/Location/LocationCreateModal";
+import LocationDeleteModal from "@/Components/Modals/Location/LocationDeleteModal";
+import LocationEditModal from "@/Components/Modals/Location/LocationEditModal";
+import LocationShowModal from "@/Components/Modals/Location/LocationShowModal";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { LocationSummary, PageProps, PaginatedData } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
+import {
+    FiChevronLeft,
+    FiChevronRight,
+    FiEdit,
+    FiEye,
+    FiPlus,
+    FiTrash2,
+} from "react-icons/fi";
 
 const SkeletonRow = () => (
     <tr>
@@ -14,11 +24,18 @@ const SkeletonRow = () => (
         <td className="px-6 py-4 whitespace-nowrap">
             <div className="h-5 w-32 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
-        <td className="px-6 py-4">
-            <div className="h-5 w-64 bg-surfaceContainer rounded animate-pulse"></div>
+        <td className="px-6 py-4 whitespace-nowrap">
+            <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
         </td>
         <td className="px-6 py-4 whitespace-nowrap">
             <div className="h-5 w-24 bg-surfaceContainer rounded animate-pulse"></div>
+        </td>
+        <td className="px-6 py-4 whitespace-nowrap">
+            <div className="flex space-x-2">
+                <div className="h-8 w-8 bg-surfaceContainer rounded animate-pulse"></div>
+                <div className="h-8 w-8 bg-surfaceContainer rounded animate-pulse"></div>
+                <div className="h-8 w-8 bg-surfaceContainer rounded animate-pulse"></div>
+            </div>
         </td>
     </tr>
 );
@@ -44,7 +61,11 @@ const LocationIndex = () => {
         },
     });
 
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+    const [selectedLocation, setSelectedLocation] =
+        useState<LocationSummary | null>(null);
+    const [showModalType, setShowModalType] = useState<
+        "create" | "show" | "edit" | "delete" | null
+    >(null);
 
     const fetchLocations = async (url?: string) => {
         get(url || route("api.locations.index"), {
@@ -61,18 +82,48 @@ const LocationIndex = () => {
         fetchLocations();
     }, []);
 
+    const handleCreateLocation = () => {
+        setSelectedLocation(null);
+        setShowModalType("create");
+    };
+
+    const handleShowLocation = (location: LocationSummary) => {
+        setSelectedLocation(location);
+        setShowModalType("show");
+    };
+
+    const handleEditLocation = (location: LocationSummary) => {
+        setSelectedLocation(location);
+        setShowModalType("edit");
+    };
+
+    const handleDeleteLocation = (location: LocationSummary) => {
+        setSelectedLocation(location);
+        setShowModalType("delete");
+    };
+
+    const handleDeletedLocation = () => {
+        setShowModalType(null);
+        fetchLocations();
+    };
+
     return (
         <AdminLayout>
             <Head title="Locations" />
 
             <div className="py-6">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
-                    <button
-                        onClick={() => setIsCreateModalOpen(true)}
-                        className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600"
-                    >
-                        <FiPlus className="mr-2" /> Create Location
-                    </button>
+                    <div className="flex justify-between items-center mb-4">
+                        <h1 className="text-2xl font-bold text-onSurface">
+                            Locations
+                        </h1>
+                        <button
+                            onClick={handleCreateLocation}
+                            className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600 transition-colors"
+                        >
+                            <FiPlus className="mr-2" /> Create Location
+                        </button>
+                    </div>
 
                     <div className="overflow-hidden border border-surfaceContainer rounded-lg">
                         <table className="min-w-full divide-y divide-surfaceContainer">
@@ -101,6 +152,12 @@ const LocationIndex = () => {
                                         className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
                                     >
                                         Surface
+                                    </th>
+                                    <th
+                                        scope="col"
+                                        className="px-6 py-3 text-left text-xs font-medium text-onSurface uppercase tracking-wider"
+                                    >
+                                        Actions
                                     </th>
                                 </tr>
                             </thead>
@@ -136,6 +193,43 @@ const LocationIndex = () => {
                                               <td className="px-6 py-4 whitespace-nowrap">
                                                   <div className="text-sm text-onSurface">
                                                       {location.surfaceType}
+                                                  </div>
+                                              </td>
+                                              <td className="px-6 py-4 whitespace-nowrap text-sm text-onSurface">
+                                                  <div className="flex space-x-2">
+                                                      <button
+                                                          onClick={() =>
+                                                              handleShowLocation(
+                                                                  location
+                                                              )
+                                                          }
+                                                          className="p-2 bg-surfaceContainer rounded-md text-onSurface hover:bg-surfaceContainer/80 transition-colors"
+                                                          title="View details"
+                                                      >
+                                                          <FiEye />
+                                                      </button>
+                                                      <button
+                                                          onClick={() =>
+                                                              handleEditLocation(
+                                                                  location
+                                                              )
+                                                          }
+                                                          className="p-2 bg-surfaceContainer rounded-md text-onSurface hover:bg-surfaceContainer/80 transition-colors"
+                                                          title="Edit category"
+                                                      >
+                                                          <FiEdit />
+                                                      </button>
+                                                      <button
+                                                          onClick={() =>
+                                                              handleDeleteLocation(
+                                                                  location
+                                                              )
+                                                          }
+                                                          className="p-2 bg-surfaceContainer rounded-md text-red-500 hover:bg-red-500/10 transition-colors"
+                                                          title="Delete category"
+                                                      >
+                                                          <FiTrash2 />
+                                                      </button>
                                                   </div>
                                               </td>
                                           </tr>
@@ -248,11 +342,32 @@ const LocationIndex = () => {
                         )}
                     </div>
 
-                    {/* Create Vehicle Modal */}
-                    {isCreateModalOpen && (
+                    {/* Modals */}
+                    {showModalType === "create" && (
                         <LocationCreateModal
-                            isOpen={isCreateModalOpen}
-                            onClose={() => setIsCreateModalOpen(false)}
+                            isOpen={true}
+                            onClose={() => setShowModalType(null)}
+                        />
+                    )}
+                    {showModalType === "edit" && selectedLocation && (
+                        <LocationEditModal
+                            isOpen={true}
+                            onClose={() => setShowModalType(null)}
+                            location={selectedLocation}
+                        />
+                    )}
+                    {showModalType === "show" && selectedLocation && (
+                        <LocationShowModal
+                            isOpen={true}
+                            onClose={() => setShowModalType(null)}
+                            location={selectedLocation}
+                        />
+                    )}
+                    {showModalType === "delete" && selectedLocation && (
+                        <LocationDeleteModal
+                            isOpen={true}
+                            onClose={handleDeletedLocation}
+                            location={selectedLocation}
                         />
                     )}
                 </div>
