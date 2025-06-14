@@ -1,0 +1,518 @@
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment, useState, useRef, useEffect } from "react";
+import useAxiosForm from "@/Hooks/useAxiosForm";
+import { FiX, FiCheck, FiInfo, FiTrash2 } from "react-icons/fi";
+import { Location } from "@/types";
+
+interface LocationFormData {
+    name: string;
+    description: string;
+    seasons: string[];
+    tyres: string[];
+    surface_conditions: string[];
+    surface_type: string;
+    img_bg: File | null;
+    img_banner: File | null;
+}
+
+// Predefined options (modify as needed)
+const SEASON_OPTIONS = ["spring", "summer", "autumn", "winter"];
+const TYRE_OPTIONS = [
+    "gravel soft",
+    "gravel medium",
+    "gravel hard",
+    "tarmac soft",
+    "tarmac medium",
+    "tarmac hard",
+    "snow",
+    "ice",
+];
+const SURFACE_CONDITIONS = ["dry", "wet", "snow", "ice"];
+const SURFACE_TYPES = ["gravel", "tarmac", "snow", "ice", "mixed"];
+
+export default function LocationCreateModal({
+    isOpen,
+    onClose,
+}: {
+    isOpen: boolean;
+    onClose: () => void;
+}) {
+    const {
+        data,
+        setData,
+        post: postLocation,
+        isProcessing,
+        errors,
+    } = useAxiosForm<Location, LocationFormData>({
+        name: "",
+        description: "",
+        seasons: [],
+        tyres: [],
+        surface_conditions: [],
+        surface_type: "",
+        img_bg: null,
+        img_banner: null,
+    });
+
+    // State for image preview URLs
+    const [bgPreview, setBgPreview] = useState<string | null>(null);
+    const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+
+    // Cleanup preview URLs on unmount
+    useEffect(() => {
+        return () => {
+            if (bgPreview) URL.revokeObjectURL(bgPreview);
+            if (bannerPreview) URL.revokeObjectURL(bannerPreview);
+        };
+    }, [bgPreview, bannerPreview]);
+
+    const handleInputChange = (
+        e: React.ChangeEvent<
+            HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+        >
+    ) => {
+        const { name, value } = e.target;
+        setData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleFileChange =
+        (name: "img_bg" | "img_banner") =>
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (e.target.files?.[0]) {
+                const file = e.target.files[0];
+                setData((prev) => ({ ...prev, [name]: file }));
+
+                // Create preview URL
+                const previewUrl = URL.createObjectURL(file);
+                if (name === "img_bg") {
+                    if (bgPreview) URL.revokeObjectURL(bgPreview);
+                    setBgPreview(previewUrl);
+                } else {
+                    if (bannerPreview) URL.revokeObjectURL(bannerPreview);
+                    setBannerPreview(previewUrl);
+                }
+            }
+        };
+
+    const removeImage = (name: "img_bg" | "img_banner") => {
+        setData((prev) => ({ ...prev, [name]: null }));
+        if (name === "img_bg") {
+            if (bgPreview) URL.revokeObjectURL(bgPreview);
+            setBgPreview(null);
+        } else {
+            if (bannerPreview) URL.revokeObjectURL(bannerPreview);
+            setBannerPreview(null);
+        }
+    };
+
+    const toggleArrayOption = <
+        K extends "seasons" | "tyres" | "surface_conditions"
+    >(
+        field: K,
+        value: string
+    ) => {
+        setData((prev) => ({
+            ...prev,
+            [field]: prev[field].includes(value)
+                ? prev[field].filter((v) => v !== value)
+                : [...prev[field], value],
+        }));
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        postLocation(route("api.locations.create"), {
+            onSuccess: onClose,
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+    };
+
+    return (
+        <Transition appear show={isOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-50" onClose={onClose}>
+                <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0"
+                    enterTo="opacity-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100"
+                    leaveTo="opacity-0"
+                >
+                    <div className="fixed inset-0 bg-black bg-opacity-50" />
+                </Transition.Child>
+
+                <div className="fixed inset-0 overflow-y-auto">
+                    <div className="flex min-h-full items-center justify-center p-4">
+                        <Transition.Child
+                            as={Fragment}
+                            enter="ease-out duration-300"
+                            enterFrom="opacity-0 scale-95"
+                            enterTo="opacity-100 scale-100"
+                            leave="ease-in duration-200"
+                            leaveFrom="opacity-100 scale-100"
+                            leaveTo="opacity-0 scale-95"
+                        >
+                            <Dialog.Panel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+                                <div className="p-6">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <Dialog.Title className="text-2xl font-bold text-onSurface">
+                                            Create New Location
+                                        </Dialog.Title>
+                                        <button
+                                            onClick={onClose}
+                                            className="text-onSurface hover:text-primary"
+                                        >
+                                            <FiX size={24} />
+                                        </button>
+                                    </div>
+
+                                    <form onSubmit={handleSubmit}>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                            {/* Name */}
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Location Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    value={data.name}
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                                    required
+                                                />
+                                            </div>
+
+                                            {/* Description */}
+                                            <div className="md:col-span-2">
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Description
+                                                </label>
+                                                <textarea
+                                                    name="description"
+                                                    value={data.description}
+                                                    onChange={handleInputChange}
+                                                    rows={3}
+                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                                    required
+                                                />
+                                            </div>
+
+                                            {/* Surface Type */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Surface Type
+                                                </label>
+                                                <select
+                                                    name="surface_type"
+                                                    value={data.surface_type}
+                                                    onChange={handleInputChange}
+                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                                    required
+                                                >
+                                                    <option value="">
+                                                        Select Surface Type
+                                                    </option>
+                                                    {SURFACE_TYPES.map(
+                                                        (type) => (
+                                                            <option
+                                                                key={type}
+                                                                value={type}
+                                                            >
+                                                                {type}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </div>
+
+                                            {/* Seasons */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Seasons
+                                                </label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {SEASON_OPTIONS.map(
+                                                        (season) => (
+                                                            <div
+                                                                key={season}
+                                                                className="flex items-center"
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`season-${season}`}
+                                                                    checked={data.seasons.includes(
+                                                                        season
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        toggleArrayOption(
+                                                                            "seasons",
+                                                                            season
+                                                                        )
+                                                                    }
+                                                                    className="h-4 w-4 text-primary rounded"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`season-${season}`}
+                                                                    className="ml-2 text-onSurface capitalize"
+                                                                >
+                                                                    {season}
+                                                                </label>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Surface Conditions */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Surface Conditions
+                                                </label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {SURFACE_CONDITIONS.map(
+                                                        (condition) => (
+                                                            <div
+                                                                key={condition}
+                                                                className="flex items-center"
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`condition-${condition}`}
+                                                                    checked={data.surface_conditions.includes(
+                                                                        condition
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        toggleArrayOption(
+                                                                            "surface_conditions",
+                                                                            condition
+                                                                        )
+                                                                    }
+                                                                    className="h-4 w-4 text-primary rounded"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`condition-${condition}`}
+                                                                    className="ml-2 text-onSurface capitalize"
+                                                                >
+                                                                    {condition}
+                                                                </label>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Tyres */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Recommended Tyres
+                                                </label>
+                                                <div className="grid grid-cols-2 gap-2">
+                                                    {TYRE_OPTIONS.map(
+                                                        (tyre) => (
+                                                            <div
+                                                                key={tyre}
+                                                                className="flex items-center"
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`tyre-${tyre}`}
+                                                                    checked={data.tyres.includes(
+                                                                        tyre
+                                                                    )}
+                                                                    onChange={() =>
+                                                                        toggleArrayOption(
+                                                                            "tyres",
+                                                                            tyre
+                                                                        )
+                                                                    }
+                                                                    className="h-4 w-4 text-primary rounded"
+                                                                />
+                                                                <label
+                                                                    htmlFor={`tyre-${tyre}`}
+                                                                    className="ml-2 text-onSurface"
+                                                                >
+                                                                    {tyre}
+                                                                </label>
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Background Image */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Background Image
+                                                    <span className="text-xs text-onSurface/70 ml-1">
+                                                        (Recommended: 1920x1080)
+                                                    </span>
+                                                </label>
+                                                <div className="relative">
+                                                    <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-surfaceContainer rounded-lg cursor-pointer bg-surface overflow-hidden">
+                                                        {bgPreview ? (
+                                                            <div className="w-full h-full relative">
+                                                                <img
+                                                                    src={
+                                                                        bgPreview
+                                                                    }
+                                                                    alt="Background preview"
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                                                    <span className="text-white text-sm">
+                                                                        Change
+                                                                        Image
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                                <span className="text-sm text-onSurface">
+                                                                    Click to
+                                                                    upload
+                                                                </span>
+                                                                <span className="text-xs text-onSurface/70">
+                                                                    PNG, JPG up
+                                                                    to 2MB
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        <input
+                                                            type="file"
+                                                            className="hidden"
+                                                            onChange={handleFileChange(
+                                                                "img_bg"
+                                                            )}
+                                                            accept="image/*"
+                                                        />
+                                                    </label>
+                                                    {bgPreview && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                removeImage(
+                                                                    "img_bg"
+                                                                )
+                                                            }
+                                                            className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full text-white hover:bg-red-600 transition-colors"
+                                                        >
+                                                            <FiTrash2
+                                                                size={16}
+                                                            />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+
+                                            {/* Banner Image */}
+                                            <div>
+                                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                                    Banner Image
+                                                    <span className="text-xs text-onSurface/70 ml-1">
+                                                        (Recommended: 1200x300)
+                                                    </span>
+                                                </label>
+                                                <div className="relative">
+                                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-surfaceContainer rounded-lg cursor-pointer bg-surface overflow-hidden">
+                                                        {bannerPreview ? (
+                                                            <div className="w-full h-full relative">
+                                                                <img
+                                                                    src={
+                                                                        bannerPreview
+                                                                    }
+                                                                    alt="Banner preview"
+                                                                    className="w-full h-full object-cover"
+                                                                />
+                                                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
+                                                                    <span className="text-white text-sm">
+                                                                        Change
+                                                                        Image
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                                                <span className="text-sm text-onSurface">
+                                                                    Click to
+                                                                    upload
+                                                                </span>
+                                                                <span className="text-xs text-onSurface/70">
+                                                                    PNG, JPG up
+                                                                    to 2MB
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        <input
+                                                            type="file"
+                                                            className="hidden"
+                                                            onChange={handleFileChange(
+                                                                "img_banner"
+                                                            )}
+                                                            accept="image/*"
+                                                        />
+                                                    </label>
+                                                    {bannerPreview && (
+                                                        <button
+                                                            type="button"
+                                                            onClick={() =>
+                                                                removeImage(
+                                                                    "img_banner"
+                                                                )
+                                                            }
+                                                            className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full text-white hover:bg-red-600 transition-colors"
+                                                        >
+                                                            <FiTrash2
+                                                                size={16}
+                                                            />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Form Actions */}
+                                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
+                                            <button
+                                                type="button"
+                                                onClick={onClose}
+                                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
+                                            >
+                                                Cancel
+                                            </button>
+                                            <button
+                                                type="submit"
+                                                disabled={isProcessing}
+                                                className={`px-4 py-2 flex items-center ${
+                                                    isProcessing
+                                                        ? "bg-surfaceContainer text-onSurface/50"
+                                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
+                                                } rounded-md`}
+                                            >
+                                                <FiCheck className="mr-2" />
+                                                {isProcessing
+                                                    ? "Creating..."
+                                                    : "Create Location"}
+                                            </button>
+                                        </div>
+
+                                        {errors && (
+                                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded-md">
+                                                {Object.values(errors).map(
+                                                    (error, i) => (
+                                                        <p key={i}>{error}</p>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                    </form>
+                                </div>
+                            </Dialog.Panel>
+                        </Transition.Child>
+                    </div>
+                </div>
+            </Dialog>
+        </Transition>
+    );
+}

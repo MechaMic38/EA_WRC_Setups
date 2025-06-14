@@ -3,7 +3,8 @@ import { PageProps, PaginatedData, User } from "@/types";
 import { useEffect, useState } from "react";
 import { Head, Link } from "@inertiajs/react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
+import UserCreateModal from "@/Components/Modals/UserCreateModal";
 
 const SkeletonRow = () => (
     <tr>
@@ -39,6 +40,8 @@ const UserIndex = () => {
         },
     });
 
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+
     const fetchUsers = async (url?: string) => {
         get(url || route("api.users.index"), {
             onSuccess: (response) => {
@@ -60,6 +63,13 @@ const UserIndex = () => {
 
             <div className="py-6">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600"
+                    >
+                        <FiPlus className="mr-2" /> Create User
+                    </button>
+
                     <div className="overflow-hidden border border-surfaceContainer rounded-lg">
                         <table className="min-w-full divide-y divide-surfaceContainer">
                             <thead className="bg-surfaceContainer">
@@ -235,6 +245,14 @@ const UserIndex = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Create Vehicle Modal */}
+                    {isCreateModalOpen && (
+                        <UserCreateModal
+                            isOpen={isCreateModalOpen}
+                            onClose={() => setIsCreateModalOpen(false)}
+                        />
+                    )}
                 </div>
             </div>
         </AdminLayout>

@@ -1,9 +1,10 @@
+import ManufacturerCreateModal from "@/Components/Modals/ManufacturerCreateModal";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Manufacturer, PageProps, PaginatedData } from "@/types";
 import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiPlus } from "react-icons/fi";
 
 const SkeletonRow = () => (
     <tr>
@@ -35,6 +36,8 @@ const ManufacturerIndex = () => {
         },
     });
 
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
+
     const fetchManufacturers = async (url?: string) => {
         get(url || route("api.manufacturers.index"), {
             onSuccess: (response) => {
@@ -56,6 +59,13 @@ const ManufacturerIndex = () => {
 
             <div className="py-6">
                 <div className="mx-auto px-4 sm:px-6 lg:px-8">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600"
+                    >
+                        <FiPlus className="mr-2" /> Create Manufacturer
+                    </button>
+
                     <div className="overflow-hidden border border-surfaceContainer rounded-lg">
                         <table className="min-w-full divide-y divide-surfaceContainer">
                             <thead className="bg-surfaceContainer">
@@ -213,6 +223,14 @@ const ManufacturerIndex = () => {
                             </div>
                         )}
                     </div>
+
+                    {/* Create Vehicle Modal */}
+                    {isCreateModalOpen && (
+                        <ManufacturerCreateModal
+                            isOpen={isCreateModalOpen}
+                            onClose={() => setIsCreateModalOpen(false)}
+                        />
+                    )}
                 </div>
             </div>
         </AdminLayout>
