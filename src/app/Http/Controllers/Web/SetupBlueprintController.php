@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\VehicleResource;
 use App\Models\SetupBlueprint;
+use App\Models\Vehicle;
+use Inertia\Inertia;
 
 class SetupBlueprintController extends Controller
 {
@@ -34,8 +37,12 @@ class SetupBlueprintController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(SetupBlueprint $setupBlueprint)
+    public function edit(Vehicle $vehicle)
     {
-        //
+        $vehicle->load(['category', 'manufacturer']);
+
+        return Inertia::render('Admin/BlueprintEditor', [
+            'vehicle' => new VehicleResource($vehicle),
+        ]);
     }
 }

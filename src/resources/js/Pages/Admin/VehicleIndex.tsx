@@ -10,6 +10,7 @@ import {
     FiChevronRight,
     FiEdit,
     FiEye,
+    FiMap,
     FiPlus,
     FiTrash2,
 } from "react-icons/fi";
@@ -257,6 +258,19 @@ const VehicleIndex = () => {
                                                       >
                                                           <FiEdit />
                                                       </button>
+                                                      <Link
+                                                          href={route(
+                                                              "admin.vehicles.blueprint.edit",
+                                                              {
+                                                                  vehicle:
+                                                                      vehicle.id,
+                                                              }
+                                                          )}
+                                                          className="p-2 bg-surfaceContainer rounded-md text-onSurface hover:bg-surfaceContainer/80 transition-colors"
+                                                          title="Update Blueprint"
+                                                      >
+                                                          <FiMap />
+                                                      </Link>
                                                       <button
                                                           onClick={() =>
                                                               handleDeleteVehicle(

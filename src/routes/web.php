@@ -5,6 +5,7 @@ use App\Http\Controllers\Web\CategoryController;
 use App\Http\Controllers\Web\LocationController;
 use App\Http\Controllers\Web\ManufacturerController;
 use App\Http\Controllers\Web\ProfileController;
+use App\Http\Controllers\Web\SetupBlueprintController;
 use App\Http\Controllers\Web\SetupController;
 use App\Http\Controllers\Web\UserController;
 use App\Http\Controllers\Web\VehicleController;
@@ -79,6 +80,7 @@ Route::prefix('admin')
         Route::get('/manufacturers', [ManufacturerController::class, 'index'])->name('admin.manufacturers.index');
         Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
         Route::get('/vehicles', [VehicleController::class, 'adminIndex'])->name('admin.vehicles.index');
+        Route::get('/vehicles/{vehicle}/blueprint/edit', [SetupBlueprintController::class, 'edit'])->name('admin.vehicles.blueprint.edit');
     });
 
 
