@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
 COPY --from=composer /usr/bin/composer /usr/bin/composer
 
 # INSTALL MONGODB
-RUN pecl install mongodb \
+RUN pecl install mongodb-1.19.0 \
     && docker-php-ext-enable mongodb
 
 # Create the application directory
