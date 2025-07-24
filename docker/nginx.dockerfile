@@ -1,4 +1,4 @@
-ARG NGINX_VERSION
+ARG NGINX_VERSION=stable
 
 FROM nginx:${NGINX_VERSION}-alpine
 
