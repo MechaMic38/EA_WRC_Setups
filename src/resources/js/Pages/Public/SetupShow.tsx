@@ -14,6 +14,7 @@ import {
     FiDownload,
 } from "react-icons/fi";
 import { Setup, SetupBlueprint, SetupSection } from "@/types";
+import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
 
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const { get: getSetupBlueprint, isProcessing } =
@@ -51,68 +52,24 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
         );
     }
 
-    const renderSlider = (
-        section: SetupSection,
-        key: string,
-        value: string
-    ) => {
-        const option = setupBlueprint[section]?.[key];
-        if (!option) return null;
-
-        const numericValue = parseFloat(value);
-        const percentage =
-            ((numericValue - option.min_value) /
-                (option.max_value - option.min_value)) *
-            100;
-
-        return (
-            <div key={key} className="mb-6">
-                <div className="flex justify-between items-center mb-1">
-                    <label className="font-medium text-onSurface">
-                        {option.label}
-                    </label>
-                    <span className="text-onSurface">
-                        {numericValue.toFixed(option.precision)}
-                        {option.unit}
-                    </span>
-                </div>
-                <div className="relative h-2 bg-surfaceContainer rounded-full">
-                    <div
-                        className="absolute h-2 bg-primary rounded-full"
-                        style={{ width: `${percentage}%` }}
-                    />
-                </div>
-                <div className="flex justify-between text-xs text-onSurface/70 mt-1">
-                    <span>
-                        {option.min_value}
-                        {option.unit}
-                    </span>
-                    <span>
-                        {option.max_value}
-                        {option.unit}
-                    </span>
-                </div>
-                {option.description && (
-                    <p className="text-sm text-onSurface/70 mt-2">
-                        {option.description}
-                    </p>
-                )}
-            </div>
-        );
-    };
-
     const renderConfigurationSection = (section: SetupSection) => {
         if (!setup.configuration || !setup.configuration[section]) return null;
 
+        // Convert setup options from string to numeric
+        const options = Object.fromEntries(
+            Object.entries(setup.configuration[section]).map(([key, value]) => [
+                key,
+                typeof value === "string" ? Number(value) : value,
+            ])
+        );
+
         return (
-            <div className="bg-surfaceContainer rounded-lg p-6 mb-6">
-                <h3 className="text-xl font-bold text-onSurface mb-4 capitalize">
-                    {section.replace("_", " ")}
-                </h3>
-                {Object.entries(setup.configuration[section]).map(
-                    ([key, value]) => renderSlider(section, key, value)
-                )}
-            </div>
+            <ConfigurationSection
+                section={section}
+                options={options}
+                blueprintOptions={setupBlueprint[section]}
+                disabled
+            />
         );
     };
 

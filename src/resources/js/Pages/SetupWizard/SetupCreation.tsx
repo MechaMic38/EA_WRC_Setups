@@ -2,16 +2,9 @@ import { Head, Link, router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
-import {
-    FiChevronLeft,
-    FiChevronRight,
-    FiSave,
-    FiSliders,
-    FiInfo,
-    FiX,
-    FiCheck,
-} from "react-icons/fi";
+import { FiChevronLeft, FiSave, FiSliders, FiX } from "react-icons/fi";
 import { SetupBlueprint, SetupConfigsNumeric, SetupSection } from "@/types";
+import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
 
 interface SetupCreationProps {
     location_id: string;
@@ -66,7 +59,6 @@ export default function SetupCreation({
 
     const [blueprint, setBlueprint] = useState<SetupBlueprint | null>(null);
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
-    const [showDescription, setShowDescription] = useState<string | null>(null);
 
     // Fetch vehicle blueprint
     useEffect(() => {
@@ -114,10 +106,10 @@ export default function SetupCreation({
     };
 
     // Handle slider change
-    const handleSliderChange = (
+    const onConfigurationChange = (
         section: SetupSection,
         setting: string,
-        value: string
+        value: number
     ) => {
         setData((prev) => ({
             ...prev,
@@ -125,8 +117,27 @@ export default function SetupCreation({
                 ...prev.configuration,
                 [section]: {
                     ...prev.configuration[section],
-                    [setting]: parseFloat(value),
+                    [setting]: value,
                 },
+            },
+        }));
+    };
+
+    // Handle configuration section reset
+    const onReset = (section: SetupSection) => {
+        if (!blueprint || !blueprint[section]) return;
+
+        const sectionDefaults: any = {};
+        Object.keys(blueprint[section]).forEach((setting) => {
+            sectionDefaults[setting] =
+                blueprint[section][setting].default_value;
+        });
+
+        setData((prev) => ({
+            ...prev,
+            configuration: {
+                ...prev.configuration,
+                [section]: sectionDefaults,
             },
         }));
     };
@@ -141,127 +152,18 @@ export default function SetupCreation({
         });
     };
 
-    // Render slider for a configuration option
-    const renderSlider = (
-        section: SetupSection,
-        setting: string,
-        option: any
-    ) => {
-        const value =
-            data.configuration[section]?.[setting] || option.default_value;
-
-        return (
-            <div key={setting} className="mb-6">
-                <div className="flex justify-between items-center mb-3">
-                    <div className="flex items-center">
-                        <h3 className="font-medium text-onSurface mr-2">
-                            {option.label}
-                        </h3>
-                        <button
-                            onClick={() =>
-                                setShowDescription(
-                                    showDescription === setting ? null : setting
-                                )
-                            }
-                            className="text-primary hover:text-primary-600"
-                        >
-                            <FiInfo size={16} />
-                        </button>
-                    </div>
-                    <span className="bg-surfaceContainer px-3 py-1 rounded-full text-onSurface">
-                        {value.toFixed(option.precision)}
-                        {option.unit}
-                    </span>
-                </div>
-
-                {showDescription === setting && (
-                    <div className="bg-surfaceContainer/50 p-3 rounded-lg mb-3 text-sm text-onSurface">
-                        {option.description}
-                    </div>
-                )}
-
-                <div className="relative">
-                    <input
-                        type="range"
-                        min={option.min_value}
-                        max={option.max_value}
-                        step={
-                            (option.max_value - option.min_value) /
-                            (option.steps - 1)
-                        }
-                        value={value}
-                        onChange={(e) =>
-                            handleSliderChange(section, setting, e.target.value)
-                        }
-                        className="w-full h-2 bg-surfaceContainer rounded-lg appearance-none cursor-pointer"
-                        style={{
-                            background: `linear-gradient(to right, #CFBDFE 0%, #CFBDFE ${
-                                ((value - option.min_value) /
-                                    (option.max_value - option.min_value)) *
-                                100
-                            }%, #3A3643 ${
-                                ((value - option.min_value) /
-                                    (option.max_value - option.min_value)) *
-                                100
-                            }%, #3A3643 100%)`,
-                        }}
-                    />
-                    <div className="flex justify-between text-xs text-onSurface/70 mt-1">
-                        <span>
-                            {option.min_value}
-                            {option.unit}
-                        </span>
-                        <span>
-                            {option.max_value}
-                            {option.unit}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        );
-    };
-
     // Render configuration section
     const renderConfigurationSection = (section: SetupSection) => {
         if (!blueprint || !blueprint[section]) return null;
 
         return (
-            <div className="bg-surfaceContainer rounded-lg p-6 mb-6">
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-bold text-onSurface capitalize">
-                        {section.replace("_", " ")}
-                    </h3>
-                    <button
-                        onClick={() => {
-                            // Reset to default values
-                            const sectionDefaults: any = {};
-                            Object.keys(blueprint[section]).forEach(
-                                (setting) => {
-                                    sectionDefaults[setting] =
-                                        blueprint[section][
-                                            setting
-                                        ].default_value;
-                                }
-                            );
-
-                            setData((prev) => ({
-                                ...prev,
-                                configuration: {
-                                    ...prev.configuration,
-                                    [section]: sectionDefaults,
-                                },
-                            }));
-                        }}
-                        className="text-sm text-primary hover:text-primary-600"
-                    >
-                        Reset to Default
-                    </button>
-                </div>
-
-                {Object.entries(blueprint[section]).map(([setting, option]) =>
-                    renderSlider(section, setting, option)
-                )}
-            </div>
+            <ConfigurationSection
+                section={section}
+                options={data.configuration[section]}
+                blueprintOptions={blueprint[section]}
+                onConfigurationChange={onConfigurationChange}
+                onReset={onReset}
+            />
         );
     };
 
