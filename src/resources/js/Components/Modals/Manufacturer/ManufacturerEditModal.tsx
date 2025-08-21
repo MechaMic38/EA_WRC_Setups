@@ -1,5 +1,6 @@
 import {
     Dialog,
+    DialogBackdrop,
     DialogPanel,
     DialogTitle,
     Transition,
@@ -9,7 +10,7 @@ import { Fragment, useState, useEffect, useRef } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiTrash2, FiUpload } from "react-icons/fi";
 import { Manufacturer } from "@/types";
-import ImagePicker from "@/Components/ImagePicker";
+import ImagePicker from "@/Components/Form/ImagePicker";
 
 interface ManufacturerFormData {
     name: string;
@@ -101,7 +102,7 @@ export default function ManufacturerEditModal({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-50" />
+                    <DialogBackdrop className="fixed inset-0 bg-black bg-opacity-50" />
                 </TransitionChild>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -186,16 +187,6 @@ export default function ManufacturerEditModal({
                                                     : "Update Manufacturer"}
                                             </button>
                                         </div>
-
-                                        {errors && (
-                                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded-md">
-                                                {Object.values(errors).map(
-                                                    (error, i) => (
-                                                        <p key={i}>{error}</p>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
                                     </form>
                                 </div>
                             </DialogPanel>

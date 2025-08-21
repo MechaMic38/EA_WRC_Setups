@@ -48,9 +48,11 @@ const ManufacturerIndex = () => {
 
     const [selectedManufacturer, setSelectedManufacturer] =
         useState<Manufacturer | null>(null);
-    const [showModalType, setShowModalType] = useState<
-        "create" | "show" | "edit" | "delete" | null
-    >(null);
+
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isShowOpen, setIsShowOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     const fetchManufacturers = async (url?: string) => {
         get(url || route("api.manufacturers.index"), {
@@ -69,27 +71,22 @@ const ManufacturerIndex = () => {
 
     const handleCreateManufacturer = () => {
         setSelectedManufacturer(null);
-        setShowModalType("create");
+        setIsCreateOpen(true);
     };
 
     const handleShowManufacturer = (manufacturer: Manufacturer) => {
         setSelectedManufacturer(manufacturer);
-        setShowModalType("show");
+        setIsShowOpen(true);
     };
 
     const handleEditManufacturer = (manufacturer: Manufacturer) => {
         setSelectedManufacturer(manufacturer);
-        setShowModalType("edit");
+        setIsEditOpen(true);
     };
 
     const handleDeleteManufacturer = (manufacturer: Manufacturer) => {
         setSelectedManufacturer(manufacturer);
-        setShowModalType("delete");
-    };
-
-    const handleManufacturerDeleted = () => {
-        setShowModalType(null);
-        fetchManufacturers();
+        setIsDeleteOpen(true);
     };
 
     return (
@@ -312,33 +309,25 @@ const ManufacturerIndex = () => {
                     </div>
 
                     {/* Modals */}
-                    {showModalType === "create" && (
-                        <ManufacturerCreateModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                        />
-                    )}
-                    {showModalType === "edit" && selectedManufacturer && (
-                        <ManufacturerEditModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            manufacturer={selectedManufacturer}
-                        />
-                    )}
-                    {showModalType === "show" && selectedManufacturer && (
-                        <ManufacturerShowModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            manufacturer={selectedManufacturer}
-                        />
-                    )}
-                    {showModalType === "delete" && selectedManufacturer && (
-                        <ManufacturerDeleteModal
-                            isOpen={true}
-                            onClose={handleManufacturerDeleted}
-                            manufacturer={selectedManufacturer}
-                        />
-                    )}
+                    <ManufacturerCreateModal
+                        isOpen={isCreateOpen}
+                        onClose={() => setIsCreateOpen(false)}
+                    />
+                    <ManufacturerEditModal
+                        isOpen={isEditOpen}
+                        onClose={() => setIsEditOpen(false)}
+                        manufacturer={selectedManufacturer}
+                    />
+                    <ManufacturerShowModal
+                        isOpen={isShowOpen}
+                        onClose={() => setIsShowOpen(false)}
+                        manufacturer={selectedManufacturer}
+                    />
+                    <ManufacturerDeleteModal
+                        isOpen={isDeleteOpen}
+                        onClose={() => setIsDeleteOpen(false)}
+                        manufacturer={selectedManufacturer}
+                    />
                 </div>
             </div>
         </AdminLayout>

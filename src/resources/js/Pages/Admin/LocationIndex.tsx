@@ -63,9 +63,11 @@ const LocationIndex = () => {
 
     const [selectedLocation, setSelectedLocation] =
         useState<LocationSummary | null>(null);
-    const [showModalType, setShowModalType] = useState<
-        "create" | "show" | "edit" | "delete" | null
-    >(null);
+
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isShowOpen, setIsShowOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     const fetchLocations = async (url?: string) => {
         get(url || route("api.locations.index"), {
@@ -84,27 +86,22 @@ const LocationIndex = () => {
 
     const handleCreateLocation = () => {
         setSelectedLocation(null);
-        setShowModalType("create");
+        setIsCreateOpen(true);
     };
 
     const handleShowLocation = (location: LocationSummary) => {
         setSelectedLocation(location);
-        setShowModalType("show");
+        setIsShowOpen(true);
     };
 
     const handleEditLocation = (location: LocationSummary) => {
         setSelectedLocation(location);
-        setShowModalType("edit");
+        setIsEditOpen(true);
     };
 
     const handleDeleteLocation = (location: LocationSummary) => {
         setSelectedLocation(location);
-        setShowModalType("delete");
-    };
-
-    const handleDeletedLocation = () => {
-        setShowModalType(null);
-        fetchLocations();
+        setIsDeleteOpen(true);
     };
 
     return (
@@ -343,33 +340,25 @@ const LocationIndex = () => {
                     </div>
 
                     {/* Modals */}
-                    {showModalType === "create" && (
-                        <LocationCreateModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                        />
-                    )}
-                    {showModalType === "edit" && selectedLocation && (
-                        <LocationEditModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            location={selectedLocation}
-                        />
-                    )}
-                    {showModalType === "show" && selectedLocation && (
-                        <LocationShowModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            location={selectedLocation}
-                        />
-                    )}
-                    {showModalType === "delete" && selectedLocation && (
-                        <LocationDeleteModal
-                            isOpen={true}
-                            onClose={handleDeletedLocation}
-                            location={selectedLocation}
-                        />
-                    )}
+                    <LocationCreateModal
+                        isOpen={isCreateOpen}
+                        onClose={() => setIsCreateOpen(false)}
+                    />
+                    <LocationEditModal
+                        isOpen={isEditOpen}
+                        onClose={() => setIsEditOpen(false)}
+                        location={selectedLocation}
+                    />
+                    <LocationShowModal
+                        isOpen={isShowOpen}
+                        onClose={() => setIsShowOpen(false)}
+                        location={selectedLocation}
+                    />
+                    <LocationDeleteModal
+                        isOpen={isDeleteOpen}
+                        onClose={() => setIsDeleteOpen(false)}
+                        location={selectedLocation}
+                    />
                 </div>
             </div>
         </AdminLayout>

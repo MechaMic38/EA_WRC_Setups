@@ -1,5 +1,6 @@
 import {
     Dialog,
+    DialogBackdrop,
     DialogPanel,
     DialogTitle,
     Transition,
@@ -9,7 +10,13 @@ import { Fragment, useState, useRef, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiInfo, FiTrash2 } from "react-icons/fi";
 import { Location } from "@/types";
-import ImagePicker from "@/Components/ImagePicker";
+import ImagePicker from "@/Components/Form/ImagePicker";
+import {
+    SEASONS_MAP,
+    SURFACE_CONDITIONS_MAP,
+    SURFACE_TYPES_MAP,
+    TYRES_MAP,
+} from "@/constants";
 
 interface LocationFormData {
     name: string;
@@ -21,21 +28,6 @@ interface LocationFormData {
     img_bg: File | null;
     img_banner: File | null;
 }
-
-// Predefined options (modify as needed)
-const SEASON_OPTIONS = ["spring", "summer", "autumn", "winter"];
-const TYRE_OPTIONS = [
-    "gravel soft",
-    "gravel medium",
-    "gravel hard",
-    "tarmac soft",
-    "tarmac medium",
-    "tarmac hard",
-    "snow",
-    "ice",
-];
-const SURFACE_CONDITIONS = ["dry", "wet", "snow", "ice"];
-const SURFACE_TYPES = ["gravel", "tarmac", "snow", "ice", "mixed"];
 
 export default function LocationCreateModal({
     isOpen,
@@ -94,7 +86,7 @@ export default function LocationCreateModal({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        postLocation(route("api.locations.create"), {
+        postLocation(route("api.locations.store"), {
             onSuccess: onClose,
             headers: { "Content-Type": "multipart/form-data" },
         });
@@ -112,7 +104,7 @@ export default function LocationCreateModal({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-50" />
+                    <DialogBackdrop className="fixed inset-0 bg-black bg-opacity-50" />
                 </TransitionChild>
 
                 <div className="fixed inset-0 overflow-y-auto">
@@ -187,16 +179,16 @@ export default function LocationCreateModal({
                                                     <option value="">
                                                         Select Surface Type
                                                     </option>
-                                                    {SURFACE_TYPES.map(
-                                                        (type) => (
-                                                            <option
-                                                                key={type}
-                                                                value={type}
-                                                            >
-                                                                {type}
-                                                            </option>
-                                                        )
-                                                    )}
+                                                    {Object.entries(
+                                                        SURFACE_TYPES_MAP
+                                                    ).map(([key, value]) => (
+                                                        <option
+                                                            key={key}
+                                                            value={key}
+                                                        >
+                                                            {value.text}
+                                                        </option>
+                                                    ))}
                                                 </select>
                                             </div>
 
@@ -206,35 +198,35 @@ export default function LocationCreateModal({
                                                     Seasons
                                                 </label>
                                                 <div className="grid grid-cols-2 gap-2">
-                                                    {SEASON_OPTIONS.map(
-                                                        (season) => (
-                                                            <div
-                                                                key={season}
-                                                                className="flex items-center"
+                                                    {Object.entries(
+                                                        SEASONS_MAP
+                                                    ).map(([key, value]) => (
+                                                        <div
+                                                            key={key}
+                                                            className="flex items-center"
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                id={`season-${key}`}
+                                                                checked={data.seasons.includes(
+                                                                    key
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleArrayOption(
+                                                                        "seasons",
+                                                                        key
+                                                                    )
+                                                                }
+                                                                className="h-4 w-4 text-primary rounded"
+                                                            />
+                                                            <label
+                                                                htmlFor={`season-${key}`}
+                                                                className="ml-2 text-onSurface capitalize"
                                                             >
-                                                                <input
-                                                                    type="checkbox"
-                                                                    id={`season-${season}`}
-                                                                    checked={data.seasons.includes(
-                                                                        season
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        toggleArrayOption(
-                                                                            "seasons",
-                                                                            season
-                                                                        )
-                                                                    }
-                                                                    className="h-4 w-4 text-primary rounded"
-                                                                />
-                                                                <label
-                                                                    htmlFor={`season-${season}`}
-                                                                    className="ml-2 text-onSurface capitalize"
-                                                                >
-                                                                    {season}
-                                                                </label>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                                {value.text}
+                                                            </label>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
 
@@ -244,35 +236,35 @@ export default function LocationCreateModal({
                                                     Surface Conditions
                                                 </label>
                                                 <div className="grid grid-cols-2 gap-2">
-                                                    {SURFACE_CONDITIONS.map(
-                                                        (condition) => (
-                                                            <div
-                                                                key={condition}
-                                                                className="flex items-center"
+                                                    {Object.entries(
+                                                        SURFACE_CONDITIONS_MAP
+                                                    ).map(([key, value]) => (
+                                                        <div
+                                                            key={key}
+                                                            className="flex items-center"
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                id={`condition-${key}`}
+                                                                checked={data.surface_conditions.includes(
+                                                                    key
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleArrayOption(
+                                                                        "surface_conditions",
+                                                                        key
+                                                                    )
+                                                                }
+                                                                className="h-4 w-4 text-primary rounded"
+                                                            />
+                                                            <label
+                                                                htmlFor={`condition-${key}`}
+                                                                className="ml-2 text-onSurface capitalize"
                                                             >
-                                                                <input
-                                                                    type="checkbox"
-                                                                    id={`condition-${condition}`}
-                                                                    checked={data.surface_conditions.includes(
-                                                                        condition
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        toggleArrayOption(
-                                                                            "surface_conditions",
-                                                                            condition
-                                                                        )
-                                                                    }
-                                                                    className="h-4 w-4 text-primary rounded"
-                                                                />
-                                                                <label
-                                                                    htmlFor={`condition-${condition}`}
-                                                                    className="ml-2 text-onSurface capitalize"
-                                                                >
-                                                                    {condition}
-                                                                </label>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                                {value.text}
+                                                            </label>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
 
@@ -282,35 +274,35 @@ export default function LocationCreateModal({
                                                     Recommended Tyres
                                                 </label>
                                                 <div className="grid grid-cols-2 gap-2">
-                                                    {TYRE_OPTIONS.map(
-                                                        (tyre) => (
-                                                            <div
-                                                                key={tyre}
-                                                                className="flex items-center"
+                                                    {Object.entries(
+                                                        TYRES_MAP
+                                                    ).map(([key, value]) => (
+                                                        <div
+                                                            key={key}
+                                                            className="flex items-center"
+                                                        >
+                                                            <input
+                                                                type="checkbox"
+                                                                id={`tyre-${key}`}
+                                                                checked={data.tyres.includes(
+                                                                    key
+                                                                )}
+                                                                onChange={() =>
+                                                                    toggleArrayOption(
+                                                                        "tyres",
+                                                                        key
+                                                                    )
+                                                                }
+                                                                className="h-4 w-4 text-primary rounded"
+                                                            />
+                                                            <label
+                                                                htmlFor={`tyre-${key}`}
+                                                                className="ml-2 text-onSurface"
                                                             >
-                                                                <input
-                                                                    type="checkbox"
-                                                                    id={`tyre-${tyre}`}
-                                                                    checked={data.tyres.includes(
-                                                                        tyre
-                                                                    )}
-                                                                    onChange={() =>
-                                                                        toggleArrayOption(
-                                                                            "tyres",
-                                                                            tyre
-                                                                        )
-                                                                    }
-                                                                    className="h-4 w-4 text-primary rounded"
-                                                                />
-                                                                <label
-                                                                    htmlFor={`tyre-${tyre}`}
-                                                                    className="ml-2 text-onSurface"
-                                                                >
-                                                                    {tyre}
-                                                                </label>
-                                                            </div>
-                                                        )
-                                                    )}
+                                                                {value.text}
+                                                            </label>
+                                                        </div>
+                                                    ))}
                                                 </div>
                                             </div>
 
@@ -369,16 +361,6 @@ export default function LocationCreateModal({
                                                     : "Create Location"}
                                             </button>
                                         </div>
-
-                                        {errors && (
-                                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded-md">
-                                                {Object.values(errors).map(
-                                                    (error, i) => (
-                                                        <p key={i}>{error}</p>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
                                     </form>
                                 </div>
                             </DialogPanel>

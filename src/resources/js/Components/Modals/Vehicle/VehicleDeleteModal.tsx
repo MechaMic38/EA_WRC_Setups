@@ -1,4 +1,12 @@
-import { Dialog, Transition } from "@headlessui/react";
+import {
+    Description,
+    Dialog,
+    DialogBackdrop,
+    DialogPanel,
+    DialogTitle,
+    Transition,
+    TransitionChild,
+} from "@headlessui/react";
 import { Fragment } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiTrash2, FiAlertTriangle } from "react-icons/fi";
@@ -29,7 +37,7 @@ export default function VehicleDeleteModal({
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={onClose}>
-                <Transition.Child
+                <TransitionChild
                     as={Fragment}
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
@@ -38,12 +46,12 @@ export default function VehicleDeleteModal({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-50" />
-                </Transition.Child>
+                    <DialogBackdrop className="fixed inset-0 bg-black bg-opacity-50" />
+                </TransitionChild>
 
                 <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4">
-                        <Transition.Child
+                        <TransitionChild
                             as={Fragment}
                             enter="ease-out duration-300"
                             enterFrom="opacity-0 scale-95"
@@ -52,12 +60,12 @@ export default function VehicleDeleteModal({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
+                            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-6">
-                                        <Dialog.Title className="text-2xl font-bold text-onSurface">
+                                        <DialogTitle className="text-2xl font-bold text-onSurface">
                                             Delete Vehicle
-                                        </Dialog.Title>
+                                        </DialogTitle>
                                         <button
                                             onClick={onClose}
                                             className="text-onSurface hover:text-primary"
@@ -71,10 +79,10 @@ export default function VehicleDeleteModal({
                                             <FiAlertTriangle className="text-red-500 text-2xl" />
                                         </div>
 
-                                        <Dialog.Description className="text-lg font-medium text-onSurface mb-2">
+                                        <Description className="text-lg font-medium text-onSurface mb-2">
                                             Are you sure you want to delete this
                                             vehicle?
-                                        </Dialog.Description>
+                                        </Description>
 
                                         <p className="text-onSurface/70 mb-4">
                                             This action cannot be undone. All
@@ -121,8 +129,8 @@ export default function VehicleDeleteModal({
                                         </button>
                                     </div>
                                 </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
+                            </DialogPanel>
+                        </TransitionChild>
                     </div>
                 </div>
             </Dialog>

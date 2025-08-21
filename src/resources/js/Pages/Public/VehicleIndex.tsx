@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { FiChevronRight, FiFilter, FiX } from "react-icons/fi";
 import { Listbox, Transition } from "@headlessui/react";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
+import Select from "@/Components/Form/Select";
 
 export default function VehicleIndex() {
     // API hooks
@@ -55,6 +56,14 @@ export default function VehicleIndex() {
         return true;
     });
 
+    const onCategoryChange = (category: Category | null) => {
+        setFilters({ ...filters, category });
+    };
+
+    const onManufacturerChange = (manufacturer: Manufacturer | null) => {
+        setFilters({ ...filters, manufacturer });
+    };
+
     const clearFilters = () =>
         setFilters({ category: null, manufacturer: null });
 
@@ -98,105 +107,11 @@ export default function VehicleIndex() {
                             <h3 className="text-sm font-medium text-onSurface mb-2">
                                 Category
                             </h3>
-                            <Listbox
-                                value={filters.category}
-                                onChange={(cat) =>
-                                    setFilters({ ...filters, category: cat })
-                                }
-                            >
-                                <div className="relative">
-                                    <Listbox.Button className="w-full px-4 py-2 pr-10 text-left bg-surfaceContainer rounded-md border border-outline focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between">
-                                        {filters.category ? (
-                                            <div className="flex items-center gap-2">
-                                                <img
-                                                    src={
-                                                        filters.category.imgPath
-                                                    }
-                                                    alt={filters.category.name}
-                                                    className="h-5 w-5 object-contain"
-                                                />
-                                                <span>
-                                                    {filters.category.name}
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <span>All Categories</span>
-                                        )}
-                                        <FiChevronRight className="w-4 h-4 text-onSurface" />
-                                    </Listbox.Button>
-
-                                    <Transition
-                                        as={Fragment}
-                                        leave="transition ease-in duration-100"
-                                        leaveFrom="opacity-100"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <Listbox.Options className="absolute z-20 mt-1 w-full bg-surfaceContainer rounded-md shadow-lg max-h-60 py-1 text-base overflow-auto focus:outline-none">
-                                            <Listbox.Option
-                                                key="all"
-                                                value={null}
-                                                className={({ active }) =>
-                                                    `cursor-pointer select-none relative py-2 pl-4 pr-10 ${
-                                                        active
-                                                            ? "bg-surfaceContainerHigh"
-                                                            : ""
-                                                    }`
-                                                }
-                                            >
-                                                {({ selected }) => (
-                                                    <div className="flex items-center gap-2">
-                                                        <span
-                                                            className={`block truncate ${
-                                                                selected
-                                                                    ? "font-semibold"
-                                                                    : ""
-                                                            }`}
-                                                        >
-                                                            All Categories
-                                                        </span>
-                                                    </div>
-                                                )}
-                                            </Listbox.Option>
-                                            {categories.map((category) => (
-                                                <Listbox.Option
-                                                    key={category.id}
-                                                    value={category}
-                                                    className={({ active }) =>
-                                                        `cursor-pointer select-none relative py-2 pl-4 pr-10 ${
-                                                            active
-                                                                ? "bg-surfaceContainerHigh"
-                                                                : ""
-                                                        }`
-                                                    }
-                                                >
-                                                    {({ selected }) => (
-                                                        <div className="flex items-center gap-2">
-                                                            <img
-                                                                src={
-                                                                    category.imgPath
-                                                                }
-                                                                alt={
-                                                                    category.name
-                                                                }
-                                                                className="h-5 w-5 object-contain"
-                                                            />
-                                                            <span
-                                                                className={`block truncate ${
-                                                                    selected
-                                                                        ? "font-semibold"
-                                                                        : ""
-                                                                }`}
-                                                            >
-                                                                {category.name}
-                                                            </span>
-                                                        </div>
-                                                    )}
-                                                </Listbox.Option>
-                                            ))}
-                                        </Listbox.Options>
-                                    </Transition>
-                                </div>
-                            </Listbox>
+                            <Select
+                                options={categories}
+                                selectedOption={filters.category}
+                                onChange={onCategoryChange}
+                            />
                         </div>
 
                         {/* Manufacturer Filter */}
@@ -204,116 +119,11 @@ export default function VehicleIndex() {
                             <h3 className="text-sm font-medium text-onSurface mb-2">
                                 Manufacturer
                             </h3>
-                            <Listbox
-                                value={filters.manufacturer}
-                                onChange={(man) =>
-                                    setFilters({
-                                        ...filters,
-                                        manufacturer: man,
-                                    })
-                                }
-                            >
-                                <div className="relative">
-                                    <Listbox.Button className="w-full px-4 py-2 pr-10 text-left bg-surfaceContainer rounded-md border border-outline focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between">
-                                        {filters.manufacturer ? (
-                                            <div className="flex items-center gap-2">
-                                                <img
-                                                    src={
-                                                        filters.manufacturer
-                                                            .imgPath
-                                                    }
-                                                    alt={
-                                                        filters.manufacturer
-                                                            .name
-                                                    }
-                                                    className="h-5 w-5 object-contain"
-                                                />
-                                                <span>
-                                                    {filters.manufacturer.name}
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <span>All Manufacturers</span>
-                                        )}
-                                        <FiChevronRight className="w-4 h-4 text-onSurface" />
-                                    </Listbox.Button>
-
-                                    <Transition
-                                        as={Fragment}
-                                        leave="transition ease-in duration-100"
-                                        leaveFrom="opacity-100"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <Listbox.Options className="absolute z-20 mt-1 w-full bg-surfaceContainer rounded-md shadow-lg max-h-60 py-1 text-base overflow-auto focus:outline-none">
-                                            <Listbox.Option
-                                                key="all"
-                                                value={null}
-                                                className={({ active }) =>
-                                                    `cursor-pointer select-none relative py-2 pl-4 pr-10 ${
-                                                        active
-                                                            ? "bg-surfaceContainerHigh"
-                                                            : ""
-                                                    }`
-                                                }
-                                            >
-                                                {({ selected }) => (
-                                                    <span
-                                                        className={`block truncate ${
-                                                            selected
-                                                                ? "font-semibold"
-                                                                : ""
-                                                        }`}
-                                                    >
-                                                        All Manufacturers
-                                                    </span>
-                                                )}
-                                            </Listbox.Option>
-                                            {manufacturers.map(
-                                                (manufacturer) => (
-                                                    <Listbox.Option
-                                                        key={manufacturer.id}
-                                                        value={manufacturer}
-                                                        className={({
-                                                            active,
-                                                        }) =>
-                                                            `cursor-pointer select-none relative py-2 pl-4 pr-10 ${
-                                                                active
-                                                                    ? "bg-surfaceContainerHigh"
-                                                                    : ""
-                                                            }`
-                                                        }
-                                                    >
-                                                        {({ selected }) => (
-                                                            <div className="flex items-center gap-2">
-                                                                <img
-                                                                    src={
-                                                                        manufacturer.imgPath
-                                                                    }
-                                                                    alt={
-                                                                        manufacturer.name
-                                                                    }
-                                                                    className="h-5 w-5 object-contain"
-                                                                />
-                                                                <span
-                                                                    className={`block truncate ${
-                                                                        selected
-                                                                            ? "font-semibold"
-                                                                            : ""
-                                                                    }`}
-                                                                >
-                                                                    {
-                                                                        manufacturer.name
-                                                                    }
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                    </Listbox.Option>
-                                                )
-                                            )}
-                                        </Listbox.Options>
-                                    </Transition>
-                                </div>
-                            </Listbox>
+                            <Select
+                                options={manufacturers}
+                                selectedOption={filters.manufacturer}
+                                onChange={onManufacturerChange}
+                            />
                         </div>
                     </div>
                 </div>

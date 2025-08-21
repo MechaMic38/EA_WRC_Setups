@@ -1,4 +1,11 @@
-import { Dialog, Transition } from "@headlessui/react";
+import {
+    Dialog,
+    DialogBackdrop,
+    DialogPanel,
+    DialogTitle,
+    Transition,
+    TransitionChild,
+} from "@headlessui/react";
 import { Fragment, useEffect, useState } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiEye, FiEyeOff } from "react-icons/fi";
@@ -63,7 +70,7 @@ export default function UserCreateModal({
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={onClose}>
-                <Transition.Child
+                <TransitionChild
                     as={Fragment}
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
@@ -72,12 +79,12 @@ export default function UserCreateModal({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <div className="fixed inset-0 bg-black bg-opacity-50" />
-                </Transition.Child>
+                    <DialogBackdrop className="fixed inset-0 bg-black bg-opacity-50" />
+                </TransitionChild>
 
                 <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4">
-                        <Transition.Child
+                        <TransitionChild
                             as={Fragment}
                             enter="ease-out duration-300"
                             enterFrom="opacity-0 scale-95"
@@ -86,12 +93,12 @@ export default function UserCreateModal({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
+                            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-6">
-                                        <Dialog.Title className="text-2xl font-bold text-onSurface">
+                                        <DialogTitle className="text-2xl font-bold text-onSurface">
                                             Create New User
-                                        </Dialog.Title>
+                                        </DialogTitle>
                                         <button
                                             onClick={onClose}
                                             className="text-onSurface hover:text-primary"
@@ -270,20 +277,10 @@ export default function UserCreateModal({
                                                     : "Create User"}
                                             </button>
                                         </div>
-
-                                        {errors && (
-                                            <div className="mt-4 p-3 bg-red-500/10 border border-red-500 text-red-500 rounded-md">
-                                                {Object.values(errors).map(
-                                                    (error, i) => (
-                                                        <p key={i}>{error}</p>
-                                                    )
-                                                )}
-                                            </div>
-                                        )}
                                     </form>
                                 </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
+                            </DialogPanel>
+                        </TransitionChild>
                     </div>
                 </div>
             </Dialog>

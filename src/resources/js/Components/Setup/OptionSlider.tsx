@@ -1,7 +1,7 @@
 import { SetupOption } from "@/types";
 import React, { useState } from "react";
 import { FiInfo } from "react-icons/fi";
-import InputSlider from "./InputSlider";
+import InputSlider from "../Form/InputSlider";
 
 interface OptionSliderProps {
     setting: string;

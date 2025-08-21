@@ -55,9 +55,11 @@ const VehicleIndex = () => {
     const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(
         null
     );
-    const [showModalType, setShowModalType] = useState<
-        "create" | "show" | "edit" | "delete" | null
-    >(null);
+
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isShowOpen, setIsShowOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     const fetchVehicles = async (url?: string) => {
         get(url || route("api.vehicles.index"), {
@@ -76,28 +78,22 @@ const VehicleIndex = () => {
 
     const handleCreateVehicle = () => {
         setSelectedVehicle(null);
-        setShowModalType("create");
+        setIsCreateOpen(true);
     };
 
     const handleShowVehicle = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
-        setShowModalType("show");
+        setIsShowOpen(true);
     };
 
     const handleEditVehicle = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
-        setShowModalType("edit");
+        setIsEditOpen(true);
     };
 
     const handleDeleteVehicle = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
-        setShowModalType("delete");
-    };
-
-    const handleDeletedVehicle = () => {
-        setSelectedVehicle(null);
-        setShowModalType(null);
-        fetchVehicles();
+        setIsDeleteOpen(true);
     };
 
     return (
@@ -395,32 +391,25 @@ const VehicleIndex = () => {
                     </div>
 
                     {/* Modals */}
-                    {showModalType === "create" && (
-                        <VehicleCreateModal
-                            onClose={() => setShowModalType(null)}
-                        />
-                    )}
-                    {showModalType === "edit" && selectedVehicle && (
-                        <VehicleEditModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            vehicle={selectedVehicle}
-                        />
-                    )}
-                    {showModalType === "show" && selectedVehicle && (
-                        <VehicleShowModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            vehicle={selectedVehicle}
-                        />
-                    )}
-                    {showModalType === "delete" && selectedVehicle && (
-                        <VehicleDeleteModal
-                            isOpen={true}
-                            onClose={handleDeletedVehicle}
-                            vehicle={selectedVehicle}
-                        />
-                    )}
+                    <VehicleCreateModal
+                        isOpen={isCreateOpen}
+                        onClose={() => setIsCreateOpen(false)}
+                    />
+                    <VehicleEditModal
+                        isOpen={isEditOpen}
+                        onClose={() => setIsEditOpen(false)}
+                        vehicle={selectedVehicle}
+                    />
+                    <VehicleShowModal
+                        isOpen={isShowOpen}
+                        onClose={() => setIsShowOpen(false)}
+                        vehicle={selectedVehicle}
+                    />
+                    <VehicleDeleteModal
+                        isOpen={isDeleteOpen}
+                        onClose={() => setIsDeleteOpen(false)}
+                        vehicle={selectedVehicle}
+                    />
                 </div>
             </div>
         </AdminLayout>

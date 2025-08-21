@@ -55,9 +55,11 @@ const CategoryIndex = () => {
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(
         null
     );
-    const [showModalType, setShowModalType] = useState<
-        "create" | "show" | "edit" | "delete" | null
-    >(null);
+
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isShowOpen, setIsShowOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     const fetchCategories = async (url?: string) => {
         get(url || route("api.categories.index"), {
@@ -74,29 +76,24 @@ const CategoryIndex = () => {
         fetchCategories();
     }, []);
 
-    const handleCreateCategory = () => {
+    const onCreateCategory = () => {
         setSelectedCategory(null);
-        setShowModalType("create");
+        setIsCreateOpen(true);
     };
 
-    const handleShowCategory = (category: Category) => {
+    const onShowCategory = (category: Category) => {
         setSelectedCategory(category);
-        setShowModalType("show");
+        setIsShowOpen(true);
     };
 
-    const handleEditCategory = (category: Category) => {
+    const onEditCategory = (category: Category) => {
         setSelectedCategory(category);
-        setShowModalType("edit");
+        setIsEditOpen(true);
     };
 
-    const handleDeleteCategory = (category: Category) => {
+    const onDeleteCategory = (category: Category) => {
         setSelectedCategory(category);
-        setShowModalType("delete");
-    };
-
-    const handleCategoryDeleted = () => {
-        setShowModalType(null);
-        fetchCategories(); // Refresh the list
+        setIsDeleteOpen(true);
     };
 
     return (
@@ -110,7 +107,7 @@ const CategoryIndex = () => {
                             Categories
                         </h1>
                         <button
-                            onClick={handleCreateCategory}
+                            onClick={onCreateCategory}
                             className="flex items-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600 transition-colors"
                         >
                             <FiPlus className="mr-2" /> Create Category
@@ -167,7 +164,7 @@ const CategoryIndex = () => {
                                                   <div className="flex space-x-2">
                                                       <button
                                                           onClick={() =>
-                                                              handleShowCategory(
+                                                              onShowCategory(
                                                                   category
                                                               )
                                                           }
@@ -178,7 +175,7 @@ const CategoryIndex = () => {
                                                       </button>
                                                       <button
                                                           onClick={() =>
-                                                              handleEditCategory(
+                                                              onEditCategory(
                                                                   category
                                                               )
                                                           }
@@ -189,7 +186,7 @@ const CategoryIndex = () => {
                                                       </button>
                                                       <button
                                                           onClick={() =>
-                                                              handleDeleteCategory(
+                                                              onDeleteCategory(
                                                                   category
                                                               )
                                                           }
@@ -313,33 +310,25 @@ const CategoryIndex = () => {
                     </div>
 
                     {/* Modals */}
-                    {showModalType === "create" && (
-                        <CategoryCreateModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                        />
-                    )}
-                    {showModalType === "show" && selectedCategory && (
-                        <CategoryShowModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            category={selectedCategory}
-                        />
-                    )}
-                    {showModalType === "edit" && selectedCategory && (
-                        <CategoryEditModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            category={selectedCategory}
-                        />
-                    )}
-                    {showModalType === "delete" && selectedCategory && (
-                        <CategoryDeleteModal
-                            isOpen={true}
-                            onClose={handleCategoryDeleted}
-                            category={selectedCategory}
-                        />
-                    )}
+                    <CategoryCreateModal
+                        isOpen={isCreateOpen}
+                        onClose={() => setIsCreateOpen(false)}
+                    />
+                    <CategoryShowModal
+                        isOpen={isShowOpen}
+                        onClose={() => setIsShowOpen(false)}
+                        category={selectedCategory}
+                    />
+                    <CategoryEditModal
+                        isOpen={isEditOpen}
+                        onClose={() => setIsEditOpen(false)}
+                        category={selectedCategory}
+                    />
+                    <CategoryDeleteModal
+                        isOpen={isDeleteOpen}
+                        onClose={() => setIsDeleteOpen(false)}
+                        category={selectedCategory}
+                    />
                 </div>
             </div>
         </AdminLayout>

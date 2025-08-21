@@ -51,9 +51,11 @@ const UserIndex = () => {
     });
 
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
-    const [showModalType, setShowModalType] = useState<
-        "create" | "show" | "edit" | "delete" | null
-    >(null);
+
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [isShowOpen, setIsShowOpen] = useState(false);
+    const [isEditOpen, setIsEditOpen] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
     const fetchUsers = async (url?: string) => {
         get(url || route("api.users.index"), {
@@ -72,28 +74,22 @@ const UserIndex = () => {
 
     const handleCreateUser = () => {
         setSelectedUser(null);
-        setShowModalType("create");
+        setIsCreateOpen(true);
     };
 
     const handleShowUser = (user: User) => {
         setSelectedUser(user);
-        setShowModalType("show");
+        setIsShowOpen(true);
     };
 
     const handleEditUser = (user: User) => {
         setSelectedUser(user);
-        setShowModalType("edit");
+        setIsEditOpen(true);
     };
 
     const handleDeleteUser = (user: User) => {
         setSelectedUser(user);
-        setShowModalType("delete");
-    };
-
-    const handleDeletedUser = () => {
-        setSelectedUser(null);
-        setShowModalType(null);
-        fetchUsers();
+        setIsDeleteOpen(true);
     };
 
     return (
@@ -334,33 +330,25 @@ const UserIndex = () => {
                     </div>
 
                     {/* Modals */}
-                    {showModalType === "create" && (
-                        <UserCreateModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                        />
-                    )}
-                    {showModalType === "edit" && selectedUser && (
-                        <UserEditModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            user={selectedUser}
-                        />
-                    )}
-                    {showModalType === "show" && selectedUser && (
-                        <UserShowModal
-                            isOpen={true}
-                            onClose={() => setShowModalType(null)}
-                            user={selectedUser}
-                        />
-                    )}
-                    {showModalType === "delete" && selectedUser && (
-                        <UserDeleteModal
-                            isOpen={true}
-                            onClose={handleDeletedUser}
-                            user={selectedUser}
-                        />
-                    )}
+                    <UserCreateModal
+                        isOpen={isCreateOpen}
+                        onClose={() => setIsCreateOpen(false)}
+                    />
+                    <UserEditModal
+                        isOpen={isEditOpen}
+                        onClose={() => setIsEditOpen(false)}
+                        user={selectedUser}
+                    />
+                    <UserShowModal
+                        isOpen={isShowOpen}
+                        onClose={() => setIsShowOpen(false)}
+                        user={selectedUser}
+                    />
+                    <UserDeleteModal
+                        isOpen={isDeleteOpen}
+                        onClose={() => setIsDeleteOpen(false)}
+                        user={selectedUser}
+                    />
                 </div>
             </div>
         </AdminLayout>
