@@ -343,21 +343,33 @@ const LocationIndex = () => {
                     <LocationCreateModal
                         isOpen={isCreateOpen}
                         onClose={() => setIsCreateOpen(false)}
+                        onSuccess={() => {
+                            setIsCreateOpen(false);
+                            fetchLocations();
+                        }}
                     />
                     <LocationEditModal
                         isOpen={isEditOpen}
-                        onClose={() => setIsEditOpen(false)}
                         location={selectedLocation}
+                        onClose={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            setIsEditOpen(false);
+                            fetchLocations();
+                        }}
                     />
                     <LocationShowModal
                         isOpen={isShowOpen}
-                        onClose={() => setIsShowOpen(false)}
                         location={selectedLocation}
+                        onClose={() => setIsShowOpen(false)}
                     />
                     <LocationDeleteModal
                         isOpen={isDeleteOpen}
-                        onClose={() => setIsDeleteOpen(false)}
                         location={selectedLocation}
+                        onClose={() => setIsDeleteOpen(false)}
+                        onSuccess={() => {
+                            setIsDeleteOpen(false);
+                            fetchLocations();
+                        }}
                     />
                 </div>
             </div>

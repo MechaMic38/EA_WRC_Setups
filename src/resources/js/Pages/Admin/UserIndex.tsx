@@ -333,21 +333,33 @@ const UserIndex = () => {
                     <UserCreateModal
                         isOpen={isCreateOpen}
                         onClose={() => setIsCreateOpen(false)}
+                        onSuccess={() => {
+                            setIsCreateOpen(false);
+                            fetchUsers();
+                        }}
                     />
                     <UserEditModal
                         isOpen={isEditOpen}
-                        onClose={() => setIsEditOpen(false)}
                         user={selectedUser}
+                        onClose={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            setIsEditOpen(false);
+                            fetchUsers();
+                        }}
                     />
                     <UserShowModal
                         isOpen={isShowOpen}
-                        onClose={() => setIsShowOpen(false)}
                         user={selectedUser}
+                        onClose={() => setIsShowOpen(false)}
                     />
                     <UserDeleteModal
                         isOpen={isDeleteOpen}
-                        onClose={() => setIsDeleteOpen(false)}
                         user={selectedUser}
+                        onClose={() => setIsDeleteOpen(false)}
+                        onSuccess={() => {
+                            setIsDeleteOpen(false);
+                            fetchUsers();
+                        }}
                     />
                 </div>
             </div>

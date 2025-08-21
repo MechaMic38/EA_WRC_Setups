@@ -394,21 +394,33 @@ const VehicleIndex = () => {
                     <VehicleCreateModal
                         isOpen={isCreateOpen}
                         onClose={() => setIsCreateOpen(false)}
+                        onSuccess={() => {
+                            setIsCreateOpen(false);
+                            fetchVehicles();
+                        }}
                     />
                     <VehicleEditModal
                         isOpen={isEditOpen}
-                        onClose={() => setIsEditOpen(false)}
                         vehicle={selectedVehicle}
+                        onClose={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            setIsEditOpen(false);
+                            fetchVehicles();
+                        }}
                     />
                     <VehicleShowModal
                         isOpen={isShowOpen}
-                        onClose={() => setIsShowOpen(false)}
                         vehicle={selectedVehicle}
+                        onClose={() => setIsShowOpen(false)}
                     />
                     <VehicleDeleteModal
                         isOpen={isDeleteOpen}
-                        onClose={() => setIsDeleteOpen(false)}
                         vehicle={selectedVehicle}
+                        onClose={() => setIsDeleteOpen(false)}
+                        onSuccess={() => {
+                            setIsDeleteOpen(false);
+                            fetchVehicles();
+                        }}
                     />
                 </div>
             </div>

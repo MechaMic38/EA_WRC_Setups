@@ -312,21 +312,33 @@ const ManufacturerIndex = () => {
                     <ManufacturerCreateModal
                         isOpen={isCreateOpen}
                         onClose={() => setIsCreateOpen(false)}
+                        onSuccess={() => {
+                            setIsCreateOpen(false);
+                            fetchManufacturers();
+                        }}
                     />
                     <ManufacturerEditModal
                         isOpen={isEditOpen}
-                        onClose={() => setIsEditOpen(false)}
                         manufacturer={selectedManufacturer}
+                        onClose={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            setIsEditOpen(false);
+                            fetchManufacturers();
+                        }}
                     />
                     <ManufacturerShowModal
                         isOpen={isShowOpen}
-                        onClose={() => setIsShowOpen(false)}
                         manufacturer={selectedManufacturer}
+                        onClose={() => setIsShowOpen(false)}
                     />
                     <ManufacturerDeleteModal
                         isOpen={isDeleteOpen}
-                        onClose={() => setIsDeleteOpen(false)}
                         manufacturer={selectedManufacturer}
+                        onClose={() => setIsDeleteOpen(false)}
+                        onSuccess={() => {
+                            setIsDeleteOpen(false);
+                            fetchManufacturers();
+                        }}
                     />
                 </div>
             </div>

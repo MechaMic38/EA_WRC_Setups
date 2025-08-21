@@ -24,8 +24,10 @@ import {
     SURFACE_TYPES_MAP,
     TYRES_MAP,
 } from "@/constants";
+import BaseModal from "../BaseModal";
 
 interface LocationFormData {
+    _method: "PATCH";
     name: string;
     description: string;
     seasons: string[];
@@ -36,15 +38,19 @@ interface LocationFormData {
     img_banner: File | null;
 }
 
+interface LocationEditModalProps {
+    isOpen: boolean;
+    location: LocationSummary | null;
+    onClose: () => void;
+    onSuccess: (location: LocationSummary) => void;
+}
+
 export default function LocationEditModal({
     isOpen,
-    onClose,
     location,
-}: {
-    isOpen: boolean;
-    onClose: () => void;
-    location: LocationSummary | null;
-}) {
+    onClose,
+    onSuccess,
+}: LocationEditModalProps) {
     const { get: getLocation } = useAxiosForm<Location>([]);
     const {
         data,
@@ -54,6 +60,7 @@ export default function LocationEditModal({
         isProcessing,
         errors,
     } = useAxiosForm<Location, LocationFormData>({
+        _method: "PATCH",
         name: "",
         description: "",
         seasons: [],
@@ -78,6 +85,7 @@ export default function LocationEditModal({
 
                         // Set form data
                         setData({
+                            _method: "PATCH",
                             name: locationData.name,
                             description: locationData.description,
                             seasons: locationData.seasons || [],
@@ -137,14 +145,12 @@ export default function LocationEditModal({
         updateLocation(
             route("api.locations.update", { location: location.id }),
             {
-                method: "post", // Use POST with _method=PUT for Laravel
-                onSuccess: onClose,
+                onSuccess: (res) => {
+                    onSuccess(res.data);
+                    onClose();
+                },
                 headers: {
                     "Content-Type": "multipart/form-data",
-                },
-                data: {
-                    ...data,
-                    _method: "PUT",
                 },
             }
         );
@@ -153,291 +159,254 @@ export default function LocationEditModal({
     if (!location) return null;
 
     return (
-        <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-50" onClose={onClose}>
-                <TransitionChild
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <DialogBackdrop className="fixed inset-0 bg-black bg-opacity-50" />
-                </TransitionChild>
-
-                <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4">
-                        <TransitionChild
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
+        <BaseModal isOpen={isOpen} onClose={onClose}>
+            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
+                <div className="p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <DialogTitle className="text-2xl font-bold text-onSurface">
+                            Edit Location: {location.name}
+                        </DialogTitle>
+                        <button
+                            onClick={onClose}
+                            className="text-onSurface hover:text-primary"
                         >
-                            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-3xl transform transition-all max-h-[90vh] overflow-y-auto">
-                                <div className="p-6">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <DialogTitle className="text-2xl font-bold text-onSurface">
-                                            Edit Location: {location.name}
-                                        </DialogTitle>
-                                        <button
-                                            onClick={onClose}
-                                            className="text-onSurface hover:text-primary"
-                                        >
-                                            <FiX size={24} />
-                                        </button>
-                                    </div>
-
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                            {/* Name */}
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Location Name
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    name="name"
-                                                    value={data.name}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                                    required
-                                                />
-                                            </div>
-
-                                            {/* Description */}
-                                            <div className="md:col-span-2">
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Description
-                                                </label>
-                                                <textarea
-                                                    name="description"
-                                                    value={data.description}
-                                                    onChange={handleInputChange}
-                                                    rows={3}
-                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                                    required
-                                                />
-                                            </div>
-
-                                            {/* Surface Type */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Surface Type
-                                                </label>
-                                                <select
-                                                    name="surface_type"
-                                                    value={data.surface_type}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                                    required
-                                                >
-                                                    <option value="">
-                                                        Select Surface Type
-                                                    </option>
-                                                    {Object.entries(
-                                                        SURFACE_TYPES_MAP
-                                                    ).map(([key, value]) => (
-                                                        <option
-                                                            key={key}
-                                                            value={key}
-                                                        >
-                                                            {value.text}
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                            </div>
-
-                                            {/* Seasons */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Seasons
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {Object.entries(
-                                                        SEASONS_MAP
-                                                    ).map(([key, value]) => (
-                                                        <div
-                                                            key={key}
-                                                            className="flex items-center"
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`season-${key}`}
-                                                                checked={data.seasons.includes(
-                                                                    key
-                                                                )}
-                                                                onChange={() =>
-                                                                    toggleArrayOption(
-                                                                        "seasons",
-                                                                        key
-                                                                    )
-                                                                }
-                                                                className="h-4 w-4 text-primary rounded"
-                                                            />
-                                                            <label
-                                                                htmlFor={`season-${key}`}
-                                                                className="ml-2 text-onSurface capitalize"
-                                                            >
-                                                                {value.text}
-                                                            </label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            {/* Surface Conditions */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Surface Conditions
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {Object.entries(
-                                                        SURFACE_CONDITIONS_MAP
-                                                    ).map(([key, value]) => (
-                                                        <div
-                                                            key={key}
-                                                            className="flex items-center"
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`condition-${key}`}
-                                                                checked={data.surface_conditions.includes(
-                                                                    key
-                                                                )}
-                                                                onChange={() =>
-                                                                    toggleArrayOption(
-                                                                        "surface_conditions",
-                                                                        key
-                                                                    )
-                                                                }
-                                                                className="h-4 w-4 text-primary rounded"
-                                                            />
-                                                            <label
-                                                                htmlFor={`condition-${key}`}
-                                                                className="ml-2 text-onSurface capitalize"
-                                                            >
-                                                                {value.text}
-                                                            </label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            {/* Tyres */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Recommended Tyres
-                                                </label>
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {Object.entries(
-                                                        TYRES_MAP
-                                                    ).map(([key, value]) => (
-                                                        <div
-                                                            key={key}
-                                                            className="flex items-center"
-                                                        >
-                                                            <input
-                                                                type="checkbox"
-                                                                id={`tyre-${key}`}
-                                                                checked={data.tyres.includes(
-                                                                    key
-                                                                )}
-                                                                onChange={() =>
-                                                                    toggleArrayOption(
-                                                                        "tyres",
-                                                                        key
-                                                                    )
-                                                                }
-                                                                className="h-4 w-4 text-primary rounded"
-                                                            />
-                                                            <label
-                                                                htmlFor={`tyre-${key}`}
-                                                                className="ml-2 text-onSurface"
-                                                            >
-                                                                {value.text}
-                                                            </label>
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-
-                                            {/* Background Image */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Background Image
-                                                    <span className="text-xs text-onSurface/70 ml-1">
-                                                        (Recommended: 1920x1080)
-                                                    </span>
-                                                </label>
-                                                <ImagePicker
-                                                    fileUrl={bgImageUrl}
-                                                    onChange={
-                                                        onBackgroundImageChange
-                                                    }
-                                                />
-                                                <p className="mt-1 text-xs text-onSurface/50">
-                                                    Leave unchanged to keep
-                                                    current image
-                                                </p>
-                                            </div>
-
-                                            {/* Banner Image */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Banner Image
-                                                    <span className="text-xs text-onSurface/70 ml-1">
-                                                        (Recommended: 1200x300)
-                                                    </span>
-                                                </label>
-                                                <ImagePicker
-                                                    fileUrl={bannerImageUrl}
-                                                    onChange={
-                                                        onBannerImageChange
-                                                    }
-                                                />
-                                                <p className="mt-1 text-xs text-onSurface/50">
-                                                    Leave unchanged to keep
-                                                    current image
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        {/* Form Actions */}
-                                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
-                                            <button
-                                                type="button"
-                                                onClick={onClose}
-                                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={isProcessing}
-                                                className={`px-4 py-2 flex items-center ${
-                                                    isProcessing
-                                                        ? "bg-surfaceContainer text-onSurface/50"
-                                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
-                                                } rounded-md`}
-                                            >
-                                                <FiCheck className="mr-2" />
-                                                {isProcessing
-                                                    ? "Updating..."
-                                                    : "Update Location"}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </DialogPanel>
-                        </TransitionChild>
+                            <FiX size={24} />
+                        </button>
                     </div>
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            {/* Name */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Location Name
+                                </label>
+                                <input
+                                    type="text"
+                                    name="name"
+                                    value={data.name}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                    required
+                                />
+                            </div>
+
+                            {/* Description */}
+                            <div className="md:col-span-2">
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Description
+                                </label>
+                                <textarea
+                                    name="description"
+                                    value={data.description}
+                                    onChange={handleInputChange}
+                                    rows={3}
+                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                    required
+                                />
+                            </div>
+
+                            {/* Surface Type */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Surface Type
+                                </label>
+                                <select
+                                    name="surface_type"
+                                    value={data.surface_type}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                    required
+                                >
+                                    <option value="">
+                                        Select Surface Type
+                                    </option>
+                                    {Object.entries(SURFACE_TYPES_MAP).map(
+                                        ([key, value]) => (
+                                            <option key={key} value={key}>
+                                                {value.text}
+                                            </option>
+                                        )
+                                    )}
+                                </select>
+                            </div>
+
+                            {/* Seasons */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Seasons
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {Object.entries(SEASONS_MAP).map(
+                                        ([key, value]) => (
+                                            <div
+                                                key={key}
+                                                className="flex items-center"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id={`season-${key}`}
+                                                    checked={data.seasons.includes(
+                                                        key
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleArrayOption(
+                                                            "seasons",
+                                                            key
+                                                        )
+                                                    }
+                                                    className="h-4 w-4 text-primary rounded"
+                                                />
+                                                <label
+                                                    htmlFor={`season-${key}`}
+                                                    className="ml-2 text-onSurface capitalize"
+                                                >
+                                                    {value.text}
+                                                </label>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Surface Conditions */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Surface Conditions
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {Object.entries(SURFACE_CONDITIONS_MAP).map(
+                                        ([key, value]) => (
+                                            <div
+                                                key={key}
+                                                className="flex items-center"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id={`condition-${key}`}
+                                                    checked={data.surface_conditions.includes(
+                                                        key
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleArrayOption(
+                                                            "surface_conditions",
+                                                            key
+                                                        )
+                                                    }
+                                                    className="h-4 w-4 text-primary rounded"
+                                                />
+                                                <label
+                                                    htmlFor={`condition-${key}`}
+                                                    className="ml-2 text-onSurface capitalize"
+                                                >
+                                                    {value.text}
+                                                </label>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Tyres */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Recommended Tyres
+                                </label>
+                                <div className="grid grid-cols-2 gap-2">
+                                    {Object.entries(TYRES_MAP).map(
+                                        ([key, value]) => (
+                                            <div
+                                                key={key}
+                                                className="flex items-center"
+                                            >
+                                                <input
+                                                    type="checkbox"
+                                                    id={`tyre-${key}`}
+                                                    checked={data.tyres.includes(
+                                                        key
+                                                    )}
+                                                    onChange={() =>
+                                                        toggleArrayOption(
+                                                            "tyres",
+                                                            key
+                                                        )
+                                                    }
+                                                    className="h-4 w-4 text-primary rounded"
+                                                />
+                                                <label
+                                                    htmlFor={`tyre-${key}`}
+                                                    className="ml-2 text-onSurface"
+                                                >
+                                                    {value.text}
+                                                </label>
+                                            </div>
+                                        )
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Background Image */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Background Image
+                                    <span className="text-xs text-onSurface/70 ml-1">
+                                        (Recommended: 1920x1080)
+                                    </span>
+                                </label>
+                                <ImagePicker
+                                    fileUrl={bgImageUrl}
+                                    onChange={onBackgroundImageChange}
+                                />
+                                <p className="mt-1 text-xs text-onSurface/50">
+                                    Leave unchanged to keep current image
+                                </p>
+                            </div>
+
+                            {/* Banner Image */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Banner Image
+                                    <span className="text-xs text-onSurface/70 ml-1">
+                                        (Recommended: 1200x300)
+                                    </span>
+                                </label>
+                                <ImagePicker
+                                    fileUrl={bannerImageUrl}
+                                    onChange={onBannerImageChange}
+                                />
+                                <p className="mt-1 text-xs text-onSurface/50">
+                                    Leave unchanged to keep current image
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Form Actions */}
+                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isProcessing}
+                                className={`px-4 py-2 flex items-center ${
+                                    isProcessing
+                                        ? "bg-surfaceContainer text-onSurface/50"
+                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
+                                } rounded-md`}
+                            >
+                                <FiCheck className="mr-2" />
+                                {isProcessing
+                                    ? "Updating..."
+                                    : "Update Location"}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </Dialog>
-        </Transition>
+            </DialogPanel>
+        </BaseModal>
     );
 }

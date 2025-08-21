@@ -313,21 +313,33 @@ const CategoryIndex = () => {
                     <CategoryCreateModal
                         isOpen={isCreateOpen}
                         onClose={() => setIsCreateOpen(false)}
+                        onSuccess={() => {
+                            setIsCreateOpen(false);
+                            fetchCategories();
+                        }}
                     />
                     <CategoryShowModal
                         isOpen={isShowOpen}
-                        onClose={() => setIsShowOpen(false)}
                         category={selectedCategory}
+                        onClose={() => setIsShowOpen(false)}
                     />
                     <CategoryEditModal
                         isOpen={isEditOpen}
-                        onClose={() => setIsEditOpen(false)}
                         category={selectedCategory}
+                        onClose={() => setIsEditOpen(false)}
+                        onSuccess={() => {
+                            setIsEditOpen(false);
+                            fetchCategories();
+                        }}
                     />
                     <CategoryDeleteModal
                         isOpen={isDeleteOpen}
-                        onClose={() => setIsDeleteOpen(false)}
                         category={selectedCategory}
+                        onClose={() => setIsDeleteOpen(false)}
+                        onSuccess={() => {
+                            setIsDeleteOpen(false);
+                            fetchCategories();
+                        }}
                     />
                 </div>
             </div>

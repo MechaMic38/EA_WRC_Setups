@@ -2,6 +2,7 @@ import {
     Dialog,
     DialogBackdrop,
     DialogPanel,
+    DialogTitle,
     Transition,
     TransitionChild,
 } from "@headlessui/react";
@@ -10,19 +11,24 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiTrash2, FiUpload } from "react-icons/fi";
 import { Category } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
+import BaseModal from "../BaseModal";
 
 interface CategoryFormData {
     name: string;
     img: File | null;
 }
 
+interface CategoryCreateModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSuccess: (category: Category) => void;
+}
+
 export default function CategoryCreateModal({
     isOpen,
     onClose,
-}: {
-    isOpen: boolean;
-    onClose: () => void;
-}) {
+    onSuccess,
+}: CategoryCreateModalProps) {
     const {
         data,
         setData,
@@ -53,113 +59,86 @@ export default function CategoryCreateModal({
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         postCategory(route("api.categories.store"), {
-            onSuccess: onClose,
+            onSuccess: (res) => {
+                onSuccess(res.data);
+                onClose();
+            },
             headers: { "Content-Type": "multipart/form-data" },
         });
     };
 
     return (
-        <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="relative z-50" onClose={onClose}>
-                <TransitionChild
-                    as={Fragment}
-                    enter="ease-out duration-300"
-                    enterFrom="opacity-0"
-                    enterTo="opacity-100"
-                    leave="ease-in duration-200"
-                    leaveFrom="opacity-100"
-                    leaveTo="opacity-0"
-                >
-                    <DialogBackdrop className="fixed inset-0 bg-black bg-opacity-50" />
-                </TransitionChild>
-
-                <div className="fixed inset-0 overflow-y-auto">
-                    <div className="flex min-h-full items-center justify-center p-4">
-                        <TransitionChild
-                            as={Fragment}
-                            enter="ease-out duration-300"
-                            enterFrom="opacity-0 scale-95"
-                            enterTo="opacity-100 scale-100"
-                            leave="ease-in duration-200"
-                            leaveFrom="opacity-100 scale-100"
-                            leaveTo="opacity-0 scale-95"
+        <BaseModal isOpen={isOpen} onClose={onClose}>
+            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
+                <div className="p-6">
+                    <div className="flex justify-between items-center mb-6">
+                        <DialogTitle className="text-2xl font-bold text-onSurface">
+                            Create New Category
+                        </DialogTitle>
+                        <button
+                            onClick={onClose}
+                            className="text-onSurface hover:text-primary"
                         >
-                            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
-                                <div className="p-6">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <Dialog.Title className="text-2xl font-bold text-onSurface">
-                                            Create New Category
-                                        </Dialog.Title>
-                                        <button
-                                            onClick={onClose}
-                                            className="text-onSurface hover:text-primary"
-                                        >
-                                            <FiX size={24} />
-                                        </button>
-                                    </div>
-
-                                    <form onSubmit={handleSubmit}>
-                                        <div className="space-y-6 mb-6">
-                                            {/* Name */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Category Name
-                                                </label>
-                                                <input
-                                                    type="text"
-                                                    value={data.name}
-                                                    onChange={handleInputChange}
-                                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                                    placeholder="e.g., Rally1, Rally2, Historic"
-                                                    required
-                                                />
-                                            </div>
-
-                                            {/* Image Upload */}
-                                            <div>
-                                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                                    Category Image
-                                                    <span className="text-xs text-onSurface/70 ml-1">
-                                                        (Recommended: 500x500)
-                                                    </span>
-                                                </label>
-                                                <ImagePicker
-                                                    onChange={onImageChange}
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* Form Actions */}
-                                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
-                                            <button
-                                                type="button"
-                                                onClick={onClose}
-                                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
-                                            >
-                                                Cancel
-                                            </button>
-                                            <button
-                                                type="submit"
-                                                disabled={isProcessing}
-                                                className={`px-4 py-2 flex items-center ${
-                                                    isProcessing
-                                                        ? "bg-surfaceContainer text-onSurface/50"
-                                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
-                                                } rounded-md`}
-                                            >
-                                                <FiCheck className="mr-2" />
-                                                {isProcessing
-                                                    ? "Creating..."
-                                                    : "Create Category"}
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </DialogPanel>
-                        </TransitionChild>
+                            <FiX size={24} />
+                        </button>
                     </div>
+
+                    <form onSubmit={handleSubmit}>
+                        <div className="space-y-6 mb-6">
+                            {/* Name */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Category Name
+                                </label>
+                                <input
+                                    type="text"
+                                    value={data.name}
+                                    onChange={handleInputChange}
+                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                                    placeholder="e.g., Rally1, Rally2, Historic"
+                                    required
+                                />
+                            </div>
+
+                            {/* Image Upload */}
+                            <div>
+                                <label className="block text-sm font-medium text-onSurface mb-2">
+                                    Category Image
+                                    <span className="text-xs text-onSurface/70 ml-1">
+                                        (Recommended: 500x500)
+                                    </span>
+                                </label>
+                                <ImagePicker onChange={onImageChange} />
+                            </div>
+                        </div>
+
+                        {/* Form Actions */}
+                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
+                            <button
+                                type="button"
+                                onClick={onClose}
+                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isProcessing}
+                                className={`px-4 py-2 flex items-center ${
+                                    isProcessing
+                                        ? "bg-surfaceContainer text-onSurface/50"
+                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
+                                } rounded-md`}
+                            >
+                                <FiCheck className="mr-2" />
+                                {isProcessing
+                                    ? "Creating..."
+                                    : "Create Category"}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </Dialog>
-        </Transition>
+            </DialogPanel>
+        </BaseModal>
     );
 }
