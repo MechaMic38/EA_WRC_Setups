@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 interface InputSliderProps {
     option: {
@@ -17,33 +17,55 @@ export default function InputSlider({
     disabled = false,
     onChange = () => {},
 }: InputSliderProps) {
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!disabled && onChange) {
-            onChange(Number(e.target.value));
-        }
-    };
+    const { min_value, max_value, steps } = option;
+
+    // Calculate the step size (can be decimal)
+    const stepSize = useMemo(() => {
+        return (max_value - min_value) / (steps - 1);
+    }, [min_value, max_value, steps]);
+
+    // Calculate the current step index based on the value
+    const currentStep = useMemo(() => {
+        return Math.round((value - min_value) / stepSize);
+    }, [value, min_value, stepSize]);
+
+    // Generate all possible values
+    const possibleValues = useMemo(() => {
+        return Array.from({ length: steps }, (_, index) => {
+            return min_value + index * stepSize;
+        });
+    }, [min_value, steps, stepSize]);
+
+    // Calculate gradient percentage
+    const gradientPercentage = useMemo(() => {
+        return ((value - min_value) / (max_value - min_value)) * 100;
+    }, [value, min_value, max_value]);
+
+    // Handle input change
+    const handleChange = useCallback(
+        (e: React.ChangeEvent<HTMLInputElement>) => {
+            const stepIndex = parseInt(e.target.value);
+            const newValue = possibleValues[stepIndex];
+            onChange(newValue);
+        },
+        [onChange, possibleValues]
+    );
 
     return (
-        <input
-            type="range"
-            min={option.min_value}
-            max={option.max_value}
-            step={(option.max_value - option.min_value) / (option.steps - 1)}
-            value={value}
-            onChange={handleChange}
-            disabled={disabled}
-            className="w-full h-2 bg-surfaceContainer rounded-lg appearance-none cursor-pointer"
-            style={{
-                background: `linear-gradient(to right, #CFBDFE 0%, #CFBDFE ${
-                    ((value - option.min_value) /
-                        (option.max_value - option.min_value)) *
-                    100
-                }%, #3A3643 ${
-                    ((value - option.min_value) /
-                        (option.max_value - option.min_value)) *
-                    100
-                }%, #3A3643 100%)`,
-            }}
-        />
+        <div className="w-full">
+            <input
+                type="range"
+                min={0}
+                max={steps - 1}
+                step={1}
+                value={currentStep}
+                onChange={handleChange}
+                disabled={disabled}
+                className="w-full h-2 bg-surfaceContainer rounded-lg appearance-none cursor-pointer"
+                style={{
+                    background: `linear-gradient(to right, #CFBDFE 0%, #CFBDFE ${gradientPercentage}%, #3A3643 ${gradientPercentage}%, #3A3643 100%)`,
+                }}
+            />
+        </div>
     );
 }

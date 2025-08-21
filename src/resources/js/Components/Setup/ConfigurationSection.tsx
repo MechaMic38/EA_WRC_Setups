@@ -42,7 +42,7 @@ export default function ConfigurationSection({
                     setting={setting}
                     option={option}
                     disabled={disabled}
-                    value={options[setting] || option.default_value}
+                    value={options[setting] ?? option.default_value}
                     onChange={(setting, value) =>
                         onConfigurationChange(section, setting, value)
                     }
