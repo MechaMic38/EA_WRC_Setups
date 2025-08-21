@@ -8,6 +8,7 @@ import {
     SetupOptions,
     Vehicle,
 } from "@/types";
+import ImagePicker from "@/Components/ImagePicker";
 
 interface CreateVehicleFormData {
     name: string;
@@ -79,10 +80,8 @@ export default function VehicleCreateModal({
         setData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files && e.target.files[0]) {
-            setData((prev) => ({ ...prev, img: e.target.files!![0] }));
-        }
+    const onImageChange = (file: File | null) => {
+        setData((prev) => ({ ...prev, img: file }));
     };
 
     const toggleOption = (optionId: string) => {
@@ -195,37 +194,7 @@ export default function VehicleCreateModal({
                             </div>
 
                             {/* Image Upload */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Vehicle Image
-                                </label>
-                                <div className="flex items-center">
-                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-surfaceContainer rounded-lg cursor-pointer bg-surface">
-                                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                            {data.img ? (
-                                                <span className="text-onSurface">
-                                                    {data.img.name}
-                                                </span>
-                                            ) : (
-                                                <>
-                                                    <span className="text-sm text-onSurface">
-                                                        Click to upload
-                                                    </span>
-                                                    <span className="text-xs text-onSurface/70">
-                                                        PNG, JPG up to 2MB
-                                                    </span>
-                                                </>
-                                            )}
-                                        </div>
-                                        <input
-                                            type="file"
-                                            className="hidden"
-                                            onChange={handleFileChange}
-                                            accept="image/*"
-                                        />
-                                    </label>
-                                </div>
-                            </div>
+                            <ImagePicker onChange={onImageChange} />
                         </div>
 
                         {/* Setup Options */}

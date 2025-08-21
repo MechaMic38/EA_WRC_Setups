@@ -10,6 +10,7 @@ import {
     FiInfo,
 } from "react-icons/fi";
 import { Location, LocationSummary } from "@/types";
+import ImagePicker from "@/Components/ImagePicker";
 
 interface LocationFormData {
     name: string;
@@ -65,8 +66,8 @@ export default function LocationEditModal({
         img_banner: null,
     });
 
-    const [bgPreview, setBgPreview] = useState<string | null>(null);
-    const [bannerPreview, setBannerPreview] = useState<string | null>(null);
+    const [bgImageUrl, setBgImageUrl] = useState<string | null>(null);
+    const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
 
     // Initialize form with location data
     useEffect(() => {
@@ -76,6 +77,8 @@ export default function LocationEditModal({
                 {
                     onSuccess: (response) => {
                         const locationData = response.data;
+
+                        // Set form data
                         setData({
                             name: locationData.name,
                             description: locationData.description,
@@ -87,23 +90,15 @@ export default function LocationEditModal({
                             img_bg: null, // Reset file inputs
                             img_banner: null,
                         });
-                        setBgPreview(locationData.imgBgPath || null);
-                        setBannerPreview(locationData.imgBannerPath || null);
+
+                        // Set image preview URLs
+                        setBgImageUrl(locationData.imgBgPath || null);
+                        setBannerImageUrl(locationData.imgBannerPath || null);
                     },
                 }
             );
         }
     }, [location, isOpen]);
-
-    // Cleanup preview URLs
-    useEffect(() => {
-        return () => {
-            if (bgPreview && bgPreview.startsWith("blob:"))
-                URL.revokeObjectURL(bgPreview);
-            if (bannerPreview && bannerPreview.startsWith("blob:"))
-                URL.revokeObjectURL(bannerPreview);
-        };
-    }, [bgPreview, bannerPreview]);
 
     const handleInputChange = (
         e: React.ChangeEvent<
@@ -114,38 +109,12 @@ export default function LocationEditModal({
         setData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleFileChange =
-        (name: "img_bg" | "img_banner") =>
-        (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files?.[0]) {
-                const file = e.target.files[0];
-                setData((prev) => ({ ...prev, [name]: file }));
+    const onBackgroundImageChange = (file: File | null) => {
+        setData((prev) => ({ ...prev, img_bg: file }));
+    };
 
-                // Create preview
-                const previewUrl = URL.createObjectURL(file);
-                if (name === "img_bg") {
-                    if (bgPreview && bgPreview.startsWith("blob:"))
-                        URL.revokeObjectURL(bgPreview);
-                    setBgPreview(previewUrl);
-                } else {
-                    if (bannerPreview && bannerPreview.startsWith("blob:"))
-                        URL.revokeObjectURL(bannerPreview);
-                    setBannerPreview(previewUrl);
-                }
-            }
-        };
-
-    const removeImage = (name: "img_bg" | "img_banner") => {
-        setData((prev) => ({ ...prev, [name]: null }));
-        if (name === "img_bg") {
-            if (bgPreview && bgPreview.startsWith("blob:"))
-                URL.revokeObjectURL(bgPreview);
-            setBgPreview(location?.imgBgPath || null);
-        } else {
-            if (bannerPreview && bannerPreview.startsWith("blob:"))
-                URL.revokeObjectURL(bannerPreview);
-            setBannerPreview(location?.imgBannerPath || null);
-        }
+    const onBannerImageChange = (file: File | null) => {
+        setData((prev) => ({ ...prev, img_banner: file }));
     };
 
     const toggleArrayOption = <
@@ -407,61 +376,12 @@ export default function LocationEditModal({
                                                         (Recommended: 1920x1080)
                                                     </span>
                                                 </label>
-                                                <div className="relative">
-                                                    <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-surfaceContainer rounded-lg cursor-pointer bg-surface overflow-hidden">
-                                                        {bgPreview ? (
-                                                            <div className="w-full h-full relative">
-                                                                <img
-                                                                    src={
-                                                                        bgPreview
-                                                                    }
-                                                                    alt="Background preview"
-                                                                    className="w-full h-full object-cover"
-                                                                />
-                                                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                                    <span className="text-white text-sm">
-                                                                        Change
-                                                                        Image
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                                <span className="text-sm text-onSurface">
-                                                                    Click to
-                                                                    upload
-                                                                </span>
-                                                                <span className="text-xs text-onSurface/70">
-                                                                    PNG, JPG up
-                                                                    to 2MB
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        <input
-                                                            type="file"
-                                                            className="hidden"
-                                                            onChange={handleFileChange(
-                                                                "img_bg"
-                                                            )}
-                                                            accept="image/*"
-                                                        />
-                                                    </label>
-                                                    {bgPreview && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeImage(
-                                                                    "img_bg"
-                                                                )
-                                                            }
-                                                            className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full text-white hover:bg-red-600 transition-colors"
-                                                        >
-                                                            <FiTrash2
-                                                                size={16}
-                                                            />
-                                                        </button>
-                                                    )}
-                                                </div>
+                                                <ImagePicker
+                                                    fileUrl={bgImageUrl}
+                                                    onChange={
+                                                        onBackgroundImageChange
+                                                    }
+                                                />
                                                 <p className="mt-1 text-xs text-onSurface/50">
                                                     Leave unchanged to keep
                                                     current image
@@ -476,61 +396,12 @@ export default function LocationEditModal({
                                                         (Recommended: 1200x300)
                                                     </span>
                                                 </label>
-                                                <div className="relative">
-                                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-surfaceContainer rounded-lg cursor-pointer bg-surface overflow-hidden">
-                                                        {bannerPreview ? (
-                                                            <div className="w-full h-full relative">
-                                                                <img
-                                                                    src={
-                                                                        bannerPreview
-                                                                    }
-                                                                    alt="Banner preview"
-                                                                    className="w-full h-full object-cover"
-                                                                />
-                                                                <div className="absolute inset-0 bg-black bg-opacity-30 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                                                                    <span className="text-white text-sm">
-                                                                        Change
-                                                                        Image
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                                                <span className="text-sm text-onSurface">
-                                                                    Click to
-                                                                    upload
-                                                                </span>
-                                                                <span className="text-xs text-onSurface/70">
-                                                                    PNG, JPG up
-                                                                    to 2MB
-                                                                </span>
-                                                            </div>
-                                                        )}
-                                                        <input
-                                                            type="file"
-                                                            className="hidden"
-                                                            onChange={handleFileChange(
-                                                                "img_banner"
-                                                            )}
-                                                            accept="image/*"
-                                                        />
-                                                    </label>
-                                                    {bannerPreview && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                removeImage(
-                                                                    "img_banner"
-                                                                )
-                                                            }
-                                                            className="absolute top-2 right-2 p-1.5 bg-red-500/80 rounded-full text-white hover:bg-red-600 transition-colors"
-                                                        >
-                                                            <FiTrash2
-                                                                size={16}
-                                                            />
-                                                        </button>
-                                                    )}
-                                                </div>
+                                                <ImagePicker
+                                                    fileUrl={bannerImageUrl}
+                                                    onChange={
+                                                        onBannerImageChange
+                                                    }
+                                                />
                                                 <p className="mt-1 text-xs text-onSurface/50">
                                                     Leave unchanged to keep
                                                     current image

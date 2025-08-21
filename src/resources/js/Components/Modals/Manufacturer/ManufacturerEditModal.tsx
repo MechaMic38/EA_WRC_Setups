@@ -1,8 +1,15 @@
-import { Dialog, Transition } from "@headlessui/react";
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Transition,
+    TransitionChild,
+} from "@headlessui/react";
 import { Fragment, useState, useEffect, useRef } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiTrash2, FiUpload } from "react-icons/fi";
 import { Manufacturer } from "@/types";
+import ImagePicker from "@/Components/ImagePicker";
 
 interface ManufacturerFormData {
     name: string;
@@ -30,8 +37,13 @@ export default function ManufacturerEditModal({
         img: null,
     });
 
-    const [imagePreview, setImagePreview] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (manufacturer && manufacturer.imgPath) {
+            setImageUrl(manufacturer.imgPath);
+        }
+    }, [manufacturer]);
 
     // Initialize form with manufacturer data
     useEffect(() => {
@@ -40,41 +52,15 @@ export default function ManufacturerEditModal({
                 name: manufacturer.name,
                 img: null,
             });
-            setImagePreview(manufacturer.imgPath);
         }
     }, [manufacturer, isOpen]);
-
-    // Cleanup preview URL
-    useEffect(() => {
-        return () => {
-            if (imagePreview && imagePreview.startsWith("blob:")) {
-                URL.revokeObjectURL(imagePreview);
-            }
-        };
-    }, [imagePreview]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setData({ ...data, name: e.target.value });
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            const file = e.target.files[0];
-            setData({ ...data, img: file });
-
-            // Create preview
-            const previewUrl = URL.createObjectURL(file);
-            setImagePreview(previewUrl);
-        }
-    };
-
-    const removeImage = () => {
-        setData({ ...data, img: null });
-        if (imagePreview && imagePreview.startsWith("blob:")) {
-            URL.revokeObjectURL(imagePreview);
-        }
-        setImagePreview(manufacturer?.imgPath || null);
-        if (fileInputRef.current) fileInputRef.current.value = "";
+    const onImageChange = (file: File | null) => {
+        setData({ ...data, img: file });
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -106,7 +92,7 @@ export default function ManufacturerEditModal({
     return (
         <Transition appear show={isOpen} as={Fragment}>
             <Dialog as="div" className="relative z-50" onClose={onClose}>
-                <Transition.Child
+                <TransitionChild
                     as={Fragment}
                     enter="ease-out duration-300"
                     enterFrom="opacity-0"
@@ -116,11 +102,11 @@ export default function ManufacturerEditModal({
                     leaveTo="opacity-0"
                 >
                     <div className="fixed inset-0 bg-black bg-opacity-50" />
-                </Transition.Child>
+                </TransitionChild>
 
                 <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center p-4">
-                        <Transition.Child
+                        <TransitionChild
                             as={Fragment}
                             enter="ease-out duration-300"
                             enterFrom="opacity-0 scale-95"
@@ -129,12 +115,12 @@ export default function ManufacturerEditModal({
                             leaveFrom="opacity-100 scale-100"
                             leaveTo="opacity-0 scale-95"
                         >
-                            <Dialog.Panel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
+                            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
                                 <div className="p-6">
                                     <div className="flex justify-between items-center mb-6">
-                                        <Dialog.Title className="text-2xl font-bold text-onSurface">
+                                        <DialogTitle className="text-2xl font-bold text-onSurface">
                                             Edit Manufacturer
-                                        </Dialog.Title>
+                                        </DialogTitle>
                                         <button
                                             onClick={onClose}
                                             className="text-onSurface hover:text-primary"
@@ -169,60 +155,10 @@ export default function ManufacturerEditModal({
                                                     </span>
                                                 </label>
 
-                                                <div className="flex flex-col items-center">
-                                                    {/* Preview Area */}
-                                                    <div className="relative mb-4">
-                                                        {imagePreview ? (
-                                                            <div className="relative">
-                                                                <img
-                                                                    src={
-                                                                        imagePreview
-                                                                    }
-                                                                    alt="Manufacturer preview"
-                                                                    className="w-40 h-40 object-cover rounded-lg border border-surfaceContainer"
-                                                                />
-                                                                <button
-                                                                    type="button"
-                                                                    onClick={
-                                                                        removeImage
-                                                                    }
-                                                                    className="absolute -top-2 -right-2 p-1.5 bg-red-500 rounded-full text-white hover:bg-red-600 transition-colors"
-                                                                >
-                                                                    <FiTrash2
-                                                                        size={
-                                                                            16
-                                                                        }
-                                                                    />
-                                                                </button>
-                                                            </div>
-                                                        ) : (
-                                                            <div className="w-40 h-40 flex items-center justify-center border-2 border-dashed border-surfaceContainer rounded-lg bg-surface">
-                                                                <FiUpload className="text-onSurface/50 text-2xl" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    {/* Upload Button */}
-                                                    <label className="flex items-center justify-center px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600 cursor-pointer transition-colors">
-                                                        <FiUpload className="mr-2" />
-                                                        <span>
-                                                            Change Image
-                                                        </span>
-                                                        <input
-                                                            type="file"
-                                                            ref={fileInputRef}
-                                                            className="hidden"
-                                                            onChange={
-                                                                handleFileChange
-                                                            }
-                                                            accept="image/*"
-                                                        />
-                                                    </label>
-                                                    <p className="mt-2 text-xs text-onSurface/50">
-                                                        Leave unchanged to keep
-                                                        current image
-                                                    </p>
-                                                </div>
+                                                <ImagePicker
+                                                    fileUrl={imageUrl}
+                                                    onChange={onImageChange}
+                                                />
                                             </div>
                                         </div>
 
@@ -262,8 +198,8 @@ export default function ManufacturerEditModal({
                                         )}
                                     </form>
                                 </div>
-                            </Dialog.Panel>
-                        </Transition.Child>
+                            </DialogPanel>
+                        </TransitionChild>
                     </div>
                 </div>
             </Dialog>
