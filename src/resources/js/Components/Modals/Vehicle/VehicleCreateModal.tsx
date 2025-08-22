@@ -1,6 +1,14 @@
 import { useState, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { FiX, FiInfo, FiCheck, FiAlertCircle } from "react-icons/fi";
+import {
+    FiX,
+    FiInfo,
+    FiCheck,
+    FiAlertCircle,
+    FiPackage,
+    FiTool,
+} from "react-icons/fi";
+import { BsTools } from "react-icons/bs";
 import {
     Category,
     Manufacturer,
@@ -9,18 +17,9 @@ import {
     Vehicle,
 } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
-import {
-    DialogPanel,
-    DialogTitle,
-    Field,
-    Input,
-    Label,
-} from "@headlessui/react";
+import { DialogPanel, DialogTitle } from "@headlessui/react";
 import ListBox from "@/Components/Form/ListBox";
 import BaseModal from "../BaseModal";
-import TextInput from "@/Components/Form/TextInput";
-import SuccessMessage from "@/Components/Form/SuccessMessage";
-import ErrorText from "@/Components/Form/ErrorText";
 
 interface CreateVehicleFormData {
     name: string;
@@ -81,12 +80,16 @@ export default function VehicleCreateModal({
         null
     );
     const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Clear errors when modal opens/closes
     useEffect(() => {
         if (isOpen) {
             clearErrors();
             setShowSuccess(false);
+            setShowError(false);
+            setErrorMessage("");
         }
     }, [isOpen]);
 
@@ -117,6 +120,12 @@ export default function VehicleCreateModal({
     ) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
+
+        // Clear error when user starts typing
+        if (errors[name as keyof typeof errors]) {
+            clearErrors();
+            setShowError(false);
+        }
     };
 
     /**
@@ -162,41 +171,14 @@ export default function VehicleCreateModal({
     };
 
     /**
-     * Validates the form data.
-     * @returns True if the form is valid, false otherwise.
-     */
-    const validateForm = () => {
-        clearErrors();
-        let isValid = true;
-
-        if (!data.name) {
-            setError("name", "Name is required");
-            isValid = false;
-        }
-        if (!data.manufacturer_id) {
-            setError("manufacturer_id", "Manufacturer is required");
-            isValid = false;
-        }
-        if (!data.category_id) {
-            setError("category_id", "Category is required");
-            isValid = false;
-        }
-        if (!data.img) {
-            setError("img", "Image is required");
-            isValid = false;
-        }
-
-        return isValid;
-    };
-
-    /**
      * Handles form submission.
      * @param e The form event
      */
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!validateForm()) return;
+        setShowSuccess(false);
+        setShowError(false);
+        setErrorMessage("");
 
         postVehicle(route("api.vehicles.store"), {
             onSuccess: (res) => {
@@ -204,13 +186,27 @@ export default function VehicleCreateModal({
                 setTimeout(() => {
                     onSuccess(res.data);
                     onClose();
-                    setShowSuccess(false);
                 }, 1500);
+            },
+            onError: (error) => {
+                setShowError(true);
+                setErrorMessage(
+                    error.response?.data?.message ||
+                        "An error occurred while creating the vehicle. Please try again."
+                );
             },
             headers: {
                 "Content-Type": "multipart/form-data",
             },
         });
+    };
+
+    const handleClose = () => {
+        setShowSuccess(false);
+        setShowError(false);
+        setErrorMessage("");
+        clearErrors();
+        onClose();
     };
 
     /**
@@ -228,216 +224,297 @@ export default function VehicleCreateModal({
     };
 
     return (
-        <BaseModal isOpen={isOpen} onClose={onClose}>
-            <DialogPanel className="bg-surfaceContainer rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-surfaceContainerHigh">
-                <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <DialogTitle className="text-2xl font-bold text-onSurface">
-                            Create New Vehicle
-                        </DialogTitle>
-                        <button
-                            onClick={onClose}
-                            className="text-onSurface hover:text-primary transition-colors duration-200 p-1 rounded-full hover:bg-surfaceContainerHigh"
-                        >
-                            <FiX size={24} />
-                        </button>
+        <BaseModal isOpen={isOpen} onClose={handleClose}>
+            <DialogPanel className="bg-surfaceContainer rounded-xl shadow-2xl w-full max-w-6xl transform transition-all overflow-hidden">
+                <div className="flex flex-col md:flex-row">
+                    {/* Preview Section */}
+                    <div className="md:w-2/5 bg-gradient-to-br from-surfaceContainerHigh to-surfaceContainer p-6 flex flex-col justify-center">
+                        <h3 className="text-lg font-semibold text-onSurface mb-4">
+                            Preview
+                        </h3>
+
+                        {/* Image Preview */}
+                        <div className="relative h-60 mb-4 rounded-lg overflow-hidden border border-surfaceContainerHigh flex items-center justify-center">
+                            {data.img ? (
+                                <img
+                                    src={URL.createObjectURL(data.img)}
+                                    alt="Vehicle preview"
+                                    className="max-h-full max-w-full object-contain"
+                                />
+                            ) : (
+                                <div className="w-full h-full bg-surfaceContainerHigh flex items-center justify-center">
+                                    <span className="text-onSurface/50">
+                                        Vehicle Image Preview
+                                    </span>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Name Preview */}
+                        {data.name && (
+                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <p className="text-onSurface font-medium text-center">
+                                    {data.name}
+                                </p>
+                            </div>
+                        )}
                     </div>
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    {/* Form Section */}
+                    <div className="md:w-3/5 p-8 flex flex-col relative">
+                        {/* Success Message */}
+                        {showSuccess && (
+                            <div className="absolute top-4 left-4 right-4 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center z-10">
+                                <FiCheck className="mr-2 text-green-600" />
+                                <span>Vehicle created successfully!</span>
+                            </div>
+                        )}
+
+                        {/* Error Message */}
+                        {showError && (
+                            <div className="absolute top-4 left-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-start z-10">
+                                <FiAlertCircle className="mr-2 text-red-600 mt-0.5 flex-shrink-0" />
+                                <span>{errorMessage}</span>
+                                <button
+                                    onClick={() => setShowError(false)}
+                                    className="ml-auto text-red-700 hover:text-red-900"
+                                >
+                                    <FiX size={18} />
+                                </button>
+                            </div>
+                        )}
+
+                        <div className="flex justify-between items-start mb-6">
+                            <div>
+                                <DialogTitle className="text-2xl font-bold text-onSurface">
+                                    Create New Vehicle
+                                </DialogTitle>
+                                <p className="text-onSurface/70 mt-1">
+                                    Add details for a new vehicle
+                                </p>
+                            </div>
+                            <button
+                                onClick={handleClose}
+                                className="text-onSurface hover:text-primary transition-colors duration-200 p-1 rounded-full hover:bg-surfaceContainerHigh"
+                            >
+                                <FiX size={24} />
+                            </button>
+                        </div>
+
+                        <form
+                            onSubmit={handleSubmit}
+                            className="space-y-6 mb-8 flex-grow overflow-y-auto max-h-[60vh] pr-2"
+                        >
                             {/* Vehicle Name */}
-                            <Field className="md:col-span-2">
-                                <Label className="block text-sm font-medium text-onSurface mb-2">
-                                    Vehicle Name *
-                                </Label>
-                                <TextInput
+                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    Vehicle Name
+                                </label>
+                                <input
+                                    type="text"
                                     name="name"
                                     value={data.name}
                                     onChange={handleInputChange}
-                                    error={getError("name")}
+                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
+                                    required
+                                    placeholder="Enter vehicle name"
                                 />
                                 {getError("name") && (
-                                    <ErrorText message={getError("name")!!} />
+                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                        <FiAlertCircle className="mr-1" />
+                                        {getError("name")}
+                                    </p>
                                 )}
-                            </Field>
+                            </div>
 
-                            {/* Make both selects as distant as possible within the cell */}
-                            <div className="flex flex-col justify-between">
-                                {/* Manufacturer */}
-                                <Field>
-                                    <Label className="block text-sm font-medium text-onSurface mb-2">
-                                        Manufacturer *
-                                    </Label>
-                                    <ListBox
-                                        options={manufacturers}
-                                        selectedOption={selectedManufacturer}
-                                        error={getError("manufacturer_id")}
-                                        onChange={onManufacturerChange}
-                                    />
-                                    {getError("manufacturer_id") && (
-                                        <ErrorText
-                                            message={
-                                                getError("manufacturer_id")!!
-                                            }
-                                        />
-                                    )}
-                                </Field>
+                            {/* Manufacturer */}
+                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <div className="flex items-center mb-3">
+                                    <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
+                                        <BsTools className="text-primary text-lg" />
+                                    </div>
+                                    <label className="block text-sm font-medium text-onSurface/70">
+                                        Manufacturer
+                                    </label>
+                                </div>
+                                <ListBox
+                                    options={manufacturers}
+                                    selectedOption={selectedManufacturer}
+                                    error={getError("manufacturer_id")}
+                                    onChange={onManufacturerChange}
+                                />
+                                {getError("manufacturer_id") && (
+                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                        <FiAlertCircle className="mr-1" />
+                                        {getError("manufacturer_id")}
+                                    </p>
+                                )}
+                            </div>
 
-                                {/* Category */}
-                                <Field>
-                                    <Label className="block text-sm font-medium text-onSurface mb-2">
-                                        Category *
-                                    </Label>
-                                    <ListBox
-                                        options={categories}
-                                        selectedOption={selectedCategory}
-                                        error={getError("category_id")}
-                                        onChange={onCategoryChange}
-                                    />
-                                    {getError("category_id") && (
-                                        <ErrorText
-                                            message={getError("category_id")!!}
-                                        />
-                                    )}
-                                </Field>
+                            {/* Category */}
+                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <div className="flex items-center mb-3">
+                                    <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
+                                        <FiPackage className="text-tertiary text-lg" />
+                                    </div>
+                                    <label className="block text-sm font-medium text-onSurface/70">
+                                        Category
+                                    </label>
+                                </div>
+                                <ListBox
+                                    options={categories}
+                                    selectedOption={selectedCategory}
+                                    error={getError("category_id")}
+                                    onChange={onCategoryChange}
+                                />
+                                {getError("category_id") && (
+                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                        <FiAlertCircle className="mr-1" />
+                                        {getError("category_id")}
+                                    </p>
+                                )}
                             </div>
 
                             {/* Image Upload */}
-                            <Field>
-                                <Label className="block text-sm font-medium text-onSurface mb-2">
-                                    Vehicle Image *
-                                </Label>
+                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    Vehicle Image
+                                </label>
                                 <ImagePicker
                                     onChange={onImageChange}
                                     error={getError("img")}
                                 />
                                 {getError("img") && (
-                                    <ErrorText message={getError("img")!!} />
+                                    <p className="text-red-500 text-sm mt-1 flex items-center">
+                                        <FiAlertCircle className="mr-1" />
+                                        {getError("img")}
+                                    </p>
                                 )}
-                            </Field>
-                        </div>
-
-                        {/* Setup Options */}
-                        <div className="mb-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-lg font-medium text-onSurface">
-                                    Setup Options
-                                </h3>
-                                <span className="text-sm text-onSurface/70">
-                                    {data.setup_options.length} selected
-                                </span>
                             </div>
 
-                            <div className="bg-surface rounded-xl p-4 border border-surfaceContainerHigh">
-                                {Object.entries(setupOptions).map(
-                                    ([category, options]) => (
-                                        <div
-                                            key={category}
-                                            className="mb-6 last:mb-0"
-                                        >
-                                            <h4 className="text-md font-medium text-onSurface mb-3 capitalize">
-                                                {category.replace("_", " ")}
-                                            </h4>
-                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                                {Object.entries(options).map(
-                                                    ([optionId, option]) => (
-                                                        <div
-                                                            key={optionId}
-                                                            className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 group relative ${
-                                                                data.setup_options.includes(
-                                                                    optionId
-                                                                )
-                                                                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
-                                                                    : "border-surfaceContainerHigh hover:border-primary hover:bg-surfaceContainer/50"
-                                                            }`}
-                                                            onClick={() =>
-                                                                toggleOption(
-                                                                    optionId
-                                                                )
-                                                            }
-                                                        >
-                                                            <div className="flex justify-between items-start">
-                                                                <span className="text-onSurface font-medium">
-                                                                    {
-                                                                        option.label
-                                                                    }
-                                                                </span>
-                                                                <div
-                                                                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
-                                                                        data.setup_options.includes(
-                                                                            optionId
-                                                                        )
-                                                                            ? "bg-primary border-primary"
-                                                                            : "bg-surface border-outline"
-                                                                    }`}
-                                                                >
-                                                                    {data.setup_options.includes(
+                            {/* Setup Options */}
+                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <div className="flex items-center mb-3">
+                                    <div className="bg-secondaryContainer/20 p-2 rounded-lg mr-3">
+                                        <FiTool className="text-secondary text-lg" />
+                                    </div>
+                                    <div className="flex-grow">
+                                        <label className="block text-sm font-medium text-onSurface/70">
+                                            Setup Options
+                                        </label>
+                                        <p className="text-xs text-onSurface/50">
+                                            {data.setup_options.length} selected
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-4">
+                                    {Object.entries(setupOptions).map(
+                                        ([category, options]) => (
+                                            <div
+                                                key={category}
+                                                className="mb-4 last:mb-0"
+                                            >
+                                                <h4 className="text-md font-medium text-onSurface mb-3 capitalize">
+                                                    {category.replace("_", " ")}
+                                                </h4>
+                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                                    {Object.entries(
+                                                        options
+                                                    ).map(
+                                                        ([
+                                                            optionId,
+                                                            option,
+                                                        ]) => (
+                                                            <div
+                                                                key={optionId}
+                                                                className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 group relative ${
+                                                                    data.setup_options.includes(
                                                                         optionId
-                                                                    ) && (
-                                                                        <FiCheck className="w-3 h-3 text-onPrimary" />
-                                                                    )}
+                                                                    )
+                                                                        ? "border-primary bg-primary/10"
+                                                                        : "border-surfaceContainerHigh hover:border-primary/30"
+                                                                }`}
+                                                                onClick={() =>
+                                                                    toggleOption(
+                                                                        optionId
+                                                                    )
+                                                                }
+                                                            >
+                                                                <div className="flex justify-between items-start">
+                                                                    <span className="text-onSurface font-medium">
+                                                                        {
+                                                                            option.label
+                                                                        }
+                                                                    </span>
+                                                                    <div
+                                                                        className={`h-5 w-5 rounded border flex items-center justify-center ${
+                                                                            data.setup_options.includes(
+                                                                                optionId
+                                                                            )
+                                                                                ? "bg-primary border-primary"
+                                                                                : "border-onSurface/30"
+                                                                        }`}
+                                                                    >
+                                                                        {data.setup_options.includes(
+                                                                            optionId
+                                                                        ) && (
+                                                                            <FiCheck className="w-3 h-3 text-white" />
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center mt-2 text-sm text-onSurface/60">
+                                                                    <FiInfo className="mr-1 w-4 h-4" />
+                                                                    <span>
+                                                                        Hover
+                                                                        for
+                                                                        details
+                                                                    </span>
+                                                                </div>
+                                                                <div className="opacity-0 group-hover:opacity-100 invisible group-hover:visible absolute z-10 mt-2 w-64 p-3 bg-surfaceContainer text-onSurface text-sm rounded-lg shadow-xl border border-surfaceContainerHigh transition-all duration-200">
+                                                                    {
+                                                                        option.description
+                                                                    }
                                                                 </div>
                                                             </div>
-                                                            <div className="flex items-center mt-2 text-sm text-onSurface/60">
-                                                                <FiInfo className="mr-1 w-4 h-4" />
-                                                                <span>
-                                                                    Hover for
-                                                                    details
-                                                                </span>
-                                                            </div>
-                                                            <div className="opacity-0 group-hover:opacity-100 invisible group-hover:visible absolute z-10 mt-2 w-64 p-3 bg-surfaceContainer text-onSurface text-sm rounded-lg shadow-xl border border-surfaceContainerHigh transition-all duration-200">
-                                                                {
-                                                                    option.description
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    )
-                                                )}
+                                                        )
+                                                    )}
+                                                </div>
                                             </div>
-                                        </div>
-                                    )
-                                )}
+                                        )
+                                    )}
+                                </div>
+                            </div>
+                        </form>
+
+                        <div className="pt-6 border-t border-surfaceContainerHigh">
+                            <div className="flex justify-end space-x-3">
+                                <button
+                                    type="button"
+                                    onClick={handleClose}
+                                    className="px-6 py-3 text-onSurface bg-surfaceContainer rounded-xl hover:bg-surfaceContainerHigh transition-colors duration-200 font-medium"
+                                    disabled={isProcessingVehicle}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    onClick={handleSubmit}
+                                    disabled={isProcessingVehicle}
+                                    className={`px-6 py-3 flex items-center rounded-xl font-medium transition-colors duration-200 ${
+                                        isProcessingVehicle
+                                            ? "bg-surfaceContainer text-onSurface/50"
+                                            : "bg-primary text-surfaceContainer hover:bg-primary-600"
+                                    }`}
+                                >
+                                    <FiCheck className="mr-2" />
+                                    {isProcessingVehicle
+                                        ? "Creating..."
+                                        : "Create Vehicle"}
+                                </button>
                             </div>
                         </div>
-
-                        {/* Form Actions */}
-                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainerHigh">
-                            <button
-                                type="button"
-                                onClick={onClose}
-                                className="px-6 py-3 text-onSurface bg-surfaceContainer rounded-lg hover:bg-surfaceContainerHigh transition-colors duration-200 font-medium"
-                                disabled={isProcessingVehicle}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                type="submit"
-                                disabled={isProcessingVehicle}
-                                className={`px-6 py-3 flex items-center rounded-lg font-medium transition-all duration-200 ${
-                                    isProcessingVehicle
-                                        ? "bg-surfaceContainer text-onSurface/50 cursor-not-allowed"
-                                        : "bg-primary text-onPrimary hover:bg-primary/90 hover:shadow-lg transform hover:scale-105"
-                                }`}
-                            >
-                                {isProcessingVehicle ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-onPrimary border-t-transparent rounded-full animate-spin mr-2"></div>
-                                        Creating...
-                                    </>
-                                ) : (
-                                    <>
-                                        <FiCheck className="mr-2" />
-                                        Create Vehicle
-                                    </>
-                                )}
-                            </button>
-                        </div>
-
-                        {/* Success Message */}
-                        {showSuccess && (
-                            <SuccessMessage message="Vehicle created successfully!" />
-                        )}
-                    </form>
+                    </div>
                 </div>
             </DialogPanel>
         </BaseModal>

@@ -2,6 +2,7 @@ import LocationCreateModal from "@/Components/Modals/Location/LocationCreateModa
 import LocationDeleteModal from "@/Components/Modals/Location/LocationDeleteModal";
 import LocationEditModal from "@/Components/Modals/Location/LocationEditModal";
 import LocationShowModal from "@/Components/Modals/Location/LocationShowModal";
+import { SURFACE_TYPES_MAP } from "@/constants";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { LocationSummary, PageProps, PaginatedData } from "@/types";
@@ -189,7 +190,10 @@ const LocationIndex = () => {
                                               </td>
                                               <td className="px-6 py-4 whitespace-nowrap">
                                                   <div className="text-sm text-onSurface">
-                                                      {location.surfaceType}
+                                                      {SURFACE_TYPES_MAP[
+                                                          location.surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                                      ]?.text ||
+                                                          location.surfaceType}
                                                   </div>
                                               </td>
                                               <td className="px-6 py-4 whitespace-nowrap text-sm text-onSurface">

@@ -1,14 +1,17 @@
-import {
-    Dialog,
-    DialogBackdrop,
-    DialogPanel,
-    DialogTitle,
-    Transition,
-    TransitionChild,
-} from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { DialogPanel, DialogTitle } from "@headlessui/react";
+import { useEffect, useState } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { FiX, FiCheck, FiEye, FiEyeOff } from "react-icons/fi";
+import {
+    FiX,
+    FiCheck,
+    FiEye,
+    FiEyeOff,
+    FiUser,
+    FiMail,
+    FiShield,
+    FiLock,
+    FiAlertCircle,
+} from "react-icons/fi";
 import { User } from "@/types";
 import BaseModal from "../BaseModal";
 
@@ -37,6 +40,7 @@ export default function UserCreateModal({
         isProcessing,
         errors,
         reset,
+        clearErrors,
     } = useAxiosForm<User, UserFormData>({
         username: "",
         email: "",
@@ -45,12 +49,19 @@ export default function UserCreateModal({
     });
 
     const [showPassword, setShowPassword] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
     // Reset form when modal opens
     useEffect(() => {
         if (isOpen) {
             reset();
+            clearErrors();
             setShowPassword(false);
+            setShowSuccess(false);
+            setShowError(false);
+            setErrorMessage("");
         }
     }, [isOpen]);
 
@@ -59,6 +70,12 @@ export default function UserCreateModal({
     ) => {
         const { name, value } = e.target;
         setData((prev) => ({ ...prev, [name]: value }));
+
+        // Clear error when user starts typing
+        if (errors[name as keyof typeof errors]) {
+            clearErrors();
+            setShowError(false);
+        }
     };
 
     const togglePasswordVisibility = () => {
@@ -67,182 +84,290 @@ export default function UserCreateModal({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        setShowSuccess(false);
+        setShowError(false);
+        setErrorMessage("");
+
         postUser(route("api.users.store"), {
             onSuccess: (res) => {
-                onSuccess(res.data);
-                onClose();
+                setShowSuccess(true);
+                setTimeout(() => {
+                    onSuccess(res.data);
+                    onClose();
+                }, 1500);
+            },
+            onError: (error) => {
+                setShowError(true);
+                setErrorMessage(
+                    error.response?.data?.message ||
+                        "An error occurred while creating the user. Please try again."
+                );
             },
         });
     };
 
+    const handleClose = () => {
+        setShowSuccess(false);
+        setShowError(false);
+        setErrorMessage("");
+        clearErrors();
+        onClose();
+    };
+
     return (
-        <BaseModal isOpen={isOpen} onClose={onClose}>
-            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-md transform transition-all">
-                <div className="p-6">
-                    <div className="flex justify-between items-center mb-6">
-                        <DialogTitle className="text-2xl font-bold text-onSurface">
-                            Create New User
-                        </DialogTitle>
+        <BaseModal isOpen={isOpen} onClose={handleClose}>
+            <DialogPanel className="bg-surfaceContainer rounded-xl shadow-2xl w-full max-w-md transform transition-all overflow-hidden">
+                <div className="flex flex-col">
+                    {/* Header Section */}
+                    <div className="p-6 bg-gradient-to-r from-surfaceContainerHigh to-surfaceContainer flex justify-between items-center">
+                        <div className="flex items-center">
+                            <div className="bg-primaryContainer/20 p-3 rounded-lg mr-4">
+                                <FiUser className="text-primary text-xl" />
+                            </div>
+                            <div>
+                                <DialogTitle className="text-2xl font-bold text-onSurface">
+                                    Create User
+                                </DialogTitle>
+                                <p className="text-onSurface/70 text-sm">
+                                    Add a new user account
+                                </p>
+                            </div>
+                        </div>
                         <button
-                            onClick={onClose}
-                            className="text-onSurface hover:text-primary"
+                            onClick={handleClose}
+                            className="text-onSurface hover:text-primary transition-colors duration-200 p-1 rounded-full hover:bg-surfaceContainerHigh"
                         >
                             <FiX size={24} />
                         </button>
                     </div>
 
-                    <form onSubmit={handleSubmit}>
-                        <div className="space-y-4 mb-6">
-                            {/* Username */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
+                    {/* Content Section */}
+                    <div className="p-6 space-y-6">
+                        {/* Success Message */}
+                        {showSuccess && (
+                            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg flex items-center">
+                                <FiCheck className="mr-2 text-green-600" />
+                                <span>User created successfully!</span>
+                            </div>
+                        )}
+
+                        {/* Error Message */}
+                        {showError && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg flex items-start">
+                                <FiAlertCircle className="mr-2 text-red-600 mt-0.5 flex-shrink-0" />
+                                <span>{errorMessage}</span>
+                                <button
+                                    onClick={() => setShowError(false)}
+                                    className="ml-auto text-red-700 hover:text-red-900"
+                                >
+                                    <FiX size={18} />
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Username */}
+                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                            <div className="flex items-center mb-3">
+                                <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
+                                    <FiUser className="text-primary text-lg" />
+                                </div>
+                                <label className="block text-sm font-medium text-onSurface/70">
                                     Username
                                 </label>
-                                <input
-                                    type="text"
-                                    name="username"
-                                    value={data.username}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                    placeholder="e.g., MechaMic_38"
-                                    required
-                                    autoFocus
-                                />
                             </div>
-
-                            {/* Email */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Email Address
-                                </label>
-                                <input
-                                    type="email"
-                                    name="email"
-                                    value={data.email}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                    placeholder="user@example.com"
-                                    required
-                                />
-                            </div>
-
-                            {/* Password */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Password
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        type={
-                                            showPassword ? "text" : "password"
-                                        }
-                                        name="password"
-                                        value={data.password}
-                                        onChange={handleInputChange}
-                                        className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface pr-10"
-                                        placeholder="••••••••"
-                                        required
-                                        minLength={6}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={togglePasswordVisibility}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-onSurface/70 hover:text-onSurface"
-                                    >
-                                        {showPassword ? (
-                                            <FiEyeOff />
-                                        ) : (
-                                            <FiEye />
-                                        )}
-                                    </button>
-                                </div>
-                                <p className="mt-1 text-xs text-onSurface/50">
-                                    Minimum 6 characters
+                            <input
+                                type="text"
+                                name="username"
+                                value={data.username}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
+                                placeholder="e.g., MechaMic_38"
+                                required
+                                autoFocus
+                            />
+                            {errors.username && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center">
+                                    <FiAlertCircle className="mr-1" />
+                                    {errors.username}
                                 </p>
-                            </div>
-
-                            {/* Role */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Account Type
-                                </label>
-                                <div className="grid grid-cols-2 gap-3">
-                                    <label
-                                        className={`flex items-center justify-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                                            data.role === "admin"
-                                                ? "border-primary bg-primary/10"
-                                                : "border-surfaceContainer hover:bg-surfaceContainer/30"
-                                        }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value="admin"
-                                            checked={data.role === "admin"}
-                                            onChange={handleInputChange}
-                                            className="hidden"
-                                        />
-                                        <div className="text-center">
-                                            <div className="font-medium">
-                                                Admin
-                                            </div>
-                                            <div className="text-xs mt-1 text-onSurface/70">
-                                                Full access
-                                            </div>
-                                        </div>
-                                    </label>
-
-                                    <label
-                                        className={`flex items-center justify-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                                            data.role === "user"
-                                                ? "border-primary bg-primary/10"
-                                                : "border-surfaceContainer hover:bg-surfaceContainer/30"
-                                        }`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="role"
-                                            value="user"
-                                            checked={data.role === "user"}
-                                            onChange={handleInputChange}
-                                            className="hidden"
-                                        />
-                                        <div className="text-center">
-                                            <div className="font-medium">
-                                                Regular User
-                                            </div>
-                                            <div className="text-xs mt-1 text-onSurface/70">
-                                                Limited access
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
+                            )}
                         </div>
 
-                        {/* Form Actions */}
-                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
+                        {/* Email */}
+                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                            <div className="flex items-center mb-3">
+                                <div className="bg-secondaryContainer/20 p-2 rounded-lg mr-3">
+                                    <FiMail className="text-secondary text-lg" />
+                                </div>
+                                <label className="block text-sm font-medium text-onSurface/70">
+                                    Email Address
+                                </label>
+                            </div>
+                            <input
+                                type="email"
+                                name="email"
+                                value={data.email}
+                                onChange={handleInputChange}
+                                className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
+                                placeholder="user@example.com"
+                                required
+                            />
+                            {errors.email && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center">
+                                    <FiAlertCircle className="mr-1" />
+                                    {errors.email}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Password */}
+                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                            <div className="flex items-center mb-3">
+                                <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
+                                    <FiLock className="text-tertiary text-lg" />
+                                </div>
+                                <label className="block text-sm font-medium text-onSurface/70">
+                                    Password
+                                </label>
+                            </div>
+                            <div className="relative">
+                                <input
+                                    type={showPassword ? "text" : "password"}
+                                    name="password"
+                                    value={data.password}
+                                    onChange={handleInputChange}
+                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary pr-10"
+                                    placeholder="••••••••"
+                                    required
+                                    minLength={6}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={togglePasswordVisibility}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-onSurface/70 hover:text-onSurface transition-colors duration-200"
+                                >
+                                    {showPassword ? (
+                                        <FiEyeOff className="text-lg" />
+                                    ) : (
+                                        <FiEye className="text-lg" />
+                                    )}
+                                </button>
+                            </div>
+                            <p className="mt-2 text-xs text-onSurface/50">
+                                Minimum 6 characters
+                            </p>
+                            {errors.password && (
+                                <p className="text-red-500 text-sm mt-1 flex items-center">
+                                    <FiAlertCircle className="mr-1" />
+                                    {errors.password}
+                                </p>
+                            )}
+                        </div>
+
+                        {/* Role */}
+                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                            <div className="flex items-center mb-3">
+                                <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
+                                    <FiShield className="text-primary text-lg" />
+                                </div>
+                                <label className="block text-sm font-medium text-onSurface/70">
+                                    Account Type
+                                </label>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                                <label
+                                    className={`flex flex-col items-center justify-center p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                                        data.role === "admin"
+                                            ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                                            : "border-surfaceContainerHigh hover:border-primary/30 hover:bg-surfaceContainer/50"
+                                    }`}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="role"
+                                        value="admin"
+                                        checked={data.role === "admin"}
+                                        onChange={handleInputChange}
+                                        className="hidden"
+                                    />
+                                    <FiShield
+                                        className={`text-lg mb-2 ${
+                                            data.role === "admin"
+                                                ? "text-primary"
+                                                : "text-onSurface/70"
+                                        }`}
+                                    />
+                                    <div className="text-center">
+                                        <div className="font-medium text-onSurface">
+                                            Admin
+                                        </div>
+                                        <div className="text-xs mt-1 text-onSurface/60">
+                                            Full access
+                                        </div>
+                                    </div>
+                                </label>
+
+                                <label
+                                    className={`flex flex-col items-center justify-center p-4 rounded-xl border cursor-pointer transition-all duration-200 ${
+                                        data.role === "user"
+                                            ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                                            : "border-surfaceContainerHigh hover:border-primary/30 hover:bg-surfaceContainer/50"
+                                    }`}
+                                >
+                                    <input
+                                        type="radio"
+                                        name="role"
+                                        value="user"
+                                        checked={data.role === "user"}
+                                        onChange={handleInputChange}
+                                        className="hidden"
+                                    />
+                                    <FiUser
+                                        className={`text-lg mb-2 ${
+                                            data.role === "user"
+                                                ? "text-primary"
+                                                : "text-onSurface/70"
+                                        }`}
+                                    />
+                                    <div className="text-center">
+                                        <div className="font-medium text-onSurface">
+                                            Regular User
+                                        </div>
+                                        <div className="text-xs mt-1 text-onSurface/60">
+                                            Limited access
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Footer Section */}
+                    <div className="p-6 pt-0">
+                        <div className="flex justify-end space-x-3">
                             <button
                                 type="button"
-                                onClick={onClose}
-                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
+                                onClick={handleClose}
+                                className="px-6 py-3 text-onSurface bg-surfaceContainer rounded-xl hover:bg-surfaceContainerHigh transition-colors duration-200 font-medium"
+                                disabled={isProcessing}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
+                                onClick={handleSubmit}
                                 disabled={isProcessing}
-                                className={`px-4 py-2 flex items-center ${
+                                className={`px-6 py-3 flex items-center rounded-xl font-medium transition-colors duration-200 ${
                                     isProcessing
                                         ? "bg-surfaceContainer text-onSurface/50"
                                         : "bg-primary text-surfaceContainer hover:bg-primary-600"
-                                } rounded-md`}
+                                }`}
                             >
                                 <FiCheck className="mr-2" />
                                 {isProcessing ? "Creating..." : "Create User"}
                             </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </DialogPanel>
         </BaseModal>

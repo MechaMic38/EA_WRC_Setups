@@ -1,14 +1,6 @@
 import { Vehicle } from "@/types";
-import {
-    Dialog,
-    DialogBackdrop,
-    DialogPanel,
-    DialogTitle,
-    Transition,
-    TransitionChild,
-} from "@headlessui/react";
-import { Fragment } from "react";
-import { FiX, FiInfo, FiStar, FiAward, FiPackage } from "react-icons/fi";
+import { DialogPanel, DialogTitle } from "@headlessui/react";
+import { FiX, FiPackage } from "react-icons/fi";
 import BaseModal from "../BaseModal";
 import { BsTools } from "react-icons/bs";
 
