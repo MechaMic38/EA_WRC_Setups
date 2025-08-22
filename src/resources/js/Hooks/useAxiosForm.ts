@@ -79,7 +79,7 @@ export default function useAxiosForm<
         isRecentlySuccessful,
         get: wrapRequest('get'),
         post: wrapRequest('post'),
-        patch: wrapRequest('put'),
+        put: wrapRequest('put'),
         patch: wrapRequest('patch'),
         delete: wrapRequest('delete')
     };

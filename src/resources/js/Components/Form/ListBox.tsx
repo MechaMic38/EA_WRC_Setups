@@ -8,27 +8,37 @@ import {
 import React, { Fragment } from "react";
 import { FiChevronRight } from "react-icons/fi";
 
-interface SelectOption {
+interface Option {
     id: string;
     name: string;
     imgPath: string;
 }
 
-interface SelectProps {
-    options: SelectOption[];
-    selectedOption: SelectOption | null;
-    onChange: (option: SelectOption | null) => void;
+interface ListBoxProps {
+    options: Option[];
+    selectedOption: Option | null;
+    placeholder?: string;
+    error?: string | null;
+    onChange: (option: Option | null) => void;
 }
 
-export default function Select({
+export default function ListBox({
     options,
     selectedOption,
+    placeholder = "Select an option",
+    error = null,
     onChange,
-}: SelectProps) {
+}: ListBoxProps) {
     return (
         <Listbox value={selectedOption} onChange={onChange}>
             <div className="relative">
-                <ListboxButton className="w-full px-4 py-2 text-left bg-surfaceContainer rounded-md border border-outline focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between">
+                <ListboxButton
+                    className={`w-full px-4 py-2 text-left bg-surface rounded-md border focus:outline-none focus:ring-2 focus:ring-primary hover:border-primary flex items-center justify-between ${
+                        error
+                            ? "border-error focus:ring-error"
+                            : "border-outline hover:border-outline"
+                    }`}
+                >
                     {selectedOption ? (
                         <div className="flex items-center gap-2">
                             <img
@@ -39,7 +49,7 @@ export default function Select({
                             <span>{selectedOption.name}</span>
                         </div>
                     ) : (
-                        <span>All Categories</span>
+                        <span>{placeholder}</span>
                     )}
                     <FiChevronRight className="w-4 h-4 text-onSurface" />
                 </ListboxButton>
@@ -50,13 +60,13 @@ export default function Select({
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                 >
-                    <ListboxOptions className="absolute z-20 mt-1 w-full bg-surfaceContainer rounded-md shadow-lg max-h-60 py-1 text-base overflow-auto focus:outline-none">
+                    <ListboxOptions className="absolute z-20 mt-1 w-full bg-surfaceContainerHigh rounded-md shadow-lg max-h-60 py-1 text-base overflow-auto focus:outline-none">
                         <ListboxOption
                             key="all"
                             value={null}
                             className={({ active }) =>
                                 `cursor-pointer select-none relative py-2 pl-4 pr-10 ${
-                                    active ? "bg-surfaceContainerHigh" : ""
+                                    active ? "bg-surfaceContainerHighest" : ""
                                 }`
                             }
                         >
@@ -67,7 +77,7 @@ export default function Select({
                                             selected ? "font-semibold" : ""
                                         }`}
                                     >
-                                        All Categories
+                                        {placeholder}
                                     </span>
                                 </div>
                             )}
@@ -78,7 +88,9 @@ export default function Select({
                                 value={option}
                                 className={({ active }) =>
                                     `cursor-pointer select-none relative py-2 pl-4 pr-10 ${
-                                        active ? "bg-surfaceContainerHigh" : ""
+                                        active
+                                            ? "bg-surfaceContainerHighest"
+                                            : ""
                                     }`
                                 }
                             >

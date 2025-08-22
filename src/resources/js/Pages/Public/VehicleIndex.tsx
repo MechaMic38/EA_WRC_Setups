@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { FiChevronRight, FiFilter, FiX } from "react-icons/fi";
 import { Listbox, Transition } from "@headlessui/react";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
-import Select from "@/Components/Form/Select";
+import ListBox from "@/Components/Form/ListBox";
 
 export default function VehicleIndex() {
     // API hooks
@@ -107,7 +107,7 @@ export default function VehicleIndex() {
                             <h3 className="text-sm font-medium text-onSurface mb-2">
                                 Category
                             </h3>
-                            <Select
+                            <ListBox
                                 options={categories}
                                 selectedOption={filters.category}
                                 onChange={onCategoryChange}
@@ -119,7 +119,7 @@ export default function VehicleIndex() {
                             <h3 className="text-sm font-medium text-onSurface mb-2">
                                 Manufacturer
                             </h3>
-                            <Select
+                            <ListBox
                                 options={manufacturers}
                                 selectedOption={filters.manufacturer}
                                 onChange={onManufacturerChange}

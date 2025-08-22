@@ -7,11 +7,13 @@ import {
     Transition,
     TransitionChild,
 } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiTrash2, FiAlertTriangle } from "react-icons/fi";
 import { Vehicle } from "@/types";
 import BaseModal from "../BaseModal";
+import SuccessMessage from "@/Components/Form/SuccessMessage";
+import ErrorMessage from "@/Components/Form/ErrorMessage";
 
 interface VehicleDeleteModalProps {
     isOpen: boolean;
@@ -28,13 +30,26 @@ export default function VehicleDeleteModal({
 }: VehicleDeleteModalProps) {
     const { delete: deleteVehicle, isProcessing } = useAxiosForm<void>([]);
 
+    const [showSuccess, setShowSuccess] = useState(false);
+    const [showError, setShowError] = useState(false);
+
     const handleDelete = () => {
+        setShowSuccess(false);
+        setShowError(false);
+
         if (!vehicle) return;
 
         deleteVehicle(route("api.vehicles.destroy", { vehicle: vehicle.id }), {
             onSuccess: () => {
-                onSuccess();
-                onClose();
+                setShowSuccess(true);
+                setTimeout(() => {
+                    onSuccess();
+                    onClose();
+                    setShowSuccess(false);
+                }, 1500);
+            },
+            onError: () => {
+                setShowError(true);
             },
         });
     };
@@ -107,6 +122,14 @@ export default function VehicleDeleteModal({
                             {isProcessing ? "Deleting..." : "Delete Vehicle"}
                         </button>
                     </div>
+
+                    {/* Messages */}
+                    {showSuccess && (
+                        <SuccessMessage message="Vehicle removed successfully!" />
+                    )}
+                    {showError && (
+                        <ErrorMessage message="An error occurred while deleting the vehicle." />
+                    )}
                 </div>
             </DialogPanel>
         </BaseModal>

@@ -1,6 +1,6 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { FiX, FiInfo, FiCheck } from "react-icons/fi";
+import { FiX, FiInfo, FiCheck, FiAlertCircle } from "react-icons/fi";
 import {
     Category,
     Manufacturer,
@@ -10,15 +10,17 @@ import {
 } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
 import {
-    Dialog,
-    DialogBackdrop,
     DialogPanel,
     DialogTitle,
-    Transition,
-    TransitionChild,
+    Field,
+    Input,
+    Label,
 } from "@headlessui/react";
-import Select from "@/Components/Form/Select";
+import ListBox from "@/Components/Form/ListBox";
 import BaseModal from "../BaseModal";
+import TextInput from "@/Components/Form/TextInput";
+import SuccessMessage from "@/Components/Form/SuccessMessage";
+import ErrorText from "@/Components/Form/ErrorText";
 
 interface CreateVehicleFormData {
     name: string;
@@ -52,6 +54,8 @@ export default function VehicleCreateModal({
         post: postVehicle,
         isProcessing: isProcessingVehicle,
         errors,
+        setError,
+        clearErrors,
     } = useAxiosForm<Vehicle, CreateVehicleFormData>({
         name: "",
         manufacturer_id: "",
@@ -76,6 +80,15 @@ export default function VehicleCreateModal({
     const [selectedCategory, setSelectedCategory] = useState<Category | null>(
         null
     );
+    const [showSuccess, setShowSuccess] = useState(false);
+
+    // Clear errors when modal opens/closes
+    useEffect(() => {
+        if (isOpen) {
+            clearErrors();
+            setShowSuccess(false);
+        }
+    }, [isOpen]);
 
     // Fetch initial data
     useEffect(() => {
@@ -96,7 +109,7 @@ export default function VehicleCreateModal({
     }, []);
 
     /**
-     * Handle input change
+     * Handles input change events for form fields.
      * @param e The change event
      */
     const handleInputChange = (
@@ -107,7 +120,7 @@ export default function VehicleCreateModal({
     };
 
     /**
-     * Handle manufacturer selection change
+     * Handles manufacturer selection change.
      * @param manufacturer The selected manufacturer
      */
     const onManufacturerChange = (manufacturer: Manufacturer | null) => {
@@ -119,7 +132,7 @@ export default function VehicleCreateModal({
     };
 
     /**
-     * Handle category selection change
+     * Handles category selection change.
      * @param category The selected category
      */
     const onCategoryChange = (category: Category | null) => {
@@ -128,13 +141,17 @@ export default function VehicleCreateModal({
     };
 
     /**
-     * Handle image change
+     * Handles image change.
      * @param file The selected image file
      */
     const onImageChange = (file: File | null) => {
         setData((prev) => ({ ...prev, img: file }));
     };
 
+    /**
+     * Handles setup option toggle.
+     * @param optionId The ID of the setup option
+     */
     const toggleOption = (optionId: string) => {
         setData((prev) => {
             const newOptions = prev.setup_options.includes(optionId)
@@ -144,13 +161,51 @@ export default function VehicleCreateModal({
         });
     };
 
+    /**
+     * Validates the form data.
+     * @returns True if the form is valid, false otherwise.
+     */
+    const validateForm = () => {
+        clearErrors();
+        let isValid = true;
+
+        if (!data.name) {
+            setError("name", "Name is required");
+            isValid = false;
+        }
+        if (!data.manufacturer_id) {
+            setError("manufacturer_id", "Manufacturer is required");
+            isValid = false;
+        }
+        if (!data.category_id) {
+            setError("category_id", "Category is required");
+            isValid = false;
+        }
+        if (!data.img) {
+            setError("img", "Image is required");
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    /**
+     * Handles form submission.
+     * @param e The form event
+     */
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        if (!validateForm()) return;
+
         postVehicle(route("api.vehicles.store"), {
             onSuccess: (res) => {
-                onSuccess(res.data);
-                onClose();
+                setShowSuccess(true);
+                setTimeout(() => {
+                    onSuccess(res.data);
+                    onClose();
+                    setShowSuccess(false);
+                }, 1500);
             },
             headers: {
                 "Content-Type": "multipart/form-data",
@@ -158,9 +213,23 @@ export default function VehicleCreateModal({
         });
     };
 
+    /**
+     * Retrieves the error message for a specific form field.
+     * @param fieldName The name of the form field
+     * @returns The error message or null if no error exists
+     */
+    const getError = (
+        fieldName: keyof CreateVehicleFormData
+    ): string | null => {
+        // Check if the field is an array or a string
+        return Array.isArray(errors[fieldName])
+            ? errors[fieldName][0]
+            : errors[fieldName] || null;
+    };
+
     return (
         <BaseModal isOpen={isOpen} onClose={onClose}>
-            <DialogPanel className="bg-surfaceContainer rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogPanel className="bg-surfaceContainer rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto border border-surfaceContainerHigh">
                 <div className="p-6">
                     <div className="flex justify-between items-center mb-6">
                         <DialogTitle className="text-2xl font-bold text-onSurface">
@@ -168,7 +237,7 @@ export default function VehicleCreateModal({
                         </DialogTitle>
                         <button
                             onClick={onClose}
-                            className="text-onSurface hover:text-primary"
+                            className="text-onSurface hover:text-primary transition-colors duration-200 p-1 rounded-full hover:bg-surfaceContainerHigh"
                         >
                             <FiX size={24} />
                         </button>
@@ -177,46 +246,75 @@ export default function VehicleCreateModal({
                     <form onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             {/* Vehicle Name */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Vehicle Name
-                                </label>
-                                <input
-                                    type="text"
+                            <Field className="md:col-span-2">
+                                <Label className="block text-sm font-medium text-onSurface mb-2">
+                                    Vehicle Name *
+                                </Label>
+                                <TextInput
                                     name="name"
                                     value={data.name}
                                     onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                    required
+                                    error={getError("name")}
                                 />
-                            </div>
+                                {getError("name") && (
+                                    <ErrorText message={getError("name")!!} />
+                                )}
+                            </Field>
 
-                            {/* Manufacturer */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Manufacturer
-                                </label>
-                                <Select
-                                    options={manufacturers}
-                                    selectedOption={selectedManufacturer}
-                                    onChange={onManufacturerChange}
-                                />
-                            </div>
+                            {/* Make both selects as distant as possible within the cell */}
+                            <div className="flex flex-col justify-between">
+                                {/* Manufacturer */}
+                                <Field>
+                                    <Label className="block text-sm font-medium text-onSurface mb-2">
+                                        Manufacturer *
+                                    </Label>
+                                    <ListBox
+                                        options={manufacturers}
+                                        selectedOption={selectedManufacturer}
+                                        error={getError("manufacturer_id")}
+                                        onChange={onManufacturerChange}
+                                    />
+                                    {getError("manufacturer_id") && (
+                                        <ErrorText
+                                            message={
+                                                getError("manufacturer_id")!!
+                                            }
+                                        />
+                                    )}
+                                </Field>
 
-                            {/* Category */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
-                                    Category
-                                </label>
-                                <Select
-                                    options={categories}
-                                    selectedOption={selectedCategory}
-                                    onChange={onCategoryChange}
-                                />
+                                {/* Category */}
+                                <Field>
+                                    <Label className="block text-sm font-medium text-onSurface mb-2">
+                                        Category *
+                                    </Label>
+                                    <ListBox
+                                        options={categories}
+                                        selectedOption={selectedCategory}
+                                        error={getError("category_id")}
+                                        onChange={onCategoryChange}
+                                    />
+                                    {getError("category_id") && (
+                                        <ErrorText
+                                            message={getError("category_id")!!}
+                                        />
+                                    )}
+                                </Field>
                             </div>
 
                             {/* Image Upload */}
-                            <ImagePicker onChange={onImageChange} />
+                            <Field>
+                                <Label className="block text-sm font-medium text-onSurface mb-2">
+                                    Vehicle Image *
+                                </Label>
+                                <ImagePicker
+                                    onChange={onImageChange}
+                                    error={getError("img")}
+                                />
+                                {getError("img") && (
+                                    <ErrorText message={getError("img")!!} />
+                                )}
+                            </Field>
                         </div>
 
                         {/* Setup Options */}
@@ -230,10 +328,13 @@ export default function VehicleCreateModal({
                                 </span>
                             </div>
 
-                            <div className="bg-surface rounded-lg p-4">
+                            <div className="bg-surface rounded-xl p-4 border border-surfaceContainerHigh">
                                 {Object.entries(setupOptions).map(
                                     ([category, options]) => (
-                                        <div key={category} className="mb-6">
+                                        <div
+                                            key={category}
+                                            className="mb-6 last:mb-0"
+                                        >
                                             <h4 className="text-md font-medium text-onSurface mb-3 capitalize">
                                                 {category.replace("_", " ")}
                                             </h4>
@@ -242,12 +343,12 @@ export default function VehicleCreateModal({
                                                     ([optionId, option]) => (
                                                         <div
                                                             key={optionId}
-                                                            className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                                                            className={`p-4 rounded-lg border cursor-pointer transition-all duration-200 group relative ${
                                                                 data.setup_options.includes(
                                                                     optionId
                                                                 )
-                                                                    ? "border-primary bg-primary/10"
-                                                                    : "border-surfaceContainer hover:bg-surfaceContainer/30"
+                                                                    ? "border-primary bg-primary/10 shadow-lg shadow-primary/10"
+                                                                    : "border-surfaceContainerHigh hover:border-primary hover:bg-surfaceContainer/50"
                                                             }`}
                                                             onClick={() =>
                                                                 toggleOption(
@@ -256,28 +357,35 @@ export default function VehicleCreateModal({
                                                             }
                                                         >
                                                             <div className="flex justify-between items-start">
-                                                                <span className="text-onSurface">
+                                                                <span className="text-onSurface font-medium">
                                                                     {
                                                                         option.label
                                                                     }
                                                                 </span>
-                                                                <input
-                                                                    type="checkbox"
-                                                                    checked={data.setup_options.includes(
+                                                                <div
+                                                                    className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                                                                        data.setup_options.includes(
+                                                                            optionId
+                                                                        )
+                                                                            ? "bg-primary border-primary"
+                                                                            : "bg-surface border-outline"
+                                                                    }`}
+                                                                >
+                                                                    {data.setup_options.includes(
                                                                         optionId
+                                                                    ) && (
+                                                                        <FiCheck className="w-3 h-3 text-onPrimary" />
                                                                     )}
-                                                                    onChange={() => {}}
-                                                                    className="ml-2 h-5 w-5 text-primary focus:ring-primary"
-                                                                />
+                                                                </div>
                                                             </div>
-                                                            <div className="flex items-center mt-2 text-sm text-onSurface/70">
-                                                                <FiInfo className="mr-1" />
+                                                            <div className="flex items-center mt-2 text-sm text-onSurface/60">
+                                                                <FiInfo className="mr-1 w-4 h-4" />
                                                                 <span>
                                                                     Hover for
                                                                     details
                                                                 </span>
                                                             </div>
-                                                            <div className="hidden group-hover:block absolute z-10 mt-2 w-64 p-3 bg-surfaceContainer text-onSurface text-sm rounded shadow-lg">
+                                                            <div className="opacity-0 group-hover:opacity-100 invisible group-hover:visible absolute z-10 mt-2 w-64 p-3 bg-surfaceContainer text-onSurface text-sm rounded-lg shadow-xl border border-surfaceContainerHigh transition-all duration-200">
                                                                 {
                                                                     option.description
                                                                 }
@@ -293,29 +401,42 @@ export default function VehicleCreateModal({
                         </div>
 
                         {/* Form Actions */}
-                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainer">
+                        <div className="flex justify-end space-x-3 pt-4 border-t border-surfaceContainerHigh">
                             <button
                                 type="button"
                                 onClick={onClose}
-                                className="px-4 py-2 text-onSurface bg-surfaceContainer rounded-md hover:bg-surfaceContainer/80"
+                                className="px-6 py-3 text-onSurface bg-surfaceContainer rounded-lg hover:bg-surfaceContainerHigh transition-colors duration-200 font-medium"
+                                disabled={isProcessingVehicle}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                disabled={isProcessingManufacturers}
-                                className={`px-4 py-2 flex items-center ${
-                                    isProcessingManufacturers
-                                        ? "bg-surfaceContainer text-onSurface/50"
-                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
-                                } rounded-md`}
+                                disabled={isProcessingVehicle}
+                                className={`px-6 py-3 flex items-center rounded-lg font-medium transition-all duration-200 ${
+                                    isProcessingVehicle
+                                        ? "bg-surfaceContainer text-onSurface/50 cursor-not-allowed"
+                                        : "bg-primary text-onPrimary hover:bg-primary/90 hover:shadow-lg transform hover:scale-105"
+                                }`}
                             >
-                                <FiCheck className="mr-2" />
-                                {isProcessingManufacturers
-                                    ? "Creating..."
-                                    : "Create Vehicle"}
+                                {isProcessingVehicle ? (
+                                    <>
+                                        <div className="w-4 h-4 border-2 border-onPrimary border-t-transparent rounded-full animate-spin mr-2"></div>
+                                        Creating...
+                                    </>
+                                ) : (
+                                    <>
+                                        <FiCheck className="mr-2" />
+                                        Create Vehicle
+                                    </>
+                                )}
                             </button>
                         </div>
+
+                        {/* Success Message */}
+                        {showSuccess && (
+                            <SuccessMessage message="Vehicle created successfully!" />
+                        )}
                     </form>
                 </div>
             </DialogPanel>

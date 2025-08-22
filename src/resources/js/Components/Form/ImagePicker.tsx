@@ -3,11 +3,13 @@ import { FiTrash2 } from "react-icons/fi";
 
 interface ImagePickerProps {
     fileUrl?: string | null;
+    error?: string | null;
     onChange: (file: File | null) => void;
 }
 
 export default function ImagePicker({
     fileUrl = null,
+    error = null,
     onChange,
 }: ImagePickerProps) {
     const [imgPreview, setImgPreview] = useState<string | null>(null);
@@ -41,7 +43,11 @@ export default function ImagePicker({
 
     return (
         <div className="relative">
-            <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-surfaceContainer rounded-lg cursor-pointer bg-surface overflow-hidden">
+            <label
+                className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-surface overflow-hidden ${
+                    error ? "border-error" : "border-surfaceContainer"
+                }`}
+            >
                 {imgPreview ? (
                     <div className="w-full h-full relative">
                         <img

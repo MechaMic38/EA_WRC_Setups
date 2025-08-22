@@ -3,6 +3,8 @@ import {
     DialogBackdrop,
     DialogPanel,
     DialogTitle,
+    Field,
+    Label,
     Transition,
     TransitionChild,
 } from "@headlessui/react";
@@ -12,6 +14,10 @@ import { FiX, FiCheck, FiTrash2 } from "react-icons/fi";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
 import BaseModal from "../BaseModal";
+import ListBox from "@/Components/Form/ListBox";
+import TextInput from "@/Components/Form/TextInput";
+import ErrorText from "@/Components/Form/ErrorText";
+import SuccessMessage from "@/Components/Form/SuccessMessage";
 
 interface VehicleFormData {
     _method: "PATCH";
@@ -37,10 +43,11 @@ export default function VehicleEditModal({
     const {
         data,
         setData,
-        setError,
-        post: updateVehicle,
         isProcessing,
         errors,
+        post: updateVehicle,
+        setError,
+        clearErrors,
     } = useAxiosForm<Vehicle, VehicleFormData>({
         _method: "PATCH",
         name: "",
@@ -57,7 +64,15 @@ export default function VehicleEditModal({
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
 
+    const [selectedManufacturer, setSelectedManufacturer] =
+        useState<Manufacturer | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<Category | null>(
+        null
+    );
+
     const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+    const [showSuccess, setShowSuccess] = useState(false);
 
     // Initialize form with vehicle data
     useEffect(() => {
@@ -75,6 +90,8 @@ export default function VehicleEditModal({
                 category_id: vehicle.category.id,
                 img: null,
             });
+            setSelectedManufacturer(vehicle.manufacturer);
+            setSelectedCategory(vehicle.category);
         }
     }, [vehicle, isOpen]);
 
@@ -95,6 +112,10 @@ export default function VehicleEditModal({
         }
     }, [isOpen]);
 
+    /**
+     * Handles input change events for form fields.
+     * @param e The change event
+     */
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
@@ -102,24 +123,93 @@ export default function VehicleEditModal({
         setData((prev) => ({ ...prev, [name]: value }));
     };
 
+    /**
+     * Handles manufacturer selection change.
+     * @param manufacturer The selected manufacturer
+     */
+    const onManufacturerChange = (manufacturer: Manufacturer | null) => {
+        setSelectedManufacturer(manufacturer);
+        setData((prev) => ({
+            ...prev,
+            manufacturer_id: manufacturer?.id || "",
+        }));
+    };
+
+    /**
+     * Handles category selection change.
+     * @param category The selected category
+     */
+    const onCategoryChange = (category: Category | null) => {
+        setSelectedCategory(category);
+        setData((prev) => ({ ...prev, category_id: category?.id || "" }));
+    };
+
+    /**
+     * Handles image change.
+     * @param file The selected image file
+     */
     const onImageChange = (file: File | null) => {
         setData((prev) => ({ ...prev, img: file }));
     };
 
+    const validateForm = () => {
+        clearErrors();
+        let isValid = true;
+
+        if (!data.name) {
+            setError("name", "Name is required");
+            isValid = false;
+        }
+
+        if (!selectedManufacturer) {
+            setError("manufacturer_id", "Manufacturer is required");
+            isValid = false;
+        }
+
+        if (!selectedCategory) {
+            setError("category_id", "Category is required");
+            isValid = false;
+        }
+
+        return isValid;
+    };
+
+    /**
+     * Handles form submission.
+     * @param e The form event
+     */
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!vehicle) return;
 
+        if (!validateForm()) return;
+
         updateVehicle(route("api.vehicles.update", { vehicle: vehicle.id }), {
             onSuccess: (res) => {
-                onSuccess(res.data);
-                onClose();
+                setShowSuccess(true);
+                setTimeout(() => {
+                    onSuccess(res.data);
+                    onClose();
+                    setShowSuccess(false);
+                }, 1500);
             },
             headers: {
                 "Content-Type": "multipart/form-data",
             },
         });
+    };
+
+    /**
+     * Retrieves the error message for a specific form field.
+     * @param fieldName The name of the form field
+     * @returns The error message or null if no error exists
+     */
+    const getError = (fieldName: keyof VehicleFormData): string | null => {
+        // Check if the field is an array or a string
+        return Array.isArray(errors[fieldName])
+            ? errors[fieldName][0]
+            : errors[fieldName] || null;
     };
 
     if (!vehicle) return null;
@@ -143,84 +233,70 @@ export default function VehicleEditModal({
                     <form onSubmit={handleSubmit}>
                         <div className="space-y-6 mb-6">
                             {/* Name */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
+                            <Field>
+                                <Label className="block text-sm font-medium text-onSurface mb-2">
                                     Vehicle Name
-                                </label>
-                                <input
-                                    type="text"
+                                </Label>
+                                <TextInput
                                     name="name"
                                     value={data.name}
                                     onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                    required
                                 />
-                            </div>
+                                {getError("name") && (
+                                    <ErrorText message={getError("name")!!} />
+                                )}
+                            </Field>
 
                             {/* Manufacturer */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
+                            <Field>
+                                <Label className="block text-sm font-medium text-onSurface mb-2">
                                     Manufacturer
-                                </label>
-                                <select
-                                    name="manufacturer_id"
-                                    value={data.manufacturer_id}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                    required
-                                >
-                                    <option value="">
-                                        Select Manufacturer
-                                    </option>
-                                    {manufacturers.map((manufacturer) => (
-                                        <option
-                                            key={manufacturer.id}
-                                            value={manufacturer.id}
-                                        >
-                                            {manufacturer.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                                </Label>
+                                <ListBox
+                                    options={manufacturers}
+                                    selectedOption={selectedManufacturer}
+                                    onChange={onManufacturerChange}
+                                />
+                                {getError("manufacturer_id") && (
+                                    <ErrorText
+                                        message={getError("manufacturer_id")!!}
+                                    />
+                                )}
+                            </Field>
 
                             {/* Category */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
+                            <Field>
+                                <Label className="block text-sm font-medium text-onSurface mb-2">
                                     Category
-                                </label>
-                                <select
-                                    name="category_id"
-                                    value={data.category_id}
-                                    onChange={handleInputChange}
-                                    className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
-                                    required
-                                >
-                                    <option value="">Select Category</option>
-                                    {categories.map((category) => (
-                                        <option
-                                            key={category.id}
-                                            value={category.id}
-                                        >
-                                            {category.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
+                                </Label>
+                                <ListBox
+                                    options={categories}
+                                    selectedOption={selectedCategory}
+                                    onChange={onCategoryChange}
+                                />
+                                {getError("category_id") && (
+                                    <ErrorText
+                                        message={getError("category_id")!!}
+                                    />
+                                )}
+                            </Field>
 
                             {/* Image Upload */}
-                            <div>
-                                <label className="block text-sm font-medium text-onSurface mb-2">
+                            <Field>
+                                <Label className="block text-sm font-medium text-onSurface mb-2">
                                     Vehicle Image
                                     <span className="text-xs text-onSurface/70 ml-1">
                                         (Recommended: 500x500)
                                     </span>
-                                </label>
-
+                                </Label>
                                 <ImagePicker
                                     fileUrl={imageUrl}
                                     onChange={onImageChange}
                                 />
-                            </div>
+                                {getError("img") && (
+                                    <ErrorText message={getError("img")!!} />
+                                )}
+                            </Field>
                         </div>
 
                         {/* Form Actions */}
@@ -247,6 +323,11 @@ export default function VehicleEditModal({
                                     : "Update Vehicle"}
                             </button>
                         </div>
+
+                        {/* Success Message */}
+                        {showSuccess && (
+                            <SuccessMessage message="Vehicle updated successfully!" />
+                        )}
                     </form>
                 </div>
             </DialogPanel>
