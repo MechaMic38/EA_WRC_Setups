@@ -218,8 +218,8 @@
         "tyres": ["snow"],
         "surface_conditions": ["snow"],
         "surface_type": "snow",
-        "img_banner_path": "central_europe.png",
-        "img_bg_path": "central_europe.jpg"
+        "img_banner_path": "scandia.png",
+        "img_bg_path": "scandia.jpg"
     },
     {
         "_id": 28,
@@ -234,8 +234,8 @@
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "tarmac",
-        "img_banner_path": "scandia.png",
-        "img_bg_path": "scandia.jpg"
+        "img_banner_path": "spain.png",
+        "img_bg_path": "spain.jpg"
     },
     {
         "_id": 18,
