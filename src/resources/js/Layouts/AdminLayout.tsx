@@ -94,7 +94,6 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                                     href={item.href}
                                     active={item.current}
                                     className="group flex items-center px-3 py-3 text-sm font-medium rounded-md w-full transition-colors duration-150 text-onSurface hover:bg-surfaceContainer"
-                                    activeClassName="bg-surfaceContainer text-primary"
                                 >
                                     <item.icon
                                         className={`mr-3 flex-shrink-0 h-5 w-5 ${
@@ -144,7 +143,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                                 </button>
                             </Dropdown.Trigger>
 
-                            <Dropdown.Content className="ml-14 mt-0 mb-2 origin-bottom bg-surfaceContainer border border-surfaceContainer">
+                            <Dropdown.Content>
                                 <Dropdown.Link
                                     href={route("profile.edit")}
                                     className="flex items-center transition-colors duration-150 hover:bg-surfaceContainer text-onSurface"

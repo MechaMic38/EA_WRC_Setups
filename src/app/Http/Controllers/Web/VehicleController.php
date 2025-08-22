@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VehicleResource;
 use App\Models\Vehicle;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,9 +22,15 @@ class VehicleController extends Controller
     /**
      * Display a listing of the resource for admin.
      */
-    public function adminIndex(): Response
+    public function adminIndex(Request $request): Response
     {
-        return Inertia::render('Admin/VehicleIndex', []);
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+            'category_id' => 'string',
+            'manufacturer_id' => 'string',
+        ]);
+
+        return Inertia::render('Admin/VehicleIndex', $data);
     }
 
     /**
