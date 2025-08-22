@@ -1,4 +1,10 @@
-import { DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+    DialogPanel,
+    DialogTitle,
+    Field,
+    Input,
+    Label,
+} from "@headlessui/react";
 import { useState, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiTag, FiAlertCircle } from "react-icons/fi";
@@ -154,40 +160,12 @@ export default function CategoryCreateModal({
                             </div>
                         )}
 
-                        {/* Preview Section */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                            <h3 className="text-sm font-medium text-onSurface/70 mb-3">
-                                Preview
-                            </h3>
-                            <div className="flex items-center justify-center bg-surfaceContainerHigh rounded-lg p-4 min-h-32">
-                                {data.img ? (
-                                    <img
-                                        src={URL.createObjectURL(data.img)}
-                                        alt="Category preview"
-                                        className="max-h-24 max-w-full object-contain"
-                                    />
-                                ) : (
-                                    <div className="text-onSurface/50 text-center">
-                                        <FiTag className="mx-auto text-2xl mb-2" />
-                                        <p className="text-sm">
-                                            Category preview
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
-                            {data.name && (
-                                <p className="text-onSurface font-medium text-center mt-3">
-                                    {data.name}
-                                </p>
-                            )}
-                        </div>
-
                         {/* Name Input */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
-                            <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                        <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                            <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                 Category Name
-                            </label>
-                            <input
+                            </Label>
+                            <Input
                                 type="text"
                                 value={data.name}
                                 onChange={handleInputChange}
@@ -202,16 +180,16 @@ export default function CategoryCreateModal({
                                     {errors.name}
                                 </p>
                             )}
-                        </div>
+                        </Field>
 
                         {/* Image Upload */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
-                            <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                        <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                            <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                 Category Image
                                 <span className="text-xs text-onSurface/50 ml-1">
-                                    (Recommended: 500x500)
+                                    (Recommended: 512x256)
                                 </span>
-                            </label>
+                            </Label>
                             <ImagePicker
                                 onChange={onImageChange}
                                 error={errors.img}
@@ -222,7 +200,7 @@ export default function CategoryCreateModal({
                                     {errors.img}
                                 </p>
                             )}
-                        </div>
+                        </Field>
                     </div>
 
                     {/* Footer Section */}

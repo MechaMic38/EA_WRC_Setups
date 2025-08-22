@@ -17,7 +17,13 @@ import {
     Vehicle,
 } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
-import { DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+    DialogPanel,
+    DialogTitle,
+    Field,
+    Input,
+    Label,
+} from "@headlessui/react";
 import ListBox from "@/Components/Form/ListBox";
 import BaseModal from "../BaseModal";
 
@@ -306,11 +312,11 @@ export default function VehicleCreateModal({
                             className="space-y-6 mb-8 flex-grow overflow-y-auto max-h-[60vh] pr-2"
                         >
                             {/* Vehicle Name */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Vehicle Name
-                                </label>
-                                <input
+                                </Label>
+                                <Input
                                     type="text"
                                     name="name"
                                     value={data.name}
@@ -325,17 +331,17 @@ export default function VehicleCreateModal({
                                         {getError("name")}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Manufacturer */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
                                         <BsTools className="text-primary text-lg" />
                                     </div>
-                                    <label className="block text-sm font-medium text-onSurface/70">
+                                    <Label className="block text-sm font-medium text-onSurface/70">
                                         Manufacturer
-                                    </label>
+                                    </Label>
                                 </div>
                                 <ListBox
                                     options={manufacturers}
@@ -349,17 +355,17 @@ export default function VehicleCreateModal({
                                         {getError("manufacturer_id")}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Category */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
                                         <FiPackage className="text-tertiary text-lg" />
                                     </div>
-                                    <label className="block text-sm font-medium text-onSurface/70">
+                                    <Label className="block text-sm font-medium text-onSurface/70">
                                         Category
-                                    </label>
+                                    </Label>
                                 </div>
                                 <ListBox
                                     options={categories}
@@ -373,13 +379,16 @@ export default function VehicleCreateModal({
                                         {getError("category_id")}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Image Upload */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Vehicle Image
-                                </label>
+                                    <span className="text-xs text-onSurface/50 ml-1">
+                                        (Recommended: 1280x720)
+                                    </span>
+                                </Label>
                                 <ImagePicker
                                     onChange={onImageChange}
                                     error={getError("img")}
@@ -390,18 +399,18 @@ export default function VehicleCreateModal({
                                         {getError("img")}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Setup Options */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-secondaryContainer/20 p-2 rounded-lg mr-3">
                                         <FiTool className="text-secondary text-lg" />
                                     </div>
                                     <div className="flex-grow">
-                                        <label className="block text-sm font-medium text-onSurface/70">
+                                        <Label className="block text-sm font-medium text-onSurface/70">
                                             Setup Options
-                                        </label>
+                                        </Label>
                                         <p className="text-xs text-onSurface/50">
                                             {data.setup_options.length} selected
                                         </p>
@@ -484,7 +493,7 @@ export default function VehicleCreateModal({
                                         )
                                     )}
                                 </div>
-                            </div>
+                            </Field>
                         </form>
 
                         <div className="pt-6 border-t border-surfaceContainerHigh">

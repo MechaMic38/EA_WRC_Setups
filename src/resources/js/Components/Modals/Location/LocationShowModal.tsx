@@ -1,16 +1,14 @@
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { Location, LocationSummary } from "@/types";
 import { DialogPanel, DialogTitle } from "@headlessui/react";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FiX, FiMap, FiCalendar, FiCloud, FiInfo } from "react-icons/fi";
 import BaseModal from "../BaseModal";
 import {
     SEASONS_MAP,
     SURFACE_CONDITIONS_MAP,
     SURFACE_TYPES_MAP,
-    TYRES_MAP,
 } from "@/constants";
-import { GiCarWheel } from "react-icons/gi";
 
 interface LocationShowModalProps {
     isOpen: boolean;

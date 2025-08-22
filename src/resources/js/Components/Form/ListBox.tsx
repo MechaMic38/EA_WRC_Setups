@@ -36,7 +36,7 @@ export default function ListBox({
                     className={`w-full px-4 py-2 text-left bg-surface rounded-md border focus:outline-none focus:ring-2 focus:ring-primary hover:border-primary flex items-center justify-between ${
                         error
                             ? "border-error focus:ring-error"
-                            : "border-outline hover:border-outline"
+                            : "border-surfaceContainerHigh hover:border-outline"
                     }`}
                 >
                     {selectedOption ? (

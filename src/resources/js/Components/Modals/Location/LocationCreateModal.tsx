@@ -1,18 +1,17 @@
 import {
-    Dialog,
-    DialogBackdrop,
     DialogPanel,
     DialogTitle,
-    Transition,
-    TransitionChild,
+    Field,
+    Input,
+    Label,
+    Select,
+    Textarea,
 } from "@headlessui/react";
-import { Fragment, useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import {
     FiX,
     FiCheck,
-    FiInfo,
-    FiTrash2,
     FiMap,
     FiCalendar,
     FiCloud,
@@ -253,11 +252,11 @@ export default function LocationCreateModal({
                             className="space-y-6 mb-8 flex-grow overflow-y-auto max-h-[60vh] pr-2"
                         >
                             {/* Name */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Location Name
-                                </label>
-                                <input
+                                </Label>
+                                <Input
                                     type="text"
                                     name="name"
                                     value={data.name}
@@ -272,14 +271,14 @@ export default function LocationCreateModal({
                                         {errors.name}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Description */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Description
-                                </label>
-                                <textarea
+                                </Label>
+                                <Textarea
                                     name="description"
                                     value={data.description}
                                     onChange={handleInputChange}
@@ -294,19 +293,19 @@ export default function LocationCreateModal({
                                         {errors.description}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Surface Type */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
                                         <FiMap className="text-primary text-lg" />
                                     </div>
-                                    <label className="block text-sm font-medium text-onSurface/70">
+                                    <Label className="block text-sm font-medium text-onSurface/70">
                                         Surface Type
-                                    </label>
+                                    </Label>
                                 </div>
-                                <select
+                                <Select
                                     name="surface_type"
                                     value={data.surface_type}
                                     onChange={handleInputChange}
@@ -323,24 +322,24 @@ export default function LocationCreateModal({
                                             </option>
                                         )
                                     )}
-                                </select>
+                                </Select>
                                 {errors.surface_type && (
                                     <p className="text-red-500 text-sm mt-1 flex items-center">
                                         <FiAlertCircle className="mr-1" />
                                         {errors.surface_type}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Seasons */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-secondaryContainer/20 p-2 rounded-lg mr-3">
                                         <FiCalendar className="text-secondary text-lg" />
                                     </div>
-                                    <label className="block text-sm font-medium text-onSurface/70">
+                                    <Label className="block text-sm font-medium text-onSurface/70">
                                         Seasons
-                                    </label>
+                                    </Label>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     {Object.entries(SEASONS_MAP).map(
@@ -384,17 +383,17 @@ export default function LocationCreateModal({
                                         {errors.seasons}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Surface Conditions */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
                                         <FiCloud className="text-tertiary text-lg" />
                                     </div>
-                                    <label className="block text-sm font-medium text-onSurface/70">
+                                    <Label className="block text-sm font-medium text-onSurface/70">
                                         Surface Conditions
-                                    </label>
+                                    </Label>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     {Object.entries(SURFACE_CONDITIONS_MAP).map(
@@ -438,17 +437,17 @@ export default function LocationCreateModal({
                                         {errors.surface_conditions}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Tyres */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
                                         <GiCarWheel className="text-primary text-lg" />
                                     </div>
-                                    <label className="block text-sm font-medium text-onSurface/70">
+                                    <Label className="block text-sm font-medium text-onSurface/70">
                                         Recommended Tyres
-                                    </label>
+                                    </Label>
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
                                     {Object.entries(TYRES_MAP).map(
@@ -489,16 +488,16 @@ export default function LocationCreateModal({
                                         {errors.tyres}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Background Image */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Background Image
                                     <span className="text-xs text-onSurface/50 ml-1">
                                         (Recommended: 1920x1080)
                                     </span>
-                                </label>
+                                </Label>
                                 <ImagePicker
                                     onChange={onBackgroundImageChange}
                                 />
@@ -508,16 +507,16 @@ export default function LocationCreateModal({
                                         {errors.img_bg}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
 
                             {/* Banner Image */}
-                            <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
-                                <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                            <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
+                                <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Banner Image
                                     <span className="text-xs text-onSurface/50 ml-1">
-                                        (Recommended: 1200x300)
+                                        (Recommended: 512x320)
                                     </span>
-                                </label>
+                                </Label>
                                 <ImagePicker onChange={onBannerImageChange} />
                                 {errors.img_banner && (
                                     <p className="text-red-500 text-sm mt-1 flex items-center">
@@ -525,7 +524,7 @@ export default function LocationCreateModal({
                                         {errors.img_banner}
                                     </p>
                                 )}
-                            </div>
+                            </Field>
                         </form>
 
                         <div className="pt-6 border-t border-surfaceContainerHigh">

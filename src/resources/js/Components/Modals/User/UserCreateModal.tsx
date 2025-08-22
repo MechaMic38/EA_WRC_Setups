@@ -1,4 +1,10 @@
-import { DialogPanel, DialogTitle } from "@headlessui/react";
+import {
+    DialogPanel,
+    DialogTitle,
+    Field,
+    Input,
+    Label,
+} from "@headlessui/react";
 import { useEffect, useState } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import {
@@ -166,16 +172,16 @@ export default function UserCreateModal({
                         )}
 
                         {/* Username */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                        <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
                             <div className="flex items-center mb-3">
                                 <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
                                     <FiUser className="text-primary text-lg" />
                                 </div>
-                                <label className="block text-sm font-medium text-onSurface/70">
+                                <Label className="block text-sm font-medium text-onSurface/70">
                                     Username
-                                </label>
+                                </Label>
                             </div>
-                            <input
+                            <Input
                                 type="text"
                                 name="username"
                                 value={data.username}
@@ -191,19 +197,19 @@ export default function UserCreateModal({
                                     {errors.username}
                                 </p>
                             )}
-                        </div>
+                        </Field>
 
                         {/* Email */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                        <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
                             <div className="flex items-center mb-3">
                                 <div className="bg-secondaryContainer/20 p-2 rounded-lg mr-3">
                                     <FiMail className="text-secondary text-lg" />
                                 </div>
-                                <label className="block text-sm font-medium text-onSurface/70">
+                                <Label className="block text-sm font-medium text-onSurface/70">
                                     Email Address
-                                </label>
+                                </Label>
                             </div>
-                            <input
+                            <Input
                                 type="email"
                                 name="email"
                                 value={data.email}
@@ -218,20 +224,20 @@ export default function UserCreateModal({
                                     {errors.email}
                                 </p>
                             )}
-                        </div>
+                        </Field>
 
                         {/* Password */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                        <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
                             <div className="flex items-center mb-3">
                                 <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
                                     <FiLock className="text-tertiary text-lg" />
                                 </div>
-                                <label className="block text-sm font-medium text-onSurface/70">
+                                <Label className="block text-sm font-medium text-onSurface/70">
                                     Password
-                                </label>
+                                </Label>
                             </div>
                             <div className="relative">
-                                <input
+                                <Input
                                     type={showPassword ? "text" : "password"}
                                     name="password"
                                     value={data.password}
@@ -262,17 +268,17 @@ export default function UserCreateModal({
                                     {errors.password}
                                 </p>
                             )}
-                        </div>
+                        </Field>
 
                         {/* Role */}
-                        <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
+                        <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh transition-all duration-300 hover:border-primary/30">
                             <div className="flex items-center mb-3">
                                 <div className="bg-primaryContainer/20 p-2 rounded-lg mr-3">
                                     <FiShield className="text-primary text-lg" />
                                 </div>
-                                <label className="block text-sm font-medium text-onSurface/70">
+                                <Label className="block text-sm font-medium text-onSurface/70">
                                     Account Type
-                                </label>
+                                </Label>
                             </div>
                             <div className="grid grid-cols-2 gap-3">
                                 <label
@@ -339,7 +345,7 @@ export default function UserCreateModal({
                                     </div>
                                 </label>
                             </div>
-                        </div>
+                        </Field>
                     </div>
 
                     {/* Footer Section */}
