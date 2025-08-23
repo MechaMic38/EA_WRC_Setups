@@ -19,12 +19,12 @@ export default function InputSlider({
 }: InputSliderProps) {
     const { min_value, max_value, steps } = option;
 
-    // Calculate the step size (can be decimal)
+    // Calculate the step size
     const stepSize = useMemo(() => {
         return (max_value - min_value) / (steps - 1);
     }, [min_value, max_value, steps]);
 
-    // Calculate the current step index based on the value
+    // Calculate the current step index
     const currentStep = useMemo(() => {
         return Math.round((value - min_value) / stepSize);
     }, [value, min_value, stepSize]);
@@ -61,11 +61,34 @@ export default function InputSlider({
                 value={currentStep}
                 onChange={handleChange}
                 disabled={disabled}
-                className="w-full h-2 bg-surfaceContainer rounded-lg appearance-none cursor-pointer"
+                className="w-full h-3 bg-surfaceContainer rounded-full appearance-none cursor-pointer slider-thumb"
                 style={{
                     background: `linear-gradient(to right, #CFBDFE 0%, #CFBDFE ${gradientPercentage}%, #3A3643 ${gradientPercentage}%, #3A3643 100%)`,
                 }}
             />
+
+            {/* Custom slider thumb styles */}
+            <style>{`
+                .slider-thumb::-webkit-slider-thumb {
+                    appearance: none;
+                    height: 20px;
+                    width: 20px;
+                    border-radius: 50%;
+                    background: #CFBDFE;
+                    border: 2px solid #211F24;
+                    cursor: pointer;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                }
+                .slider-thumb::-moz-range-thumb {
+                    height: 20px;
+                    width: 20px;
+                    border-radius: 50%;
+                    background: #CFBDFE;
+                    border: 2px solid #211F24;
+                    cursor: pointer;
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+                }
+            `}</style>
         </div>
     );
 }

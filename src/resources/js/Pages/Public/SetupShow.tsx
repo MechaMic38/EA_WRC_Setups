@@ -12,17 +12,40 @@ import {
     FiTruck,
     FiCopy,
     FiDownload,
+    FiInfo,
+    FiCheck,
+    FiCloud,
 } from "react-icons/fi";
-import { Setup, SetupBlueprint, SetupSection } from "@/types";
+import {
+    LocationSummary,
+    Setup,
+    SetupBlueprint,
+    SetupSection,
+    Vehicle,
+} from "@/types";
 import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
+import {
+    SEASONS_MAP,
+    SURFACE_CONDITIONS_MAP,
+    SURFACE_TYPES_MAP,
+    TYRES_MAP,
+} from "@/constants";
+import { GiCarWheel } from "react-icons/gi";
 
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const { get: getSetupBlueprint, isProcessing } =
         useAxiosForm<SetupBlueprint>([]);
+    const { get: getVehicle, isProcessing: isProcessingVehicle } =
+        useAxiosForm<Vehicle>([]);
+    const { get: getLocation, isProcessing: isProcessingLocation } =
+        useAxiosForm<LocationSummary>([]);
+
     const [setup, setSetup] = useState<Setup>(initialSetup);
     const [setupBlueprint, setSetupBlueprint] = useState<SetupBlueprint | null>(
         null
     );
+    const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+    const [location, setLocation] = useState<LocationSummary | null>(null);
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
 
     useEffect(() => {
@@ -39,6 +62,18 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                 }
             );
         }
+
+        getVehicle(route("api.vehicles.show", setup?.vehicle.id), {
+            onSuccess: (response) => {
+                setVehicle(response.data);
+            },
+        });
+
+        getLocation(route("api.locations.show", setup?.location.id), {
+            onSuccess: (response) => {
+                setLocation(response.data);
+            },
+        });
     }, []);
 
     if (!setupBlueprint) {
@@ -93,30 +128,26 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
             />
 
             {/* Setup Header */}
-            <div className="bg-surfaceContainer py-6">
+            <div className="bg-surfaceContainer py-8 border-b border-surfaceContainerHigh">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <Link
                                 href={route("vehicles.show", setup.vehicle.id)}
-                                className="inline-flex items-center text-primary hover:text-primary-600 mb-2"
+                                className="inline-flex items-center text-primary hover:text-primary-600 mb-4 transition-colors duration-200"
                             >
-                                <FiChevronLeft className="mr-1" /> Back to
-                                vehicle
+                                <FiChevronLeft className="mr-2" /> Back to
+                                Vehicle
                             </Link>
-                            <h1 className="text-2xl font-bold text-onSurface">
+                            <h1 className="text-3xl font-bold text-onSurface mb-2">
                                 {setup.vehicle.name} Setup
                             </h1>
-                            <p className="text-onSurface">
-                                {setup.location.name} • {setup.surfaceCondition}{" "}
-                                • {setup.season}
-                            </p>
                         </div>
-                        <div className="flex gap-3">
-                            <button className="px-4 py-2 bg-surface text-primary border border-primary rounded-md hover:bg-surfaceContainer flex items-center">
+                        <div className="flex gap-4">
+                            <button className="px-6 py-3 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainer transition-colors duration-200 flex items-center font-medium">
                                 <FiCopy className="mr-2" /> Copy Setup
                             </button>
-                            <button className="px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600 flex items-center">
+                            <button className="px-6 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 flex items-center font-medium">
                                 <FiDownload className="mr-2" /> Export
                             </button>
                         </div>
@@ -127,110 +158,227 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
             {/* Main Content */}
             <div className="py-8 bg-surface">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Setup Meta */}
-                        <div className="lg:col-span-1">
-                            <div className="bg-surfaceContainer rounded-lg p-6 mb-6">
-                                <h3 className="text-xl font-bold text-onSurface mb-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+                        {/* Left Sidebar - Setup Details */}
+                        <div className="lg:col-span-1 space-y-6">
+                            {/* Creator and Date Card */}
+                            <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
+                                <h3 className="text-lg font-bold text-onSurface mb-4 flex items-center">
+                                    <FiInfo className="mr-2 text-primary" />
                                     Setup Details
                                 </h3>
                                 <div className="space-y-4">
                                     <div className="flex items-center">
-                                        <FiUser className="text-primary mr-3" />
+                                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                            <FiUser className="text-primary" />
+                                        </div>
                                         <div>
                                             <p className="text-sm text-onSurface/70">
                                                 Creator
                                             </p>
-                                            <p className="text-onSurface">
+                                            <p className="text-onSurface font-medium">
                                                 {setup.user.username}
                                             </p>
                                         </div>
                                     </div>
                                     <div className="flex items-center">
-                                        <FiCalendar className="text-primary mr-3" />
+                                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                            <FiCalendar className="text-primary" />
+                                        </div>
                                         <div>
                                             <p className="text-sm text-onSurface/70">
                                                 Created
                                             </p>
-                                            <p className="text-onSurface">
+                                            <p className="text-onSurface font-medium">
                                                 {new Date(
                                                     setup.createdAt
                                                 ).toLocaleDateString()}
                                             </p>
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Vehicle and Location Cards */}
+                            {vehicle && (
+                                <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden">
+                                    <div className="h-32 relative overflow-hidden bg-surfaceContainerHigh">
+                                        <img
+                                            src={vehicle.imgPath}
+                                            alt={vehicle.name}
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                        <div className="absolute top-3 right-3">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
+                                                <img
+                                                    src={
+                                                        vehicle.category.imgPath
+                                                    }
+                                                    alt={vehicle.category.name}
+                                                    className="h-4 w-4 object-contain mr-1"
+                                                />
+                                                {vehicle.category.name}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="p-4">
+                                        <div className="flex items-center mb-3">
+                                            {/* Manufacturer Logo */}
+                                            <div className="flex-shrink-0">
+                                                <img
+                                                    src={
+                                                        vehicle.manufacturer
+                                                            .imgPath
+                                                    }
+                                                    alt={
+                                                        vehicle.manufacturer
+                                                            .name
+                                                    }
+                                                    className="h-12 w-12 object-contain p-1"
+                                                />
+                                            </div>
+                                            {/* Vertical divider */}
+                                            <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
+                                            {/* Manufacturer Name and Vehicle Name */}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-onSurface/70 truncate">
+                                                    {vehicle.manufacturer.name}
+                                                </p>
+                                                <h3 className="text-lg font-bold text-onSurface truncate">
+                                                    {vehicle.name}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {location && (
+                                <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden">
+                                    <div className="h-32 relative overflow-hidden">
+                                        <img
+                                            src={
+                                                location.imgBgPath ||
+                                                location.imgBannerPath
+                                            }
+                                            alt={location.name}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute top-3 right-3">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
+                                                {
+                                                    SURFACE_TYPES_MAP[
+                                                        location.surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                                    ]?.icon
+                                                }
+                                                <span className="ml-1" />
+                                                {SURFACE_TYPES_MAP[
+                                                    location.surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                                ]?.text || location.surfaceType}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="p-4">
+                                        <div className="flex items-center mb-3">
+                                            <img
+                                                src={location.imgBannerPath}
+                                                alt={location.name}
+                                                className="h-10 w-10 object-contain mr-3"
+                                            />
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-lg font-bold text-onSurface truncate">
+                                                    {location.name}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <p className="text-sm text-onSurface/70 line-clamp-2">
+                                            {location.description}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Conditions Card */}
+                            <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
+                                <h3 className="text-lg font-bold text-onSurface mb-4 flex items-center">
+                                    <FiSettings className="mr-2 text-primary" />
+                                    Conditions
+                                </h3>
+                                <div className="space-y-4">
                                     <div className="flex items-center">
-                                        <FiDroplet className="text-primary mr-3" />
+                                        <div className="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center mr-3">
+                                            <FiCalendar className="text-secondary" />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-onSurface/70">
+                                                Season
+                                            </p>
+                                            <p className="text-onSurface font-medium capitalize">
+                                                {
+                                                    SEASONS_MAP[
+                                                        setup.season as keyof typeof SEASONS_MAP
+                                                    ].text
+                                                }
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        <div className="w-8 h-8 bg-tertiary/10 rounded-full flex items-center justify-center mr-3">
+                                            <FiCloud className="text-tertiary" />
+                                        </div>
                                         <div>
                                             <p className="text-sm text-onSurface/70">
                                                 Surface
                                             </p>
-                                            <p className="text-onSurface capitalize">
-                                                {setup.surfaceCondition}
+                                            <p className="text-onSurface font-medium capitalize">
+                                                {
+                                                    SURFACE_CONDITIONS_MAP[
+                                                        setup.surfaceCondition as keyof typeof SURFACE_CONDITIONS_MAP
+                                                    ].text
+                                                }
                                             </p>
                                         </div>
                                     </div>
                                     <div className="flex items-center">
-                                        <FiSettings className="text-primary mr-3" />
+                                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                            <GiCarWheel className="text-primary" />
+                                        </div>
                                         <div>
                                             <p className="text-sm text-onSurface/70">
-                                                Tires
+                                                Tyres
                                             </p>
-                                            <p className="text-onSurface capitalize">
-                                                {setup.tyres}
+                                            <p className="text-onSurface font-medium capitalize">
+                                                {
+                                                    TYRES_MAP[
+                                                        setup.tyres as keyof typeof TYRES_MAP
+                                                    ].text
+                                                }
                                             </p>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="bg-surfaceContainer rounded-lg p-6">
-                                <h3 className="text-xl font-bold text-onSurface mb-4">
-                                    Vehicle & Location
-                                </h3>
-                                <div className="flex items-center mb-4">
-                                    <FiTruck className="text-primary mr-3" />
-                                    <div>
-                                        <p className="text-sm text-onSurface/70">
-                                            Vehicle
-                                        </p>
-                                        <p className="text-onSurface">
-                                            {setup.vehicle.name}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center">
-                                    <FiMapPin className="text-primary mr-3" />
-                                    <div>
-                                        <p className="text-sm text-onSurface/70">
-                                            Location
-                                        </p>
-                                        <p className="text-onSurface">
-                                            {setup.location.name}
-                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Configuration */}
-                        <div className="lg:col-span-2">
-                            <div className="bg-surfaceContainer rounded-lg overflow-hidden mb-6">
+                        {/* Configuration Section */}
+                        <div className="lg:col-span-3">
+                            {/* Configuration Tabs */}
+                            <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden mb-6">
                                 <nav className="flex overflow-x-auto">
                                     {configurationTabs.map((tab) => (
                                         <button
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
-                                            className={`px-4 py-3 font-medium text-sm flex items-center whitespace-nowrap ${
+                                            className={`px-6 py-4 font-medium text-sm flex items-center whitespace-nowrap transition-colors duration-200 ${
                                                 activeTab === tab.id
                                                     ? "bg-primary text-surfaceContainer"
-                                                    : "text-onSurface hover:bg-surfaceContainer/50"
+                                                    : "text-onSurface hover:bg-surfaceContainerHigh"
                                             }`}
                                         >
-                                            {tab.icon}
-                                            <span className="ml-2">
-                                                {tab.label}
+                                            <span className="text-lg mr-3">
+                                                {tab.icon}
                                             </span>
+                                            <span>{tab.label}</span>
                                         </button>
                                     ))}
                                 </nav>

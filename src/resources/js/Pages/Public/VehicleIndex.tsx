@@ -1,12 +1,26 @@
-import React, { Fragment } from "react";
+import React from "react";
 import { Head, Link } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
-import { FiChevronRight, FiFilter, FiX } from "react-icons/fi";
-import { Listbox, Transition } from "@headlessui/react";
+import { FiChevronRight, FiFilter, FiX, FiSearch } from "react-icons/fi";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
-import ListBox from "@/Components/Form/ListBox";
+
+const SkeletonCard = () => (
+    <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden animate-pulse">
+        <div className="h-48 bg-surfaceContainerHigh"></div>
+        <div className="p-6">
+            <div className="flex items-center mb-4">
+                <div className="h-10 w-10 bg-surfaceContainerHigh rounded-full mr-3"></div>
+                <div className="flex-1">
+                    <div className="h-5 w-3/4 bg-surfaceContainerHigh rounded mb-2"></div>
+                    <div className="h-4 w-1/2 bg-surfaceContainerHigh rounded"></div>
+                </div>
+            </div>
+            <div className="h-10 bg-surfaceContainerHigh rounded-lg"></div>
+        </div>
+    </div>
+);
 
 export default function VehicleIndex() {
     // API hooks
@@ -21,10 +35,12 @@ export default function VehicleIndex() {
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [manufacturers, setManufacturers] = useState<Manufacturer[]>([]);
     const [categories, setCategories] = useState<Category[]>([]);
+    const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
         category: null as Category | null,
         manufacturer: null as Manufacturer | null,
     });
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
     // Fetch data
     useEffect(() => {
@@ -46,13 +62,31 @@ export default function VehicleIndex() {
 
     // Filter vehicles
     const filteredVehicles = vehicles.filter((vehicle) => {
+        // Search filter
+        if (
+            searchQuery &&
+            !vehicle.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+            !vehicle.manufacturer.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase()) &&
+            !vehicle.category.name
+                .toLowerCase()
+                .includes(searchQuery.toLowerCase())
+        ) {
+            return false;
+        }
+
+        // Category filter
         if (filters.category && vehicle.category.id !== filters.category.id)
             return false;
+
+        // Manufacturer filter
         if (
             filters.manufacturer &&
             vehicle.manufacturer.id !== filters.manufacturer.id
         )
             return false;
+
         return true;
     });
 
@@ -64,99 +98,331 @@ export default function VehicleIndex() {
         setFilters({ ...filters, manufacturer });
     };
 
-    const clearFilters = () =>
+    const clearFilters = () => {
         setFilters({ category: null, manufacturer: null });
+        setSearchQuery("");
+    };
+
+    const hasActiveFilters =
+        filters.category || filters.manufacturer || searchQuery;
 
     return (
         <UserLayout>
             <Head title="Rally Vehicles" />
 
             {/* Hero Section */}
-            <div className="relative bg-surfaceContainer py-20">
+            <div className="relative bg-surfaceContainer py-16 border-b border-surfaceContainerHigh">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl text-onSurface">
+                    <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-onSurface">
                         Rally Vehicles
                     </h1>
-                    <p className="mt-6 max-w-3xl mx-auto text-xl text-onSurface">
+                    <p className="mt-4 max-w-3xl mx-auto text-lg text-onSurface/70">
                         Discover all the powerful machines in EA Sports WRC
                     </p>
                 </div>
             </div>
 
-            {/* Filters Section */}
-            <div className="sticky top-0 z-50 bg-surface py-4 shadow-sm">
+            {/* Search and Filter Section */}
+            <div className="bg-surface py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    {/* Header */}
-                    <div className="flex items-center gap-4 mb-4">
-                        <FiFilter className="text-primary text-lg" />
-                        <h2 className="font-medium text-onSurface">Filters</h2>
-                        {(filters.category || filters.manufacturer) && (
+                    <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <div className="relative flex-1">
+                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
+                                <input
+                                    type="text"
+                                    placeholder="Search vehicles by name, manufacturer, or category..."
+                                    value={searchQuery}
+                                    onChange={(e) =>
+                                        setSearchQuery(e.target.value)
+                                    }
+                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                />
+                            </div>
                             <button
-                                onClick={clearFilters}
-                                className="flex items-center text-primary hover:text-primary-600 ml-auto"
+                                onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+                                className="flex items-center px-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
                             >
-                                <FiX className="mr-1" /> Clear
+                                <FiFilter className="mr-2 text-onSurface/70" />
+                                Filters
+                                {hasActiveFilters && (
+                                    <span className="ml-2 bg-primary text-surfaceContainer text-xs px-2 py-1 rounded-full">
+                                        Active
+                                    </span>
+                                )}
                             </button>
+                        </div>
+
+                        {/* Advanced Filters Dropdown */}
+                        {isFiltersOpen && (
+                            <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Category Filter */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                            Category
+                                        </label>
+                                        <select
+                                            value={filters.category?.id || ""}
+                                            onChange={(e) => {
+                                                const categoryId =
+                                                    e.target.value;
+                                                const category = categoryId
+                                                    ? categories.find(
+                                                          (c) =>
+                                                              c.id ===
+                                                              categoryId
+                                                      ) || null
+                                                    : null;
+                                                onCategoryChange(category);
+                                            }}
+                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                        >
+                                            <option value="">
+                                                All Categories
+                                            </option>
+                                            {categories.map((category) => (
+                                                <option
+                                                    key={category.id}
+                                                    value={category.id}
+                                                >
+                                                    {category.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Manufacturer Filter */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                            Manufacturer
+                                        </label>
+                                        <select
+                                            value={
+                                                filters.manufacturer?.id || ""
+                                            }
+                                            onChange={(e) => {
+                                                const manufacturerId =
+                                                    e.target.value;
+                                                const manufacturer =
+                                                    manufacturerId
+                                                        ? manufacturers.find(
+                                                              (m) =>
+                                                                  m.id ===
+                                                                  manufacturerId
+                                                          ) || null
+                                                        : null;
+                                                onManufacturerChange(
+                                                    manufacturer
+                                                );
+                                            }}
+                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                        >
+                                            <option value="">
+                                                All Manufacturers
+                                            </option>
+                                            {manufacturers.map(
+                                                (manufacturer) => (
+                                                    <option
+                                                        key={manufacturer.id}
+                                                        value={manufacturer.id}
+                                                    >
+                                                        {manufacturer.name}
+                                                    </option>
+                                                )
+                                            )}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Clear Filters Button */}
+                                {hasActiveFilters && (
+                                    <div className="mt-4 flex justify-end">
+                                        <button
+                                            onClick={clearFilters}
+                                            className="flex items-center px-4 py-2 text-onSurface/70 hover:text-onSurface transition-colors duration-200"
+                                        >
+                                            <FiX className="mr-1" />
+                                            Clear all filters
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                         )}
                     </div>
 
-                    {/* Filters Row */}
-                    <div className="flex gap-6">
-                        {/* Category Filter */}
-                        <div className="flex-1">
-                            <h3 className="text-sm font-medium text-onSurface mb-2">
-                                Category
-                            </h3>
-                            <ListBox
-                                options={categories}
-                                selectedOption={filters.category}
-                                onChange={onCategoryChange}
-                            />
+                    {/* Active Filters Display */}
+                    {hasActiveFilters && (
+                        <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
+                            <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium text-onSurface/70">
+                                    Active filters:
+                                </span>
+                                <button
+                                    onClick={clearFilters}
+                                    className="text-sm text-primary hover:text-primary-600 transition-colors duration-200"
+                                >
+                                    Clear all
+                                </button>
+                            </div>
+                            <div className="flex flex-wrap gap-2 mt-2">
+                                {searchQuery && (
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
+                                        Search: {searchQuery}
+                                        <button
+                                            onClick={() => setSearchQuery("")}
+                                            className="ml-2 hover:text-primary-800"
+                                        >
+                                            <FiX size={14} />
+                                        </button>
+                                    </span>
+                                )}
+                                {filters.category && (
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm">
+                                        Category: {filters.category.name}
+                                        <button
+                                            onClick={() =>
+                                                onCategoryChange(null)
+                                            }
+                                            className="ml-2 hover:text-secondary-800"
+                                        >
+                                            <FiX size={14} />
+                                        </button>
+                                    </span>
+                                )}
+                                {filters.manufacturer && (
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-sm">
+                                        Manufacturer:{" "}
+                                        {filters.manufacturer.name}
+                                        <button
+                                            onClick={() =>
+                                                onManufacturerChange(null)
+                                            }
+                                            className="ml-2 hover:text-tertiary-800"
+                                        >
+                                            <FiX size={14} />
+                                        </button>
+                                    </span>
+                                )}
+                            </div>
                         </div>
+                    )}
 
-                        {/* Manufacturer Filter */}
-                        <div className="flex-1">
-                            <h3 className="text-sm font-medium text-onSurface mb-2">
-                                Manufacturer
-                            </h3>
-                            <ListBox
-                                options={manufacturers}
-                                selectedOption={filters.manufacturer}
-                                onChange={onManufacturerChange}
-                            />
+                    {/* Results Count */}
+                    {!isProcessingVehicles && (
+                        <div className="mb-6">
+                            <p className="text-onSurface/70">
+                                Showing {filteredVehicles.length} vehicle
+                                {filteredVehicles.length !== 1 ? "s" : ""}
+                                {hasActiveFilters && " (filtered)"}
+                            </p>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
 
             {/* Vehicles Grid */}
-            <div className="py-12 bg-surface">
+            <div className="bg-surface py-8">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     {isProcessingVehicles ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
-                                <VehicleCardSkeleton key={i} />
+                                <SkeletonCard key={i} />
                             ))}
                         </div>
                     ) : filteredVehicles.length === 0 ? (
-                        <div className="text-center py-12">
-                            <p className="text-xl text-onSurface mb-4">
-                                No vehicles match your filters
+                        <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
+                            <div className="mx-auto text-4xl text-onSurface/50 mb-4">
+                                🚗
+                            </div>
+                            <h3 className="text-lg font-medium text-onSurface">
+                                {hasActiveFilters
+                                    ? "No vehicles match your filters"
+                                    : "No vehicles found"}
+                            </h3>
+                            <p className="text-onSurface/70 mt-1">
+                                {hasActiveFilters
+                                    ? "Try adjusting your filters"
+                                    : "Check back later for new vehicles"}
                             </p>
-                            <button
-                                onClick={clearFilters}
-                                className="px-4 py-2 bg-primary text-surfaceContainer rounded-md hover:bg-primary-600 transition-colors"
-                            >
-                                Clear all filters
-                            </button>
+                            {hasActiveFilters && (
+                                <button
+                                    onClick={clearFilters}
+                                    className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
+                                >
+                                    Clear Filters
+                                </button>
+                            )}
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredVehicles.map((vehicle) => (
-                                <VehicleCard
+                                <div
                                     key={vehicle.id}
-                                    vehicle={vehicle}
-                                />
+                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30 group"
+                                >
+                                    {/* Vehicle Image - Full width with object-cover */}
+                                    <div className="h-48 relative overflow-hidden">
+                                        <img
+                                            src={vehicle.imgPath}
+                                            alt={vehicle.name}
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                        />
+                                        <div className="absolute top-4 right-4">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
+                                                <img
+                                                    src={
+                                                        vehicle.category.imgPath
+                                                    }
+                                                    alt={vehicle.category.name}
+                                                    className="h-4 w-4 object-contain mr-1"
+                                                />
+                                                {vehicle.category.name}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Vehicle Details */}
+                                    <div className="p-6">
+                                        <div className="flex items-center mb-4">
+                                            {/* Manufacturer Logo */}
+                                            <div className="flex-shrink-0">
+                                                <img
+                                                    src={
+                                                        vehicle.manufacturer
+                                                            .imgPath
+                                                    }
+                                                    alt={
+                                                        vehicle.manufacturer
+                                                            .name
+                                                    }
+                                                    className="h-12 w-12 object-contain p-1"
+                                                />
+                                            </div>
+                                            {/* Vertical divider */}
+                                            <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
+                                            {/* Manufacturer Name and Vehicle Name */}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-onSurface/70 truncate">
+                                                    {vehicle.manufacturer.name}
+                                                </p>
+                                                <h3 className="text-lg font-bold text-onSurface truncate">
+                                                    {vehicle.name}
+                                                </h3>
+                                            </div>
+                                        </div>
+                                        <Link
+                                            href={route(
+                                                "vehicles.show",
+                                                vehicle.id
+                                            )}
+                                            className="inline-flex items-center justify-center w-full px-4 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 font-medium"
+                                        >
+                                            View Setups
+                                            <FiChevronRight className="ml-2" />
+                                        </Link>
+                                    </div>
+                                </div>
                             ))}
                         </div>
                     )}
@@ -165,67 +431,3 @@ export default function VehicleIndex() {
         </UserLayout>
     );
 }
-
-// Extracted Components
-const VehicleCard = ({ vehicle }: { vehicle: Vehicle }) => (
-    <div className="bg-surfaceContainer rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow duration-300 group">
-        <div className="relative h-48 w-full overflow-hidden">
-            <img
-                src={vehicle.imgPath}
-                alt={vehicle.name}
-                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-            />
-            <div
-                className="absolute inset-0 bg-gradient-to-t from-surfaceContainer via-surfaceContainer/20 to-transparent"
-                style={{ height: "100%", bottom: 0 }}
-            />
-        </div>
-        <div className="p-6 relative z-10 -mt-6">
-            <h3 className="text-xl font-bold text-onSurface mb-3">
-                {vehicle.name}
-            </h3>
-            <div className="flex items-center mb-4">
-                <img
-                    src={vehicle.manufacturer.imgPath}
-                    alt={vehicle.manufacturer.name}
-                    className="h-8 w-8 object-contain mr-3"
-                />
-                <span className="text-sm font-medium text-onSurface">
-                    {vehicle.manufacturer.name}
-                </span>
-            </div>
-            <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                    <img
-                        src={vehicle.category.imgPath}
-                        alt={vehicle.category.name}
-                        className="h-6 w-6 object-contain mr-2"
-                    />
-                    <span className="text-sm text-onSurface">
-                        {vehicle.category.name}
-                    </span>
-                </div>
-                <Link
-                    href={route("vehicles.show", vehicle.id)}
-                    className="inline-flex items-center text-primary hover:text-primary-600 font-medium"
-                >
-                    View Setups <FiChevronRight className="ml-1" />
-                </Link>
-            </div>
-        </div>
-    </div>
-);
-
-const VehicleCardSkeleton = () => (
-    <div className="bg-surfaceContainer rounded-lg overflow-hidden shadow-md animate-pulse">
-        <div className="h-48 bg-surfaceContainer/50"></div>
-        <div className="p-6">
-            <div className="h-6 w-3/4 bg-surfaceContainer/50 rounded mb-4"></div>
-            <div className="flex items-center mb-4">
-                <div className="h-8 w-8 rounded-full bg-surfaceContainer/50 mr-2"></div>
-                <div className="h-4 w-20 bg-surfaceContainer/50 rounded"></div>
-            </div>
-            <div className="h-4 w-full bg-surfaceContainer/50 rounded mb-2"></div>
-        </div>
-    </div>
-);

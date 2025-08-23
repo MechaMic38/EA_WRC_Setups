@@ -23,31 +23,33 @@ export default function ConfigurationSection({
     onReset = () => {},
 }: ConfigurationSectionProps) {
     return (
-        <div className="bg-surfaceContainer rounded-lg p-6 mb-6">
-            <div className="flex justify-between items-center mb-4">
+        <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
+            <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-onSurface capitalize">
                     {section.replace("_", " ")}
                 </h3>
                 <button
                     onClick={() => onReset(section)}
-                    className="text-sm text-primary hover:text-primary-600"
+                    className="px-4 py-2 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainerHigh transition-colors duration-200 text-sm font-medium"
                 >
                     Reset to Default
                 </button>
             </div>
 
-            {Object.entries(blueprintOptions).map(([setting, option]) => (
-                <OptionSlider
-                    key={setting}
-                    setting={setting}
-                    option={option}
-                    disabled={disabled}
-                    value={options[setting] ?? option.default_value}
-                    onChange={(setting, value) =>
-                        onConfigurationChange(section, setting, value)
-                    }
-                />
-            ))}
+            <div className="space-y-6">
+                {Object.entries(blueprintOptions).map(([setting, option]) => (
+                    <OptionSlider
+                        key={setting}
+                        setting={setting}
+                        option={option}
+                        disabled={disabled}
+                        value={options[setting] ?? option.default_value}
+                        onChange={(setting, value) =>
+                            onConfigurationChange(section, setting, value)
+                        }
+                    />
+                ))}
+            </div>
         </div>
     );
 }

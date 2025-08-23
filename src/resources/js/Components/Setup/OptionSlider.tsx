@@ -21,10 +21,13 @@ export default function OptionSlider({
     const [showDescription, setShowDescription] = useState<string | null>(null);
 
     return (
-        <div key={setting} className="mb-6">
-            <div className="flex justify-between items-center mb-3">
+        <div
+            key={setting}
+            className="bg-surface rounded-xl p-4 border border-surfaceContainerHigh"
+        >
+            <div className="flex justify-between items-center mb-4">
                 <div className="flex items-center">
-                    <h3 className="font-medium text-onSurface mr-2">
+                    <h3 className="font-medium text-onSurface mr-3">
                         {option.label}
                     </h3>
                     <button
@@ -33,19 +36,19 @@ export default function OptionSlider({
                                 showDescription === setting ? null : setting
                             )
                         }
-                        className="text-primary hover:text-primary-600"
+                        className="text-primary hover:text-primary-600 transition-colors duration-200"
                     >
-                        <FiInfo size={16} />
+                        <FiInfo size={18} />
                     </button>
                 </div>
-                <span className="bg-surfaceContainer px-3 py-1 rounded-full text-onSurface">
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-medium">
                     {value.toFixed(option.precision)}
                     {option.unit}
                 </span>
             </div>
 
             {showDescription === setting && (
-                <div className="bg-surfaceContainer/50 p-3 rounded-lg mb-3 text-sm text-onSurface">
+                <div className="bg-surfaceContainer/50 p-4 rounded-lg mb-4 text-sm text-onSurface">
                     {option.description}
                 </div>
             )}
@@ -57,7 +60,7 @@ export default function OptionSlider({
                     onChange={(newValue) => onChange(setting, newValue)}
                     disabled={disabled}
                 />
-                <div className="flex justify-between text-xs text-onSurface/70 mt-1">
+                <div className="flex justify-between text-sm text-onSurface/70 mt-3">
                     <span>
                         {option.min_value}
                         {option.unit}
