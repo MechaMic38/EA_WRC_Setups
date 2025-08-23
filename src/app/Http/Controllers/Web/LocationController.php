@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\LocationSummaryResource;
 use App\Models\Location;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -21,9 +22,14 @@ class LocationController extends Controller
     /**
      * Display a listing of the resource for admin.
      */
-    public function adminIndex(): Response
+    public function adminIndex(Request $request): Response
     {
-        return Inertia::render('Admin/LocationIndex', []);
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+            'surface_type' => 'string'
+        ]);
+
+        return Inertia::render('Admin/LocationIndex', $data);
     }
 
     /**

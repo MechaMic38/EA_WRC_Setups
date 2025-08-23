@@ -3,7 +3,6 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
 import {
-    FiChevronLeft,
     FiSave,
     FiSliders,
     FiInfo,

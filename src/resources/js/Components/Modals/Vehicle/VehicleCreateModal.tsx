@@ -5,8 +5,8 @@ import {
     FiInfo,
     FiCheck,
     FiAlertCircle,
-    FiPackage,
     FiTool,
+    FiTag,
 } from "react-icons/fi";
 import { BsTools } from "react-icons/bs";
 import {
@@ -361,7 +361,7 @@ export default function VehicleCreateModal({
                             <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
-                                        <FiPackage className="text-tertiary text-lg" />
+                                        <FiTag className="text-tertiary text-lg" />
                                     </div>
                                     <Label className="block text-sm font-medium text-onSurface/70">
                                         Category

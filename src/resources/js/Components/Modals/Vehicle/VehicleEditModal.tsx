@@ -7,7 +7,7 @@ import {
 } from "@headlessui/react";
 import { useState, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { FiX, FiCheck, FiAlertCircle, FiPackage } from "react-icons/fi";
+import { FiX, FiCheck, FiAlertCircle, FiTag } from "react-icons/fi";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
 import BaseModal from "../BaseModal";
@@ -350,7 +350,7 @@ export default function VehicleEditModal({
                             <Field className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh">
                                 <div className="flex items-center mb-3">
                                     <div className="bg-tertiaryContainer/20 p-2 rounded-lg mr-3">
-                                        <FiPackage className="text-tertiary text-lg" />
+                                        <FiTag className="text-tertiary text-lg" />
                                     </div>
                                     <Label className="block text-sm font-medium text-onSurface/70">
                                         Category

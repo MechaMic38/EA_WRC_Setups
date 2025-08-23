@@ -23,9 +23,9 @@ class UserController extends Controller
         $perPage = $request->input('per_page', 15);
 
         $users = User::query()
-            // Filter by name (case-insensitive partial match)
-            ->when($request->name, function ($query, $name) {
-                $query->where('name', 'like', '%' . $name . '%');
+            // Filter by username (case-insensitive partial match)
+            ->when($request->username, function ($query, $username) {
+                $query->where('username', 'like', '%' . $username . '%');
             })
             // Filter by email (case-insensitive partial match)
             ->when($request->email, function ($query, $email) {

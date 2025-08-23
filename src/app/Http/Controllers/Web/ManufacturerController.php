@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Manufacturer;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class ManufacturerController extends Controller
@@ -11,9 +12,13 @@ class ManufacturerController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Admin/ManufacturerIndex', []);
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+        ]);
+
+        return Inertia::render('Admin/ManufacturerIndex', $data);
     }
 
     /**

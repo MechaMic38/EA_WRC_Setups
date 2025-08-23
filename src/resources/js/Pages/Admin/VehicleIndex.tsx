@@ -2,13 +2,7 @@ import VehicleCreateModal from "@/Components/Modals/Vehicle/VehicleCreateModal";
 import VehicleEditModal from "@/Components/Modals/Vehicle/VehicleEditModal";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
-import {
-    PageProps,
-    PaginatedData,
-    Vehicle,
-    Category,
-    Manufacturer,
-} from "@/types";
+import { PaginatedData, Vehicle, Category, Manufacturer } from "@/types";
 import { Head, Link, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import {
@@ -24,17 +18,18 @@ import {
     FiRefreshCw,
     FiX,
     FiTruck,
-    FiGrid,
-    FiSettings,
+    FiTag,
 } from "react-icons/fi";
 import VehicleDeleteModal from "@/Components/Modals/Vehicle/VehicleDeleteModal";
 import VehicleShowModal from "@/Components/Modals/Vehicle/VehicleShowModal";
 import { Field, Label, Select } from "@headlessui/react";
+import { LiaCarSideSolid } from "react-icons/lia";
+import { BsTools } from "react-icons/bs";
 
 interface VehicleIndexProps {
-    page: number;
-    category_id: string;
-    manufacturer_id: string;
+    page?: number;
+    category_id?: string;
+    manufacturer_id?: string;
 }
 
 const SkeletonRow = () => (
@@ -118,9 +113,8 @@ const VehicleIndex = ({
     }, [filters]);
 
     /**
-     * Update the URL with the current filters and page.
+     * Update the URL with the current filters.
      * @param newFilters The new filter values.
-     * @param page The page number (optional).
      */
     const updateUrlWithFilters = (newFilters: typeof filters) => {
         const params: any = {};
@@ -179,7 +173,7 @@ const VehicleIndex = ({
      * Fetch categories from the API.
      */
     const fetchCategories = async () => {
-        getCategories(route("api.categories.index"), {
+        getCategories(route("api.categories.index", { paginate: false }), {
             onSuccess: (response) => {
                 setCategories(response.data.data);
             },
@@ -190,44 +184,47 @@ const VehicleIndex = ({
      * Fetch manufacturers from the API.
      */
     const fetchManufacturers = async () => {
-        getManufacturers(route("api.manufacturers.index"), {
-            onSuccess: (response) => {
-                setManufacturers(response.data.data);
-            },
-        });
+        getManufacturers(
+            route("api.manufacturers.index", { paginate: false }),
+            {
+                onSuccess: (response) => {
+                    setManufacturers(response.data.data);
+                },
+            }
+        );
     };
 
     /**
-     * Handle the creation of a new vehicle.
+     * Open the create vehicle modal.
      */
-    const handleCreateVehicle = () => {
+    const onCreateVehicle = () => {
         setSelectedVehicle(null);
         setIsCreateOpen(true);
     };
 
     /**
-     * Handle the display of a vehicle's details.
-     * @param vehicle The vehicle to display.
+     * Open the show vehicle modal.
+     * @param vehicle The vehicle to show.
      */
-    const handleShowVehicle = (vehicle: Vehicle) => {
+    const onShowVehicle = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
         setIsShowOpen(true);
     };
 
     /**
-     * Handle the editing of a vehicle.
+     * Open the edit vehicle modal.
      * @param vehicle The vehicle to edit.
      */
-    const handleEditVehicle = (vehicle: Vehicle) => {
+    const onEditVehicle = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
         setIsEditOpen(true);
     };
 
     /**
-     * Handle the deletion of a vehicle.
+     * Open the delete vehicle modal.
      * @param vehicle The vehicle to delete.
      */
-    const handleDeleteVehicle = (vehicle: Vehicle) => {
+    const onDeleteVehicle = (vehicle: Vehicle) => {
         setSelectedVehicle(vehicle);
         setIsDeleteOpen(true);
     };
@@ -237,7 +234,7 @@ const VehicleIndex = ({
      * @param key The filter key.
      * @param value The filter value.
      */
-    const handleFilterChange = (key: string, value: string) => {
+    const onFilterChange = (key: string, value: string) => {
         switch (key) {
             case "name":
                 setFilters((prev) => ({ ...prev, name: value }));
@@ -278,7 +275,7 @@ const VehicleIndex = ({
      * Handle pagination.
      * @param url The pagination URL.
      */
-    const handlePagination = (url: string) => {
+    const onPaginationChange = (url: string) => {
         const urlObj = new URL(url);
         const page = urlObj.searchParams.get("page");
         if (page) {
@@ -309,7 +306,7 @@ const VehicleIndex = ({
                             </p>
                         </div>
                         <button
-                            onClick={handleCreateVehicle}
+                            onClick={onCreateVehicle}
                             className="flex items-center px-6 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
                         >
                             <FiPlus className="mr-2" /> Create Vehicle
@@ -326,10 +323,7 @@ const VehicleIndex = ({
                                     placeholder="Search vehicles by name..."
                                     value={filters.name}
                                     onChange={(e) =>
-                                        handleFilterChange(
-                                            "name",
-                                            e.target.value
-                                        )
+                                        onFilterChange("name", e.target.value)
                                     }
                                     className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
                                 />
@@ -369,7 +363,7 @@ const VehicleIndex = ({
                                         <Select
                                             value={filters.category_id}
                                             onChange={(e) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "category_id",
                                                     e.target.value
                                                 )
@@ -398,7 +392,7 @@ const VehicleIndex = ({
                                         <Select
                                             value={filters.manufacturer_id}
                                             onChange={(e) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "manufacturer_id",
                                                     e.target.value
                                                 )
@@ -458,7 +452,7 @@ const VehicleIndex = ({
                                         Name: {filters.name}
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("name", "")
+                                                onFilterChange("name", "")
                                             }
                                             className="ml-2 hover:text-primary-800"
                                         >
@@ -477,7 +471,7 @@ const VehicleIndex = ({
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "category_id",
                                                     ""
                                                 )
@@ -500,7 +494,7 @@ const VehicleIndex = ({
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "manufacturer_id",
                                                     ""
                                                 )
@@ -520,7 +514,7 @@ const VehicleIndex = ({
                         <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
                             <div className="flex items-center">
                                 <div className="bg-primary/10 p-3 rounded-lg mr-4">
-                                    <FiTruck className="text-primary text-xl" />
+                                    <LiaCarSideSolid className="text-primary text-xl" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-onSurface/70">
@@ -535,7 +529,7 @@ const VehicleIndex = ({
                         <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
                             <div className="flex items-center">
                                 <div className="bg-secondary/10 p-3 rounded-lg mr-4">
-                                    <FiGrid className="text-secondary text-xl" />
+                                    <FiTag className="text-secondary text-xl" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-onSurface/70">
@@ -556,7 +550,7 @@ const VehicleIndex = ({
                         <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
                             <div className="flex items-center">
                                 <div className="bg-tertiary/10 p-3 rounded-lg mr-4">
-                                    <FiSettings className="text-tertiary text-xl" />
+                                    <BsTools className="text-tertiary text-xl" />
                                 </div>
                                 <div>
                                     <p className="text-sm text-onSurface/70">
@@ -604,7 +598,7 @@ const VehicleIndex = ({
                                     </button>
                                 ) : (
                                     <button
-                                        onClick={handleCreateVehicle}
+                                        onClick={onCreateVehicle}
                                         className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
                                     >
                                         Create Vehicle
@@ -676,7 +670,7 @@ const VehicleIndex = ({
                                         <div className="flex space-x-2">
                                             <button
                                                 onClick={() =>
-                                                    handleShowVehicle(vehicle)
+                                                    onShowVehicle(vehicle)
                                                 }
                                                 className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
                                                 title="View details"
@@ -685,7 +679,7 @@ const VehicleIndex = ({
                                             </button>
                                             <button
                                                 onClick={() =>
-                                                    handleEditVehicle(vehicle)
+                                                    onEditVehicle(vehicle)
                                                 }
                                                 className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
                                                 title="Edit vehicle"
@@ -706,7 +700,7 @@ const VehicleIndex = ({
                                             </Link>
                                             <button
                                                 onClick={() =>
-                                                    handleDeleteVehicle(vehicle)
+                                                    onDeleteVehicle(vehicle)
                                                 }
                                                 className="p-2 bg-surfaceContainer rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200"
                                                 title="Delete vehicle"
@@ -743,7 +737,7 @@ const VehicleIndex = ({
                                     {vehiclesData.links.prev && (
                                         <button
                                             onClick={() =>
-                                                handlePagination(
+                                                onPaginationChange(
                                                     vehiclesData.links.prev!
                                                 )
                                             }
@@ -760,7 +754,7 @@ const VehicleIndex = ({
                                                 key={index}
                                                 onClick={() =>
                                                     link.url &&
-                                                    handlePagination(link.url)
+                                                    onPaginationChange(link.url)
                                                 }
                                                 className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-200 ${
                                                     link.active
@@ -776,7 +770,7 @@ const VehicleIndex = ({
                                     {vehiclesData.links.next && (
                                         <button
                                             onClick={() =>
-                                                handlePagination(
+                                                onPaginationChange(
                                                     vehiclesData.links.next!
                                                 )
                                             }

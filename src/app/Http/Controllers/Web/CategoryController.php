@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -12,9 +13,13 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        return Inertia::render('Admin/CategoryIndex', []);
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+        ]);
+
+        return Inertia::render('Admin/CategoryIndex', $data);
     }
 
     /**
