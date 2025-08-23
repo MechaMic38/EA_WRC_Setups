@@ -9,6 +9,10 @@ import {
     FiCheck,
     FiX,
     FiArrowLeft,
+    FiSettings,
+    FiAlertCircle,
+    FiRotateCcw,
+    FiChevronRight,
 } from "react-icons/fi";
 import {
     Vehicle,
@@ -35,6 +39,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
         post: updateBlueprint,
         isProcessing,
         errors,
+        clearErrors,
     } = useAxiosForm<SetupBlueprint, SetupBlueprintFormData>({
         alignment: {},
         braking: {},
@@ -55,6 +60,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
     const [showDescription, setShowDescription] = useState<string | null>(null);
     const [isModified, setIsModified] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
 
     // Fetch vehicle blueprint
     useEffect(() => {
@@ -71,7 +77,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
         const original = JSON.stringify(data);
         const current = JSON.stringify(blueprint);
         setIsModified(original !== current);
-    }, [data]);
+    }, [data, blueprint]);
 
     // Handle input changes
     const handleValueChange = (
@@ -119,7 +125,8 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
             {
                 onSuccess: () => {
                     setIsModified(false);
-                    // Show success message
+                    setSaveSuccess(true);
+                    setTimeout(() => setSaveSuccess(false), 3000);
                 },
             }
         );
@@ -139,7 +146,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
 
         return (
             <div key={`${setting}-${field}`} className="mb-4">
-                <label className="block text-sm font-medium text-onSurface mb-1">
+                <label className="block text-sm font-medium text-onSurface/70 mb-2">
                     {label}
                 </label>
                 <div className="relative">
@@ -160,9 +167,9 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                       (option.steps - 1) || 0.01
                                 : 0.01
                         }
-                        className="w-full px-3 py-2 border border-surfaceContainer rounded-md bg-surface text-onSurface"
+                        className="w-full px-4 py-3 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
                     />
-                    <span className="absolute right-3 top-2 text-onSurface/70">
+                    <span className="absolute right-3 top-3 text-onSurface/70 text-sm">
                         {option.unit}
                     </span>
                 </div>
@@ -179,11 +186,11 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
         return (
             <div
                 key={setting}
-                className="bg-surfaceContainer rounded-lg p-5 mb-6"
+                className="bg-surfaceContainer rounded-xl p-6 mb-6 border border-surfaceContainerHigh"
             >
                 <div className="flex justify-between items-start mb-4">
-                    <div>
-                        <h3 className="font-bold text-onSurface text-lg">
+                    <div className="flex-1">
+                        <h3 className="font-bold text-onSurface text-lg mb-1">
                             {option.label}
                         </h3>
                         <p className="text-sm text-onSurface/70">
@@ -197,7 +204,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                 showDescription === setting ? null : setting
                             )
                         }
-                        className="p-2 text-primary hover:bg-surfaceContainer/50 rounded-full"
+                        className="p-2 text-primary hover:bg-surfaceContainerHigh rounded-lg transition-colors duration-200 ml-4"
                         title="Show description"
                     >
                         <FiInfo size={20} />
@@ -205,12 +212,12 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                 </div>
 
                 {showDescription === setting && (
-                    <div className="bg-surfaceContainer/50 p-3 rounded-lg mb-4 text-sm text-onSurface">
+                    <div className="bg-surfaceContainerHigh p-4 rounded-lg mb-4 text-sm text-onSurface">
                         {option.description}
                     </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {renderBlueprintField(
                         section,
                         setting,
@@ -231,7 +238,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                     )}
                 </div>
 
-                <div className="mt-4 pt-4 border-t border-surfaceContainer/30 flex justify-between">
+                <div className="mt-6 pt-4 border-t border-surfaceContainerHigh/30 flex justify-between items-center">
                     <div className="text-sm text-onSurface/70">
                         <span className="block">Steps: {option.steps}</span>
                         <span className="block">
@@ -240,7 +247,6 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                     </div>
                     <button
                         onClick={() => {
-                            // Reset this setting to original values
                             setData((prev) => ({
                                 ...prev,
                                 [section]: {
@@ -251,8 +257,9 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                 },
                             }));
                         }}
-                        className="text-sm text-primary hover:text-primary-600"
+                        className="flex items-center text-sm text-primary hover:text-primary-600 transition-colors duration-200"
                     >
+                        <FiRotateCcw className="mr-1" />
                         Reset Option
                     </button>
                 </div>
@@ -279,43 +286,49 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
             <Head title={`Blueprint Editor - ${vehicle.name}`} />
 
             {/* Header */}
-            <div className="bg-surfaceContainer py-6">
+            <div className="bg-surfaceContainer py-8 border-b border-surfaceContainerHigh">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                        <div>
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="flex-1">
                             <button
                                 onClick={() =>
                                     router.visit(route("admin.vehicles.index"))
                                 }
-                                className="inline-flex items-center text-primary hover:text-primary-600 mb-2"
+                                className="inline-flex items-center text-primary hover:text-primary-600 mb-4 transition-colors duration-200"
                             >
-                                <FiArrowLeft className="mr-1" /> Back to
-                                Vehicles
+                                <FiArrowLeft className="mr-2" />
+                                Back to Vehicles
                             </button>
-                            <h1 className="text-2xl font-bold text-onSurface">
-                                Setup Blueprint Editor
-                            </h1>
-                            <div className="flex items-center mt-2">
-                                <img
-                                    src={vehicle.imgPath}
-                                    alt={vehicle.name}
-                                    className="w-12 h-12 object-contain mr-3"
-                                />
+                            <div className="flex items-center gap-4">
+                                <div className="bg-primary/10 p-3 rounded-xl">
+                                    <FiSettings className="text-primary text-2xl" />
+                                </div>
                                 <div>
-                                    <p className="text-onSurface font-medium">
-                                        {vehicle.name}
-                                    </p>
-                                    <p className="text-sm text-onSurface/70">
-                                        {vehicle.manufacturer.name} •{" "}
-                                        {vehicle.category.name}
-                                    </p>
+                                    <h1 className="text-3xl font-bold text-onSurface">
+                                        Setup Blueprint Editor
+                                    </h1>
+                                    <div className="flex items-center mt-2">
+                                        <img
+                                            src={vehicle.imgPath}
+                                            alt={vehicle.name}
+                                            className="w-10 h-10 object-contain mr-3 rounded-lg bg-surfaceContainerHigh p-1"
+                                        />
+                                        <div>
+                                            <p className="text-onSurface font-medium">
+                                                {vehicle.name}
+                                            </p>
+                                            <p className="text-sm text-onSurface/70">
+                                                {vehicle.manufacturer.name} •{" "}
+                                                {vehicle.category.name}
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div className="flex gap-3">
                             <button
                                 onClick={() => {
-                                    // Reset all to original values
                                     getBlueprint(
                                         route(
                                             "api.vehicles.blueprint.show",
@@ -328,7 +341,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                         }
                                     );
                                 }}
-                                className="px-4 py-2 bg-surface text-primary border border-primary rounded-md hover:bg-surfaceContainer flex items-center"
+                                className="px-6 py-3 bg-surfaceContainer text-onSurface border border-surfaceContainerHigh rounded-xl hover:bg-surfaceContainerHigh transition-colors duration-200 flex items-center"
                                 disabled={!isModified}
                             >
                                 <FiX className="mr-2" /> Reset All
@@ -336,11 +349,11 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                             <button
                                 onClick={submitBlueprint}
                                 disabled={isProcessing || !isModified}
-                                className={`px-4 py-2 flex items-center ${
+                                className={`px-6 py-3 flex items-center rounded-xl font-medium transition-colors duration-200 ${
                                     isProcessing || !isModified
-                                        ? "bg-surfaceContainer text-onSurface/50"
-                                        : "bg-primary text-surfaceContainer hover:bg-primary-600"
-                                } rounded-md`}
+                                        ? "bg-surfaceContainer text-onSurface/50 cursor-not-allowed"
+                                        : "bg-primary text-surfaceContainer hover:bg-primary-600 shadow-lg hover:shadow-xl transform hover:scale-105"
+                                }`}
                             >
                                 <FiSave className="mr-2" />
                                 {isProcessing ? "Saving..." : "Save Blueprint"}
@@ -353,35 +366,64 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
             {/* Main Content */}
             <div className="py-8 bg-surface">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Success Message */}
+                    {saveSuccess && (
+                        <div className="bg-green-100 border border-green-400 text-green-700 px-6 py-4 rounded-xl mb-6 flex items-center">
+                            <FiCheck className="mr-2 text-green-600" />
+                            <span>Blueprint saved successfully!</span>
+                        </div>
+                    )}
+
                     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         {/* Navigation Sidebar */}
                         <div className="lg:col-span-1">
-                            <div className="bg-surfaceContainer rounded-lg overflow-hidden mb-6">
-                                <nav className="flex flex-col">
+                            <div className="bg-surfaceContainer rounded-xl overflow-hidden mb-6 border border-surfaceContainerHigh">
+                                <div className="p-4 bg-surfaceContainerHigh">
+                                    <h3 className="text-sm font-semibold text-onSurface/70 uppercase tracking-wide">
+                                        Configuration Sections
+                                    </h3>
+                                </div>
+                                <nav className="flex flex-col p-2">
                                     {configurationTabs.map((tab) => (
                                         <button
                                             key={tab.id}
                                             onClick={() => setActiveTab(tab.id)}
-                                            className={`px-4 py-3 font-medium text-sm flex items-center ${
+                                            className={`px-4 py-3 font-medium text-sm flex items-center rounded-lg transition-all duration-200 ${
                                                 activeTab === tab.id
-                                                    ? "bg-primary text-surfaceContainer"
-                                                    : "text-onSurface hover:bg-surfaceContainer/50"
+                                                    ? "bg-primary text-surfaceContainer shadow-lg"
+                                                    : "text-onSurface hover:bg-surfaceContainerHigh"
                                             }`}
                                         >
-                                            {tab.icon}
-                                            <span className="ml-2">
+                                            <div
+                                                className={`p-2 rounded-lg mr-3 ${
+                                                    activeTab === tab.id
+                                                        ? "bg-surfaceContainer/20"
+                                                        : "bg-surfaceContainerHigh"
+                                                }`}
+                                            >
+                                                {tab.icon}
+                                            </div>
+                                            <span className="flex-1 text-left">
                                                 {tab.label}
                                             </span>
+                                            {activeTab === tab.id && (
+                                                <FiChevronRight className="ml-2" />
+                                            )}
                                         </button>
                                     ))}
                                 </nav>
                             </div>
 
                             {/* Information Panel */}
-                            <div className="bg-surfaceContainer rounded-lg p-6">
-                                <h3 className="text-lg font-bold text-onSurface mb-4">
-                                    Blueprint Guidelines
-                                </h3>
+                            <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
+                                <div className="flex items-center mb-4">
+                                    <div className="bg-primary/10 p-2 rounded-lg mr-3">
+                                        <FiInfo className="text-primary text-lg" />
+                                    </div>
+                                    <h3 className="text-lg font-bold text-onSurface">
+                                        Blueprint Guidelines
+                                    </h3>
+                                </div>
                                 <ul className="space-y-3 text-sm text-onSurface/80">
                                     <li className="flex items-start">
                                         <FiCheck className="text-green-500 mt-1 mr-2 flex-shrink-0" />
@@ -422,16 +464,21 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
 
                         {/* Blueprint Editor */}
                         <div className="lg:col-span-3">
-                            <div className="bg-surfaceContainer rounded-lg p-6 mb-6">
-                                <h2 className="text-xl font-bold text-onSurface capitalize mb-6">
-                                    {activeTab.replace("_", " ")} Settings
-                                </h2>
+                            <div className="bg-surfaceContainer rounded-xl p-6 mb-6 border border-surfaceContainerHigh">
+                                <div className="flex items-center mb-6">
+                                    <div className="bg-primary/10 p-2 rounded-lg mr-3">
+                                        <FiSliders className="text-primary text-lg" />
+                                    </div>
+                                    <h2 className="text-xl font-bold text-onSurface capitalize">
+                                        {activeTab.replace("_", " ")} Settings
+                                    </h2>
+                                </div>
 
                                 {isProcessingBlueprint ? (
                                     <div className="animate-pulse space-y-8">
                                         {[...Array(3)].map((_, i) => (
                                             <div key={i} className="space-y-6">
-                                                <div className="h-6 bg-surfaceContainer/50 rounded w-1/2"></div>
+                                                <div className="h-6 bg-surfaceContainerHigh rounded w-1/2"></div>
                                                 <div className="grid grid-cols-3 gap-4">
                                                     {[...Array(3)].map(
                                                         (_, j) => (
@@ -439,8 +486,8 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                                                 key={j}
                                                                 className="space-y-2"
                                                             >
-                                                                <div className="h-4 bg-surfaceContainer/50 rounded w-1/3"></div>
-                                                                <div className="h-10 bg-surfaceContainer/50 rounded"></div>
+                                                                <div className="h-4 bg-surfaceContainerHigh rounded w-1/3"></div>
+                                                                <div className="h-12 bg-surfaceContainerHigh rounded"></div>
                                                             </div>
                                                         )
                                                     )}
@@ -459,19 +506,27 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                             )
                                     )
                                 ) : (
-                                    <div className="text-center py-10">
-                                        <div className="bg-surfaceContainer/50 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                                    <div className="text-center py-12">
+                                        <div className="bg-surfaceContainerHigh rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                                             <FiSliders className="text-onSurface/50 text-2xl" />
                                         </div>
                                         <h3 className="text-lg font-medium text-onSurface mb-2">
                                             No {activeTab.replace("_", " ")}{" "}
                                             settings available
                                         </h3>
-                                        <p className="text-onSurface/70">
+                                        <p className="text-onSurface/70 mb-4">
                                             This vehicle doesn't have any{" "}
                                             {activeTab.replace("_", " ")}{" "}
                                             settings in its blueprint.
                                         </p>
+                                        <button
+                                            onClick={() =>
+                                                setActiveTab("alignment")
+                                            }
+                                            className="text-primary hover:text-primary-600 text-sm"
+                                        >
+                                            Check other sections
+                                        </button>
                                     </div>
                                 )}
                             </div>
@@ -480,17 +535,35 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                 </div>
             </div>
 
-            {errors && (
-                <div className="fixed bottom-4 right-4 max-w-md bg-red-500/90 text-white p-4 rounded-lg shadow-lg z-50">
-                    <div className="font-bold mb-2">Validation Errors</div>
-                    <ul className="list-disc pl-5">
-                        {Object.entries(errors).map(([field, error], i) => (
-                            <li key={i}>
-                                <span className="font-medium">{field}:</span>{" "}
-                                {error}
-                            </li>
-                        ))}
-                    </ul>
+            {/* Error Notification */}
+            {errors && Object.keys(errors).length > 0 && (
+                <div className="fixed bottom-6 right-6 max-w-md bg-red-500/95 text-white p-4 rounded-xl shadow-2xl z-50 border border-red-400">
+                    <div className="flex items-start">
+                        <FiAlertCircle className="text-xl mr-3 mt-0.5 flex-shrink-0" />
+                        <div className="flex-1">
+                            <div className="font-bold mb-2">
+                                Validation Errors
+                            </div>
+                            <ul className="list-disc pl-5 space-y-1">
+                                {Object.entries(errors).map(
+                                    ([field, error], i) => (
+                                        <li key={i} className="text-sm">
+                                            <span className="font-medium">
+                                                {field}:
+                                            </span>{" "}
+                                            {error}
+                                        </li>
+                                    )
+                                )}
+                            </ul>
+                        </div>
+                        <button
+                            onClick={() => clearErrors()}
+                            className="ml-4 text-white/80 hover:text-white"
+                        >
+                            <FiX size={18} />
+                        </button>
+                    </div>
                 </div>
             )}
         </AdminLayout>
