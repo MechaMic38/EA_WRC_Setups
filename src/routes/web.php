@@ -23,7 +23,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('Public/Welcome', []);
-});
+})->name('home');
 
 Route::get('/about', function () {
     return Inertia::render('Public/About');
