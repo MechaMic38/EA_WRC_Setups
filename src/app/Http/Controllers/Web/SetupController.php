@@ -13,11 +13,6 @@ class SetupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        return Inertia::render('Public/SetupIndex', []);
-    }
-
     public function userIndex()
     {
         return Inertia::render('Profile/UserSetupIndex', []);

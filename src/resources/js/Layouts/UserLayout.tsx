@@ -32,13 +32,6 @@ export default function UserLayout({ children }: PropsWithChildren) {
             current: route().current("home"),
         },
         {
-            name: "Setups",
-            href: route("setups.index"),
-            icon: FiSettings,
-            current:
-                route().current("setups.index") || route().current("setups.*"),
-        },
-        {
             name: "Vehicles",
             href: route("vehicles.index"),
             icon: LiaCarSideSolid,
@@ -174,7 +167,7 @@ export default function UserLayout({ children }: PropsWithChildren) {
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
                                                     href={route(
-                                                        "user.setups.index"
+                                                        "profile.setups.index"
                                                     )}
                                                     className="flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-200 hover:bg-surfaceContainerHigh text-onSurface"
                                                 >

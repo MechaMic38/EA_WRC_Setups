@@ -50,8 +50,7 @@ Route::get('/vehicles/{vehicle}/setups', [VehicleController::class, 'show'])->na
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    Route::get('/user/setups', [SetupController::class, 'userIndex'])->name('user.setups.index');
+    Route::get('/profile/setups', [SetupController::class, 'userIndex'])->name('profile.setups.index');
 
     // Setup creation wizard
     Route::get('/setups/create/location', [SetupController::class, 'createLocation'])->name('setups.create.location');
