@@ -5,6 +5,7 @@ import { FiCloudSnow, FiShield, FiSun, FiUser } from "react-icons/fi";
 import {
     GiConcreteBag,
     GiDustCloud,
+    GiIceCube,
     GiLindenLeaf,
     GiTwirlyFlower,
 } from "react-icons/gi";
@@ -65,36 +66,46 @@ export const SURFACE_CONDITIONS_MAP = {
         text: "Snow",
         icon: <BsSnow2 className="text-blue-400" />,
     },
+    ice: {
+        text: "Ice",
+        icon: <GiIceCube className="text-blue-300" />,
+    },
 };
 
 /**
  * Mapping of tyre types to their display properties.
  */
 export const TYRES_MAP = {
-    "asphalt soft": {
+    asphalt_soft: {
         text: "Asphalt Soft",
     },
-    "asphalt medium": {
+    asphalt_medium: {
         text: "Asphalt Medium",
     },
-    "asphalt hard": {
+    asphalt_hard: {
         text: "Asphalt Hard",
     },
-    "asphalt rain": {
+    asphalt_rain: {
         text: "Asphalt Rain",
     },
-    "gravel super soft": {
+    gravel_super_soft: {
         text: "Gravel Super Soft",
     },
-    "gravel soft": {
+    gravel_soft: {
         text: "Gravel Soft",
     },
-    "gravel medium": {
+    gravel_medium: {
         text: "Gravel Medium",
     },
-    "gravel hard": { text: "Gravel Hard" },
-    winter: { text: "Winter" },
-    snow: { text: "Snow" },
+    gravel_hard: {
+        text: "Gravel Hard",
+    },
+    winter: {
+        text: "Winter",
+    },
+    snow: {
+        text: "Snow",
+    },
 };
 
 export const USER_ROLES_MAP = {

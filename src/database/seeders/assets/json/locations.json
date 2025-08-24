@@ -5,10 +5,10 @@
         "description": "An unforviging asphalt rally blasting through the countryside of the Czech Republic, Germany, and Austria.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "asphalt soft",
-            "asphalt medium",
-            "asphalt hard",
-            "asphalt rain"
+            "asphalt_soft",
+            "asphalt_medium",
+            "asphalt_hard",
+            "asphalt_rain"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "tarmac",
@@ -21,10 +21,10 @@
         "description": "A challenging and versatile gravel rally set within stunning natural vistas.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "gravel super soft",
-            "gravel soft",
-            "gravel medium",
-            "gravel hard"
+            "gravel_super_soft",
+            "gravel_soft",
+            "gravel_medium",
+            "gravel_hard"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
@@ -37,10 +37,10 @@
         "description": "A fast and technical asphalt rally through rustic villages and winding mountain roads.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "asphalt soft",
-            "asphalt medium",
-            "asphalt hard",
-            "asphalt rain"
+            "asphalt_soft",
+            "asphalt_medium",
+            "asphalt_hard",
+            "asphalt_rain"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "tarmac",
@@ -52,7 +52,7 @@
         "name": "Rally Estonia",
         "description": "A blazingly fast rally through big jumps, wide gravel roads, and tight stages.",
         "seasons": ["spring", "summer", "autumn", "winter"],
-        "tyres": ["gravel super soft", "gravel soft", "gravel medium"],
+        "tyres": ["gravel_super_soft", "gravel_soft", "gravel_medium"],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
         "img_banner_path": "estonia.png",
@@ -63,7 +63,7 @@
         "name": "Secto Rally Finland",
         "description": "Competitors fly through stages of big jumps and wide roads in this gravel rally.",
         "seasons": ["spring", "summer", "autumn", "winter"],
-        "tyres": ["gravel super soft", "gravel soft", "gravel medium"],
+        "tyres": ["gravel_super_soft", "gravel_soft", "gravel_medium"],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
         "img_banner_path": "finland.png",
@@ -75,10 +75,10 @@
         "description": "An unforviging asphalt rally blasting through the countryside of the Czech Republic, Germany, and Austria.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "gravel super soft",
-            "gravel soft",
-            "gravel medium",
-            "gravel hard"
+            "gravel_super_soft",
+            "gravel_soft",
+            "gravel_medium",
+            "gravel_hard"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
@@ -91,10 +91,10 @@
         "description": "A fast flowing asphalt rally with plenty of verticality through the mountainous Chubu region.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "asphalt soft",
-            "asphalt medium",
-            "asphalt hard",
-            "asphalt rain"
+            "asphalt_soft",
+            "asphalt_medium",
+            "asphalt_hard",
+            "asphalt_rain"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "tarmac",
@@ -106,7 +106,7 @@
         "name": "Safari Rally Kenya",
         "description": "This gravel rally is both visually stunning and ruggedly harsh as it cuts through the African wilderness.",
         "seasons": ["spring", "summer", "autumn", "winter"],
-        "tyres": ["gravel medium", "gravel hard"],
+        "tyres": ["gravel_medium", "gravel_hard"],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
         "img_banner_path": "kenya.png",
@@ -118,10 +118,10 @@
         "description": "An historic asphalt rally with unforgiving obstacles and extreme drops.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "asphalt soft",
-            "asphalt medium",
-            "asphalt hard",
-            "asphalt rain"
+            "asphalt_soft",
+            "asphalt_medium",
+            "asphalt_hard",
+            "asphalt_rain"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "tarmac",
@@ -133,7 +133,7 @@
         "name": "Guanajuato Rally México",
         "description": "A highly technical desert rally run on extreme and hazardous terrain.",
         "seasons": ["spring", "summer", "autumn", "winter"],
-        "tyres": ["gravel medium", "gravel hard"],
+        "tyres": ["gravel_medium", "gravel_hard"],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
         "img_banner_path": "mexico.png",
@@ -146,12 +146,12 @@
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
             "winter",
-            "asphalt soft",
-            "asphalt medium",
-            "asphalt hard",
-            "asphalt rain"
+            "asphalt_soft",
+            "asphalt_medium",
+            "asphalt_hard",
+            "asphalt_rain"
         ],
-        "surface_conditions": ["dry", "wet", "Ice"],
+        "surface_conditions": ["dry", "wet", "ice"],
         "surface_type": "tarmac",
         "img_banner_path": "monte_carlo.png",
         "img_bg_path": "monte_carlo.jpg"
@@ -161,7 +161,7 @@
         "name": "FANATEC Rally Oceania",
         "description": "Rolling hills and sweeping vistas characterise this iconic gravel rally.",
         "seasons": ["spring", "summer", "autumn", "winter"],
-        "tyres": ["gravel super soft", "gravel soft", "gravel medium"],
+        "tyres": ["gravel_super_soft", "gravel_soft", "gravel_medium"],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
         "img_banner_path": "oceania.png",
@@ -172,7 +172,7 @@
         "name": "AGON by AOC Rally Pacifico",
         "description": "A tricky gravel rally set within the humid and tropical jungles of South East Asia.",
         "seasons": ["spring", "summer", "autumn", "winter"],
-        "tyres": ["gravel medium", "gravel hard"],
+        "tyres": ["gravel_medium", "gravel_hard"],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
         "img_banner_path": "pacifico.png",
@@ -184,10 +184,10 @@
         "description": "Long fast and flowing rally through the idyllic and vibrant countryside.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "gravel super soft",
-            "gravel soft",
-            "gravel medium",
-            "gravel hard"
+            "gravel_super_soft",
+            "gravel_soft",
+            "gravel_medium",
+            "gravel_hard"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
@@ -200,10 +200,10 @@
         "description": "A difficult rally with winding gravel roads navigating the warm coastal regions.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "gravel super soft",
-            "gravel soft",
-            "gravel medium",
-            "gravel hard"
+            "gravel_super_soft",
+            "gravel_soft",
+            "gravel_medium",
+            "gravel_hard"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "gravel",
@@ -227,10 +227,10 @@
         "description": "Blistering fast asphalt rally through the countryside of España.",
         "seasons": ["spring", "summer", "autumn", "winter"],
         "tyres": [
-            "asphalt soft",
-            "asphalt medium",
-            "asphalt hard",
-            "asphalt rain"
+            "asphalt_soft",
+            "asphalt_medium",
+            "asphalt_hard",
+            "asphalt_rain"
         ],
         "surface_conditions": ["dry", "wet"],
         "surface_type": "tarmac",

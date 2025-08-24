@@ -58,34 +58,19 @@ export default function SetupCreateOptions({
         });
     };
 
-    // Helper function to get season icon
-    const getSeasonIcon = (season: string) => {
-        switch (season) {
-            case "spring":
-                return <GiTwirlyFlower className="text-green-500 text-lg" />;
-            case "summer":
-                return <FiSun className="text-yellow-500 text-lg" />;
-            case "autumn":
-                return <GiLindenLeaf className="text-orange-500 text-lg" />;
-            case "winter":
-                return <FaRegSnowflake className="text-blue-400 text-lg" />;
-            default:
-                return <FiCalendar className="text-primary text-lg" />;
-        }
-    };
+    const getDisplayIcon = (
+        type: "season" | "surface_condition",
+        value: string
+    ) => {
+        const maps = {
+            season: SEASONS_MAP,
+            surface_condition: SURFACE_CONDITIONS_MAP,
+        };
 
-    // Helper function to get surface condition icon
-    const getSurfaceConditionIcon = (condition: string) => {
-        switch (condition) {
-            case "dry":
-                return <BsCloudSunFill className="text-amber-500 text-lg" />;
-            case "wet":
-                return <BiWater className="text-blue-500 text-lg" />;
-            case "snow":
-                return <BsSnow2 className="text-blue-400 text-lg" />;
-            default:
-                return <FiDroplet className="text-primary text-lg" />;
-        }
+        return (
+            (maps[type] as Record<string, { icon: JSX.Element }>)[value]
+                ?.icon || null
+        );
     };
 
     // Helper function to get display text for options
@@ -159,55 +144,6 @@ export default function SetupCreateOptions({
                         <div className="w-24"></div> {/* Spacer for balance */}
                     </div>
 
-                    {/* Surface Condition Selection */}
-                    <div className="bg-surfaceContainer rounded-xl p-6 mb-6 border border-surfaceContainerHigh">
-                        <h3 className="text-lg font-medium text-onSurface mb-6 flex items-center">
-                            <FiCloud className="mr-2 text-primary text-xl" />
-                            Surface Condition
-                        </h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {location?.surfaceConditions.map((condition) => (
-                                <button
-                                    key={condition}
-                                    onClick={() =>
-                                        setOptions({
-                                            ...options,
-                                            surface_condition: condition,
-                                        })
-                                    }
-                                    className={`p-4 rounded-xl border transition-all duration-200 flex flex-col items-center ${
-                                        options.surface_condition === condition
-                                            ? "border-primary bg-primary/10 ring-2 ring-primary/20"
-                                            : "border-surfaceContainerHigh bg-surface hover:border-primary/30"
-                                    }`}
-                                >
-                                    <div className="mb-3">
-                                        {getSurfaceConditionIcon(condition)}
-                                    </div>
-                                    <span
-                                        className={`font-medium ${
-                                            options.surface_condition ===
-                                            condition
-                                                ? "text-primary"
-                                                : "text-onSurface"
-                                        }`}
-                                    >
-                                        {getDisplayText(
-                                            "surface_condition",
-                                            condition
-                                        )}
-                                    </span>
-                                    {options.surface_condition ===
-                                        condition && (
-                                        <div className="mt-2 w-6 h-6 rounded-full bg-primary text-surfaceContainer flex items-center justify-center">
-                                            <FiCheck size={14} />
-                                        </div>
-                                    )}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
                     {/* Season Selection */}
                     <div className="bg-surfaceContainer rounded-xl p-6 mb-6 border border-surfaceContainerHigh">
                         <h3 className="text-lg font-medium text-onSurface mb-6 flex items-center">
@@ -231,7 +167,7 @@ export default function SetupCreateOptions({
                                     }`}
                                 >
                                     <div className="mb-3">
-                                        {getSeasonIcon(season)}
+                                        {getDisplayIcon("season", season)}
                                     </div>
                                     <span
                                         className={`font-medium ${
@@ -243,6 +179,58 @@ export default function SetupCreateOptions({
                                         {getDisplayText("season", season)}
                                     </span>
                                     {options.season === season && (
+                                        <div className="mt-2 w-6 h-6 rounded-full bg-primary text-surfaceContainer flex items-center justify-center">
+                                            <FiCheck size={14} />
+                                        </div>
+                                    )}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Surface Condition Selection */}
+                    <div className="bg-surfaceContainer rounded-xl p-6 mb-6 border border-surfaceContainerHigh">
+                        <h3 className="text-lg font-medium text-onSurface mb-6 flex items-center">
+                            <FiCloud className="mr-2 text-primary text-xl" />
+                            Surface Condition
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            {location?.surfaceConditions.map((condition) => (
+                                <button
+                                    key={condition}
+                                    onClick={() =>
+                                        setOptions({
+                                            ...options,
+                                            surface_condition: condition,
+                                        })
+                                    }
+                                    className={`p-4 rounded-xl border transition-all duration-200 flex flex-col items-center ${
+                                        options.surface_condition === condition
+                                            ? "border-primary bg-primary/10 ring-2 ring-primary/20"
+                                            : "border-surfaceContainerHigh bg-surface hover:border-primary/30"
+                                    }`}
+                                >
+                                    <div className="mb-3">
+                                        {getDisplayIcon(
+                                            "surface_condition",
+                                            condition
+                                        )}
+                                    </div>
+                                    <span
+                                        className={`font-medium ${
+                                            options.surface_condition ===
+                                            condition
+                                                ? "text-primary"
+                                                : "text-onSurface"
+                                        }`}
+                                    >
+                                        {getDisplayText(
+                                            "surface_condition",
+                                            condition
+                                        )}
+                                    </span>
+                                    {options.surface_condition ===
+                                        condition && (
                                         <div className="mt-2 w-6 h-6 rounded-full bg-primary text-surfaceContainer flex items-center justify-center">
                                             <FiCheck size={14} />
                                         </div>
@@ -320,7 +308,8 @@ export default function SetupCreateOptions({
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {options.surface_condition && (
                                     <div className="flex items-center">
-                                        {getSurfaceConditionIcon(
+                                        {getDisplayIcon(
+                                            "surface_condition",
                                             options.surface_condition
                                         )}
                                         <div className="ml-3">
@@ -338,7 +327,10 @@ export default function SetupCreateOptions({
                                 )}
                                 {options.season && (
                                     <div className="flex items-center">
-                                        {getSeasonIcon(options.season)}
+                                        {getDisplayIcon(
+                                            "season",
+                                            options.season
+                                        )}
                                         <div className="ml-3">
                                             <p className="text-sm font-medium text-onSurface/70">
                                                 Season

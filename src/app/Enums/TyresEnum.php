@@ -4,15 +4,15 @@ namespace App\Enums;
 
 enum TyresEnum: string
 {
-    case ASPHALT_SOFT = 'asphalt soft';
-    case ASPHALT_MEDIUM = 'asphalt medium';
-    case ASPHALT_HARD = 'asphalt hard';
-    case ASPHALT_RAIN = 'asphalt rain';
+    case ASPHALT_SOFT = 'asphalt_soft';
+    case ASPHALT_MEDIUM = 'asphalt_medium';
+    case ASPHALT_HARD = 'asphalt_hard';
+    case ASPHALT_RAIN = 'asphalt_rain';
 
-    case GRAVEL_SUPER_SOFT = 'gravel super soft';
-    case GRAVEL_SOFT = 'gravel soft';
-    case GRAVEL_MEDIUM = 'gravel medium';
-    case GRAVEL_HARD = 'gravel hard';
+    case GRAVEL_SUPER_SOFT = 'gravel_super_soft';
+    case GRAVEL_SOFT = 'gravel_soft';
+    case GRAVEL_MEDIUM = 'gravel_medium';
+    case GRAVEL_HARD = 'gravel_hard';
 
     case WINTER = 'winter';
     case SNOW = 'snow';
