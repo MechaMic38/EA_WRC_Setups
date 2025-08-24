@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
@@ -11,25 +11,27 @@ import {
     FiX,
     FiSearch,
     FiTruck,
+    FiMapPin,
+    FiUser,
+    FiPlus,
 } from "react-icons/fi";
 import { GiTwirlyFlower, GiLindenLeaf } from "react-icons/gi";
 import { FiSun } from "react-icons/fi";
 import { FaRegSnowflake } from "react-icons/fa";
 import { BsCloudSunFill, BsSnow2 } from "react-icons/bs";
 import { BiWater } from "react-icons/bi";
-import { LocationSummary, PaginatedData, Setup, Vehicle } from "@/types";
+import { PaginatedData, Setup, Vehicle, LocationSummary } from "@/types";
 import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";
 
-export default function LocationShow({
-    location,
-}: {
-    location: LocationSummary;
-}) {
-    const { get: getVehicles, isProcessing: isProcessingVehicles } =
-        useAxiosForm<PaginatedData<Vehicle>>([]);
-    const { get: getSetup, isProcessing: isProcessingSetup } = useAxiosForm<
+export default function UserSetupIndex() {
+    const user = usePage().props.auth.user;
+    const { get: getSetups, isProcessing: isProcessingSetups } = useAxiosForm<
         PaginatedData<Setup>
     >([]);
+    const { get: getVehicles, isProcessing: isProcessingVehicles } =
+        useAxiosForm<PaginatedData<Vehicle>>([]);
+    const { get: getLocations, isProcessing: isProcessingLocations } =
+        useAxiosForm<PaginatedData<LocationSummary>>([]);
 
     const [setupsData, setSetupsData] = useState<PaginatedData<Setup>>({
         data: [],
@@ -46,9 +48,11 @@ export default function LocationShow({
         },
     });
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+    const [locations, setLocations] = useState<LocationSummary[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
         vehicle_id: "",
+        location_id: "",
         season: "",
         surface_condition: "",
         tyres: "",
@@ -62,18 +66,24 @@ export default function LocationShow({
                 setVehicles(response.data.data);
             },
         });
-    }, [location.id]);
+        getLocations(route("api.locations.index", { paginate: false }), {
+            onSuccess: (response) => {
+                setLocations(response.data.data);
+            },
+        });
+    }, []);
 
     const fetchSetups = () => {
-        const params: any = { location_id: location.id };
+        const params: any = { user_id: user.id };
         if (searchQuery) params.search = searchQuery;
         if (filters.vehicle_id) params.vehicle_id = filters.vehicle_id;
+        if (filters.location_id) params.location_id = filters.location_id;
         if (filters.season) params.season = filters.season;
         if (filters.surface_condition)
             params.surface_condition = filters.surface_condition;
         if (filters.tyres) params.tyres = filters.tyres;
 
-        getSetup(route("api.setups.index", params), {
+        getSetups(route("api.setups.index", params), {
             onSuccess: (response) => {
                 setSetupsData(response.data);
             },
@@ -87,6 +97,7 @@ export default function LocationShow({
     const clearFilters = () => {
         setFilters({
             vehicle_id: "",
+            location_id: "",
             season: "",
             surface_condition: "",
             tyres: "",
@@ -96,6 +107,7 @@ export default function LocationShow({
 
     const hasActiveFilters =
         filters.vehicle_id ||
+        filters.location_id ||
         filters.season ||
         filters.surface_condition ||
         filters.tyres ||
@@ -142,42 +154,26 @@ export default function LocationShow({
 
     return (
         <UserLayout>
-            <Head title={`${location.name} Setups`} />
+            <Head title="My Setups" />
 
-            {/* Location Hero Banner */}
-            <div className="relative h-64 w-full overflow-hidden bg-surfaceContainerHigh">
-                <img
-                    src={location.imgBgPath}
-                    alt={location.name}
-                    className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-surfaceContainer to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
-                        <div className="flex items-end justify-between">
-                            <div className="flex-1">
-                                <div className="flex items-center mb-4">
-                                    <img
-                                        src={location.imgBannerPath}
-                                        alt={location.name}
-                                        className="h-16 w-16 object-contain mr-4"
-                                    />
-                                    <div>
-                                        <h1 className="text-4xl font-bold text-onSurface">
-                                            {location.name}
-                                        </h1>
-                                        <p className="text-onSurface mt-2 line-clamp-2">
-                                            {location.description}
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-4">
-                                    <span className="px-4 py-2 bg-surfaceContainer/90 backdrop-blur-sm text-onSurface rounded-xl text-sm font-medium">
-                                        {location.surfaceType}
-                                    </span>
-                                </div>
-                            </div>
+            {/* Header Section */}
+            <div className="bg-surfaceContainer py-8 border-b border-surfaceContainerHigh">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div>
+                            <h1 className="text-3xl font-bold text-onSurface mb-2">
+                                My Setups
+                            </h1>
+                            <p className="text-onSurface/70">
+                                Manage and view all your created setups
+                            </p>
                         </div>
+                        <Link
+                            href={route("setups.create.location")}
+                            className="px-6 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 flex items-center font-medium"
+                        >
+                            <FiPlus className="mr-2" /> Create New Setup
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -192,7 +188,7 @@ export default function LocationShow({
                                 <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
                                 <input
                                     type="text"
-                                    placeholder="Search setups by vehicle or creator..."
+                                    placeholder="Search your setups by vehicle or location..."
                                     value={searchQuery}
                                     onChange={(e) =>
                                         setSearchQuery(e.target.value)
@@ -217,7 +213,7 @@ export default function LocationShow({
                         {/* Advanced Filters Dropdown */}
                         {isFiltersOpen && (
                             <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                                     {/* Vehicle Filter */}
                                     <div>
                                         <label className="block text-sm font-medium text-onSurface/70 mb-2">
@@ -242,6 +238,35 @@ export default function LocationShow({
                                                     value={vehicle.id}
                                                 >
                                                     {vehicle.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Location Filter */}
+                                    <div>
+                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                            Location
+                                        </label>
+                                        <select
+                                            value={filters.location_id}
+                                            onChange={(e) =>
+                                                handleFilterChange(
+                                                    "location_id",
+                                                    e.target.value
+                                                )
+                                            }
+                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                        >
+                                            <option value="">
+                                                All Locations
+                                            </option>
+                                            {locations.map((location) => (
+                                                <option
+                                                    key={location.id}
+                                                    value={location.id}
+                                                >
+                                                    {location.name}
                                                 </option>
                                             ))}
                                         </select>
@@ -400,8 +425,30 @@ export default function LocationShow({
                                         </button>
                                     </span>
                                 )}
-                                {filters.season && (
+                                {filters.location_id && (
                                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-sm">
+                                        Location:{" "}
+                                        {
+                                            locations.find(
+                                                (l) =>
+                                                    l.id === filters.location_id
+                                            )?.name
+                                        }
+                                        <button
+                                            onClick={() =>
+                                                handleFilterChange(
+                                                    "location_id",
+                                                    ""
+                                                )
+                                            }
+                                            className="ml-2 hover:text-tertiary-800"
+                                        >
+                                            <FiX size={14} />
+                                        </button>
+                                    </span>
+                                )}
+                                {filters.season && (
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
                                         Season:{" "}
                                         {
                                             SEASONS_MAP[
@@ -412,14 +459,14 @@ export default function LocationShow({
                                             onClick={() =>
                                                 handleFilterChange("season", "")
                                             }
-                                            className="ml-2 hover:text-tertiary-800"
+                                            className="ml-2 hover:text-primary-800"
                                         >
                                             <FiX size={14} />
                                         </button>
                                     </span>
                                 )}
                                 {filters.surface_condition && (
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary/10 text-primary text-sm">
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm">
                                         Surface:{" "}
                                         {
                                             SURFACE_CONDITIONS_MAP[
@@ -433,14 +480,14 @@ export default function LocationShow({
                                                     ""
                                                 )
                                             }
-                                            className="ml-2 hover:text-primary-800"
+                                            className="ml-2 hover:text-secondary-800"
                                         >
                                             <FiX size={14} />
                                         </button>
                                     </span>
                                 )}
                                 {filters.tyres && (
-                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-secondary/10 text-secondary text-sm">
+                                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-sm">
                                         Tyres:{" "}
                                         {
                                             TYRES_MAP[
@@ -451,7 +498,7 @@ export default function LocationShow({
                                             onClick={() =>
                                                 handleFilterChange("tyres", "")
                                             }
-                                            className="ml-2 hover:text-secondary-800"
+                                            className="ml-2 hover:text-tertiary-800"
                                         >
                                             <FiX size={14} />
                                         </button>
@@ -462,18 +509,20 @@ export default function LocationShow({
                     )}
 
                     {/* Results Count */}
-                    {!isProcessingSetup && (
+                    {!isProcessingSetups && (
                         <div className="mb-6">
                             <p className="text-onSurface/70">
                                 Showing {setupsData.data.length} setup
                                 {setupsData.data.length !== 1 ? "s" : ""}
                                 {hasActiveFilters && " (filtered)"}
+                                {setupsData.meta.total > 0 &&
+                                    ` of ${setupsData.meta.total} total`}
                             </p>
                         </div>
                     )}
 
                     {/* Setups Grid */}
-                    {isProcessingSetup ? (
+                    {isProcessingSetups ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
                                 <div
@@ -496,12 +545,12 @@ export default function LocationShow({
                             <h3 className="text-lg font-medium text-onSurface mb-2">
                                 {hasActiveFilters
                                     ? "No setups match your filters"
-                                    : `No setups found for ${location.name}`}
+                                    : "You haven't created any setups yet"}
                             </h3>
                             <p className="text-onSurface/70 mb-4">
                                 {hasActiveFilters
                                     ? "Try adjusting your filters"
-                                    : "Be the first to create a setup for this location"}
+                                    : "Get started by creating your first setup"}
                             </p>
                             {hasActiveFilters ? (
                                 <button
@@ -515,7 +564,7 @@ export default function LocationShow({
                                     href={route("setups.create.location")}
                                     className="px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 inline-block"
                                 >
-                                    Create First Setup
+                                    Create Your First Setup
                                 </Link>
                             )}
                         </div>
@@ -526,7 +575,7 @@ export default function LocationShow({
                                     key={setup.id}
                                     className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30"
                                 >
-                                    {/* Vehicle Image */}
+                                    {/* Setup Image - Show vehicle image */}
                                     <div className="h-48 relative overflow-hidden bg-surfaceContainerHigh">
                                         <img
                                             src={setup.vehicle.imgPath}
@@ -541,12 +590,8 @@ export default function LocationShow({
                                         </div>
                                         <div className="absolute top-3 right-3">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                {getSurfaceConditionIcon(
-                                                    setup.surfaceCondition
-                                                )}
-                                                <span className="ml-1 capitalize">
-                                                    {setup.surfaceCondition}
-                                                </span>
+                                                <FiMapPin className="mr-1 text-primary" />
+                                                {setup.location.name}
                                             </span>
                                         </div>
                                     </div>
@@ -555,15 +600,11 @@ export default function LocationShow({
                                     <div className="p-4">
                                         <div className="flex items-center justify-between mb-4">
                                             <div className="flex items-center">
-                                                <img
-                                                    src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                                        setup.user.username
-                                                    )}&background=CFBDFE&color=211F24`}
-                                                    alt={setup.user.username}
-                                                    className="h-8 w-8 rounded-full mr-3 border-2 border-surfaceContainerHigh"
-                                                />
+                                                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
+                                                    <FiUser className="text-primary" />
+                                                </div>
                                                 <span className="text-sm font-medium text-onSurface">
-                                                    {setup.user.username}
+                                                    Your Setup
                                                 </span>
                                             </div>
                                             <span className="text-xs text-onSurface/70">
@@ -574,6 +615,14 @@ export default function LocationShow({
                                         </div>
 
                                         <div className="grid grid-cols-2 gap-3 mb-4">
+                                            <div className="flex items-center text-onSurface text-sm">
+                                                {getSurfaceConditionIcon(
+                                                    setup.surfaceCondition
+                                                )}
+                                                <span className="ml-2 capitalize">
+                                                    {setup.surfaceCondition}
+                                                </span>
+                                            </div>
                                             <div className="flex items-center text-onSurface text-sm">
                                                 {getSeasonIcon(setup.season)}
                                                 <span className="ml-2 capitalize">

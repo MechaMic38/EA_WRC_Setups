@@ -18,6 +18,11 @@ class SetupController extends Controller
         return Inertia::render('Public/SetupIndex', []);
     }
 
+    public function userIndex()
+    {
+        return Inertia::render('Profile/UserSetupIndex', []);
+    }
+
 
     /**
      * Show the location page of the setup creation wizard.

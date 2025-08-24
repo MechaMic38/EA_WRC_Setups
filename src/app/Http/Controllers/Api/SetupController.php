@@ -35,6 +35,18 @@ class SetupController extends Controller
             ->when($request->vehicle_id, function ($query, $vehicleId) {
                 $query->where('vehicle_id', $vehicleId);
             })
+            // Filter by season (exact match)
+            ->when($request->season, function ($query, $season) {
+                $query->where('season', $season);
+            })
+            // Filter by surface_condition (exact match)
+            ->when($request->surface_condition, function ($query, $surfaceCondition) {
+                $query->where('surface_condition', $surfaceCondition);
+            })
+            // Filter by tyre (exact match)
+            ->when($request->tyres, function ($query, $tyres) {
+                $query->where('tyres', $tyres);
+            })
             ->paginate($perPage);
 
         return SetupResource::collection($setups);

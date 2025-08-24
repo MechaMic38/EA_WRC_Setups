@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    Route::get('/user/setups', [SetupController::class, 'userIndex'])->name('user.setups.index');
+
     // Setup creation wizard
     Route::get('/setups/create/location', [SetupController::class, 'createLocation'])->name('setups.create.location');
     Route::get('/setups/create/vehicle', [SetupController::class, 'createVehicle'])->name('setups.create.vehicle');
