@@ -1,7 +1,7 @@
 import { BiWater } from "react-icons/bi";
 import { BsCloudSunFill, BsSnow2 } from "react-icons/bs";
 import { FaRegSnowflake } from "react-icons/fa";
-import { FiCloudSnow, FiSun } from "react-icons/fi";
+import { FiCloudSnow, FiShield, FiSun, FiUser } from "react-icons/fi";
 import {
     GiConcreteBag,
     GiDustCloud,
@@ -100,8 +100,10 @@ export const TYRES_MAP = {
 export const USER_ROLES_MAP = {
     admin: {
         text: "Administrator",
+        icon: <FiShield className="text-tertiary" />,
     },
     user: {
         text: "User",
+        icon: <FiUser className="text-secondary" />,
     },
 };

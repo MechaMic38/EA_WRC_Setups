@@ -27,6 +27,7 @@ import {
     TYRES_MAP,
 } from "@/constants";
 import BaseModal from "../BaseModal";
+import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
 
 interface LocationFormData {
     name: string;
@@ -95,6 +96,10 @@ export default function LocationCreateModal({
             clearErrors();
             setShowError(false);
         }
+    };
+
+    const onSurfaceTypeChange = (value: string | null) => {
+        setData((prev) => ({ ...prev, surface_type: value || "" }));
     };
 
     const onBackgroundImageChange = (file: File | null) => {
@@ -305,24 +310,12 @@ export default function LocationCreateModal({
                                         Surface Type
                                     </Label>
                                 </div>
-                                <Select
-                                    name="surface_type"
-                                    value={data.surface_type}
-                                    onChange={handleInputChange}
-                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                                    required
-                                >
-                                    <option value="">
-                                        Select Surface Type
-                                    </option>
-                                    {Object.entries(SURFACE_TYPES_MAP).map(
-                                        ([key, value]) => (
-                                            <option key={key} value={key}>
-                                                {value.text}
-                                            </option>
-                                        )
-                                    )}
-                                </Select>
+                                <SurfaceTypeListbox
+                                    options={Object.keys(SURFACE_TYPES_MAP)}
+                                    selectedOption={data.surface_type}
+                                    onChange={onSurfaceTypeChange}
+                                    error={errors.surface_type}
+                                />
                                 {errors.surface_type && (
                                     <p className="text-red-500 text-sm mt-1 flex items-center">
                                         <FiAlertCircle className="mr-1" />

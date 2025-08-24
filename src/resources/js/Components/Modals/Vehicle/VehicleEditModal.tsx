@@ -11,8 +11,9 @@ import { FiX, FiCheck, FiAlertCircle, FiTag } from "react-icons/fi";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
 import BaseModal from "../BaseModal";
-import ListBox from "@/Components/Form/ListBox";
 import { BsTools } from "react-icons/bs";
+import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
+import CategoryListbox from "@/Components/Form/CategoryListbox";
 
 interface VehicleFormData {
     _method: "PATCH";
@@ -332,7 +333,7 @@ export default function VehicleEditModal({
                                         Manufacturer
                                     </Label>
                                 </div>
-                                <ListBox
+                                <ManufacturerListbox
                                     options={manufacturers}
                                     selectedOption={selectedManufacturer}
                                     error={getError("manufacturer_id")}
@@ -356,7 +357,7 @@ export default function VehicleEditModal({
                                         Category
                                     </Label>
                                 </div>
-                                <ListBox
+                                <CategoryListbox
                                     options={categories}
                                     selectedOption={selectedCategory}
                                     error={getError("category_id")}

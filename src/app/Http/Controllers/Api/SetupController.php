@@ -22,7 +22,7 @@ class SetupController extends Controller
         $perPage = $request->input('per_page', 15);
 
         $setups = Setup::query()
-            ->with(['user', 'location', 'vehicle'])
+            ->with(['user', 'location', 'vehicle', 'vehicle.category', 'vehicle.manufacturer'])
             // Filter by user_id (exact match)
             ->when($request->user_id, function ($query, $userId) {
                 $query->where('user_id', $userId);

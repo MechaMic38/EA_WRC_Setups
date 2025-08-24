@@ -11,6 +11,8 @@ import {
 } from "react-icons/fi";
 import { LocationSummary, PaginatedData } from "@/types";
 import { SURFACE_TYPES_MAP } from "@/constants";
+import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
+import { Field, Label } from "@headlessui/react";
 
 const SkeletonCard = () => (
     <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh p-4 animate-pulse">
@@ -51,10 +53,8 @@ export default function LocationIndex() {
         setSearchQuery(e.target.value);
     };
 
-    const handleSurfaceFilterChange = (
-        e: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-        setSurfaceFilter(e.target.value);
+    const onSurfaceFilterChange = (surfaceType: string | null) => {
+        setSurfaceFilter(surfaceType || "");
     };
 
     const clearFilters = () => {
@@ -137,27 +137,18 @@ export default function LocationIndex() {
                             <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Surface Type Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Surface Type
-                                        </label>
-                                        <select
-                                            value={surfaceFilter}
-                                            onChange={handleSurfaceFilterChange}
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Surface Types
-                                            </option>
-                                            {Object.entries(
+                                        </Label>
+                                        <SurfaceTypeListbox
+                                            options={Object.keys(
                                                 SURFACE_TYPES_MAP
-                                            ).map(([key, value]) => (
-                                                <option key={key} value={key}>
-                                                    {value.text}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                            )}
+                                            selectedOption={surfaceFilter}
+                                            onChange={onSurfaceFilterChange}
+                                        />
+                                    </Field>
                                 </div>
 
                                 {/* Clear Filters Button */}

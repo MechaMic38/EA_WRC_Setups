@@ -5,6 +5,9 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
 import { FiChevronRight, FiFilter, FiX, FiSearch } from "react-icons/fi";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
+import CategoryListbox from "@/Components/Form/CategoryListbox";
+import { Field, Label } from "@headlessui/react";
+import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
 
 const SkeletonCard = () => (
     <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden animate-pulse">
@@ -158,81 +161,32 @@ export default function VehicleIndex() {
                             <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Category Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Category
-                                        </label>
-                                        <select
-                                            value={filters.category?.id || ""}
-                                            onChange={(e) => {
-                                                const categoryId =
-                                                    e.target.value;
-                                                const category = categoryId
-                                                    ? categories.find(
-                                                          (c) =>
-                                                              c.id ===
-                                                              categoryId
-                                                      ) || null
-                                                    : null;
-                                                onCategoryChange(category);
-                                            }}
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Categories
-                                            </option>
-                                            {categories.map((category) => (
-                                                <option
-                                                    key={category.id}
-                                                    value={category.id}
-                                                >
-                                                    {category.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                        </Label>
+                                        <CategoryListbox
+                                            options={categories}
+                                            selectedOption={
+                                                filters.category || null
+                                            }
+                                            onChange={onCategoryChange}
+                                        />
+                                    </Field>
 
                                     {/* Manufacturer Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Manufacturer
-                                        </label>
-                                        <select
-                                            value={
-                                                filters.manufacturer?.id || ""
+                                        </Label>
+                                        <ManufacturerListbox
+                                            options={manufacturers}
+                                            selectedOption={
+                                                filters.manufacturer
                                             }
-                                            onChange={(e) => {
-                                                const manufacturerId =
-                                                    e.target.value;
-                                                const manufacturer =
-                                                    manufacturerId
-                                                        ? manufacturers.find(
-                                                              (m) =>
-                                                                  m.id ===
-                                                                  manufacturerId
-                                                          ) || null
-                                                        : null;
-                                                onManufacturerChange(
-                                                    manufacturer
-                                                );
-                                            }}
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Manufacturers
-                                            </option>
-                                            {manufacturers.map(
-                                                (manufacturer) => (
-                                                    <option
-                                                        key={manufacturer.id}
-                                                        value={manufacturer.id}
-                                                    >
-                                                        {manufacturer.name}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
-                                    </div>
+                                            onChange={onManufacturerChange}
+                                        />
+                                    </Field>
                                 </div>
 
                                 {/* Clear Filters Button */}

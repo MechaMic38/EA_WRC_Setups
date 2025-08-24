@@ -22,6 +22,9 @@ import UserCreateModal from "@/Components/Modals/User/UserCreateModal";
 import UserEditModal from "@/Components/Modals/User/UserEditModal";
 import UserShowModal from "@/Components/Modals/User/UserShowModal";
 import UserDeleteModal from "@/Components/Modals/User/UserDeleteModal";
+import UserRoleListbox from "@/Components/Form/UserRoleListbox";
+import { USER_ROLES_MAP } from "@/constants";
+import { Field, Input, Label } from "@headlessui/react";
 
 interface UserIndexProps {
     page?: number;
@@ -314,11 +317,11 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
                             <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Email Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Email
-                                        </label>
-                                        <input
+                                        </Label>
+                                        <Input
                                             type="text"
                                             placeholder="Search by email..."
                                             value={filters.email}
@@ -330,32 +333,26 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
                                             }
                                             className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
                                         />
-                                    </div>
+                                    </Field>
 
                                     {/* Role Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Role
-                                        </label>
-                                        <select
-                                            value={filters.role}
-                                            onChange={(e) =>
+                                        </Label>
+                                        <UserRoleListbox
+                                            options={Object.keys(
+                                                USER_ROLES_MAP
+                                            )}
+                                            selectedOption={filters.role}
+                                            onChange={(value) =>
                                                 onFilterChange(
                                                     "role",
-                                                    e.target.value
+                                                    value || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">All Roles</option>
-                                            <option value="admin">
-                                                Administrator
-                                            </option>
-                                            <option value="user">
-                                                Regular User
-                                            </option>
-                                        </select>
-                                    </div>
+                                        />
+                                    </Field>
                                 </div>
 
                                 {/* Clear Filters Button */}

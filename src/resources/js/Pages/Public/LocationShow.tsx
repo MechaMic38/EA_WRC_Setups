@@ -1,30 +1,33 @@
-import { Head, Link } from "@inertiajs/react";
-import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
 import {
     FiChevronRight,
-    FiSettings,
-    FiCalendar,
-    FiDroplet,
     FiFilter,
-    FiX,
     FiSearch,
-    FiTruck,
+    FiSettings,
+    FiX,
 } from "react-icons/fi";
-import { GiTwirlyFlower, GiLindenLeaf } from "react-icons/gi";
-import { FiSun } from "react-icons/fi";
-import { FaRegSnowflake } from "react-icons/fa";
-import { BsCloudSunFill, BsSnow2 } from "react-icons/bs";
-import { BiWater } from "react-icons/bi";
-import { LocationSummary, PaginatedData, Setup, Vehicle } from "@/types";
-import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";
+import { GiCarWheel } from "react-icons/gi";
+import { Location, PaginatedData, Setup, Vehicle } from "@/types";
+import {
+    SEASONS_MAP,
+    SURFACE_CONDITIONS_MAP,
+    SURFACE_TYPES_MAP,
+    TYRES_MAP,
+} from "@/constants";
+import UserLayout from "@/Layouts/UserLayout";
+import { Head, Link } from "@inertiajs/react";
+import VehicleListbox from "@/Components/Form/VehicleListbox";
+import { Field, Label } from "@headlessui/react";
+import SeasonListbox from "@/Components/Form/SeasonListbox";
+import SurfaceConditionListbox from "@/Components/Form/SurfaceConditionListbox";
+import TyresListbox from "@/Components/Form/TyresListbox";
 
-export default function LocationShow({
-    location,
-}: {
-    location: LocationSummary;
-}) {
+interface LocationShowProps {
+    location: Location;
+}
+
+export default function LocationShow({ location }: LocationShowProps) {
     const { get: getVehicles, isProcessing: isProcessingVehicles } =
         useAxiosForm<PaginatedData<Vehicle>>([]);
     const { get: getSetup, isProcessing: isProcessingSetup } = useAxiosForm<
@@ -47,22 +50,33 @@ export default function LocationShow({
     });
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
     const [filters, setFilters] = useState({
         vehicle_id: "",
         season: "",
         surface_condition: "",
         tyres: "",
     });
-    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
+    // Initial data fetch
     useEffect(() => {
-        fetchSetups();
         getVehicles(route("api.vehicles.index", { paginate: false }), {
             onSuccess: (response) => {
                 setVehicles(response.data.data);
             },
         });
-    }, [location.id]);
+        fetchSetups();
+    }, []);
+
+    // Apply filters with debounce
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            fetchSetups();
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [filters, searchQuery]);
 
     const fetchSetups = () => {
         const params: any = { location_id: location.id };
@@ -80,7 +94,7 @@ export default function LocationShow({
         });
     };
 
-    const handleFilterChange = (key: string, value: string) => {
+    const onFilterChange = (key: string, value: string) => {
         setFilters((prev) => ({ ...prev, [key]: value }));
     };
 
@@ -100,45 +114,6 @@ export default function LocationShow({
         filters.surface_condition ||
         filters.tyres ||
         searchQuery;
-
-    // Apply filters with debounce
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            fetchSetups();
-        }, 300);
-
-        return () => clearTimeout(timeoutId);
-    }, [filters, searchQuery]);
-
-    // Helper function to get season icon
-    const getSeasonIcon = (season: string) => {
-        switch (season) {
-            case "spring":
-                return <GiTwirlyFlower className="text-green-500 text-lg" />;
-            case "summer":
-                return <FiSun className="text-yellow-500 text-lg" />;
-            case "autumn":
-                return <GiLindenLeaf className="text-orange-500 text-lg" />;
-            case "winter":
-                return <FaRegSnowflake className="text-blue-400 text-lg" />;
-            default:
-                return <FiCalendar className="text-primary text-lg" />;
-        }
-    };
-
-    // Helper function to get surface condition icon
-    const getSurfaceConditionIcon = (condition: string) => {
-        switch (condition) {
-            case "dry":
-                return <BsCloudSunFill className="text-amber-500 text-lg" />;
-            case "wet":
-                return <BiWater className="text-blue-500 text-lg" />;
-            case "snow":
-                return <BsSnow2 className="text-blue-400 text-lg" />;
-            default:
-                return <FiDroplet className="text-primary text-lg" />;
-        }
-    };
 
     return (
         <UserLayout>
@@ -172,8 +147,16 @@ export default function LocationShow({
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-4">
-                                    <span className="px-4 py-2 bg-surfaceContainer/90 backdrop-blur-sm text-onSurface rounded-xl text-sm font-medium">
-                                        {location.surfaceType}
+                                    <span className="inline-flex items-center px-4 py-2 bg-surfaceContainer/90 backdrop-blur-sm text-onSurface rounded-xl text-sm font-medium">
+                                        {
+                                            SURFACE_TYPES_MAP[
+                                                location.surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                            ]?.icon
+                                        }
+                                        <span className="ml-1" />
+                                        {SURFACE_TYPES_MAP[
+                                            location.surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                        ]?.text || location.surfaceType}
                                     </span>
                                 </div>
                             </div>
@@ -219,121 +202,80 @@ export default function LocationShow({
                             <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                     {/* Vehicle Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Vehicle
-                                        </label>
-                                        <select
-                                            value={filters.vehicle_id}
-                                            onChange={(e) =>
-                                                handleFilterChange(
+                                        </Label>
+                                        <VehicleListbox
+                                            options={vehicles}
+                                            selectedOption={
+                                                vehicles.find(
+                                                    (vehicle) =>
+                                                        vehicle.id ===
+                                                        filters.vehicle_id
+                                                )!!
+                                            }
+                                            onChange={(value) =>
+                                                onFilterChange(
                                                     "vehicle_id",
-                                                    e.target.value
+                                                    value?.id || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Vehicles
-                                            </option>
-                                            {vehicles.map((vehicle) => (
-                                                <option
-                                                    key={vehicle.id}
-                                                    value={vehicle.id}
-                                                >
-                                                    {vehicle.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                        />
+                                    </Field>
 
                                     {/* Season Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Season
-                                        </label>
-                                        <select
-                                            value={filters.season}
-                                            onChange={(e) =>
-                                                handleFilterChange(
+                                        </Label>
+                                        <SeasonListbox
+                                            options={location.seasons}
+                                            selectedOption={filters.season}
+                                            onChange={(value) =>
+                                                onFilterChange(
                                                     "season",
-                                                    e.target.value
+                                                    value || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Seasons
-                                            </option>
-                                            {Object.entries(SEASONS_MAP).map(
-                                                ([key, value]) => (
-                                                    <option
-                                                        key={key}
-                                                        value={key}
-                                                    >
-                                                        {value.text}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
-                                    </div>
+                                        />
+                                    </Field>
 
                                     {/* Surface Condition Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Surface Condition
-                                        </label>
-                                        <select
-                                            value={filters.surface_condition}
-                                            onChange={(e) =>
-                                                handleFilterChange(
+                                        </Label>
+                                        <SurfaceConditionListbox
+                                            options={location.surfaceConditions}
+                                            selectedOption={
+                                                filters.surface_condition
+                                            }
+                                            onChange={(value) =>
+                                                onFilterChange(
                                                     "surface_condition",
-                                                    e.target.value
+                                                    value || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Conditions
-                                            </option>
-                                            {Object.entries(
-                                                SURFACE_CONDITIONS_MAP
-                                            ).map(([key, value]) => (
-                                                <option key={key} value={key}>
-                                                    {value.text}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                        />
+                                    </Field>
 
                                     {/* Tyres Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Tyre Compound
-                                        </label>
-                                        <select
-                                            value={filters.tyres}
-                                            onChange={(e) =>
-                                                handleFilterChange(
+                                        </Label>
+                                        <TyresListbox
+                                            options={location.tyres}
+                                            selectedOption={filters.tyres}
+                                            onChange={(value) =>
+                                                onFilterChange(
                                                     "tyres",
-                                                    e.target.value
+                                                    value || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">All Tyres</option>
-                                            {Object.entries(TYRES_MAP).map(
-                                                ([key, value]) => (
-                                                    <option
-                                                        key={key}
-                                                        value={key}
-                                                    >
-                                                        {value.text}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
-                                    </div>
+                                        />
+                                    </Field>
                                 </div>
 
                                 {/* Clear Filters Button */}
@@ -389,10 +331,7 @@ export default function LocationShow({
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
-                                                    "vehicle_id",
-                                                    ""
-                                                )
+                                                onFilterChange("vehicle_id", "")
                                             }
                                             className="ml-2 hover:text-secondary-800"
                                         >
@@ -410,7 +349,7 @@ export default function LocationShow({
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("season", "")
+                                                onFilterChange("season", "")
                                             }
                                             className="ml-2 hover:text-tertiary-800"
                                         >
@@ -428,7 +367,7 @@ export default function LocationShow({
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_condition",
                                                     ""
                                                 )
@@ -449,7 +388,7 @@ export default function LocationShow({
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("tyres", "")
+                                                onFilterChange("tyres", "")
                                             }
                                             className="ml-2 hover:text-secondary-800"
                                         >
@@ -524,29 +463,50 @@ export default function LocationShow({
                             {setupsData.data.map((setup) => (
                                 <div
                                     key={setup.id}
-                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30"
+                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30 group"
                                 >
                                     {/* Vehicle Image */}
                                     <div className="h-48 relative overflow-hidden bg-surfaceContainerHigh">
                                         <img
                                             src={setup.vehicle.imgPath}
                                             alt={setup.vehicle.name}
-                                            className="w-full h-full object-contain"
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
-                                        <div className="absolute top-3 left-3">
+                                        <div className="absolute top-3 right-3 flex flex-col gap-3">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                <FiTruck className="mr-1 text-primary" />
-                                                {setup.vehicle.name}
+                                                {
+                                                    SEASONS_MAP[
+                                                        setup.season as keyof typeof SEASONS_MAP
+                                                    ]?.icon
+                                                }
+                                                <span className="ml-1" />
+                                                {
+                                                    SEASONS_MAP[
+                                                        setup.season as keyof typeof SEASONS_MAP
+                                                    ]?.text
+                                                }
                                             </span>
-                                        </div>
-                                        <div className="absolute top-3 right-3">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                {getSurfaceConditionIcon(
-                                                    setup.surfaceCondition
-                                                )}
-                                                <span className="ml-1 capitalize">
-                                                    {setup.surfaceCondition}
-                                                </span>
+                                                {
+                                                    SURFACE_CONDITIONS_MAP[
+                                                        setup.surfaceCondition as keyof typeof SURFACE_CONDITIONS_MAP
+                                                    ]?.icon
+                                                }
+                                                <span className="ml-1" />
+                                                {
+                                                    SURFACE_CONDITIONS_MAP[
+                                                        setup.surfaceCondition as keyof typeof SURFACE_CONDITIONS_MAP
+                                                    ]?.text
+                                                }
+                                            </span>
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
+                                                <GiCarWheel className="text-secondary" />
+                                                <span className="ml-1" />
+                                                {
+                                                    TYRES_MAP[
+                                                        setup.tyres as keyof typeof TYRES_MAP
+                                                    ]?.text
+                                                }
                                             </span>
                                         </div>
                                     </div>
@@ -573,18 +533,35 @@ export default function LocationShow({
                                             </span>
                                         </div>
 
-                                        <div className="grid grid-cols-2 gap-3 mb-4">
-                                            <div className="flex items-center text-onSurface text-sm">
-                                                {getSeasonIcon(setup.season)}
-                                                <span className="ml-2 capitalize">
-                                                    {setup.season}
-                                                </span>
+                                        <div className="flex items-center mb-4">
+                                            {/* Manufacturer Logo */}
+                                            <div className="flex-shrink-0">
+                                                <img
+                                                    src={
+                                                        setup.vehicle
+                                                            .manufacturer
+                                                            .imgPath
+                                                    }
+                                                    alt={
+                                                        setup.vehicle
+                                                            .manufacturer.name
+                                                    }
+                                                    className="h-12 w-12 object-contain p-1"
+                                                />
                                             </div>
-                                            <div className="flex items-center text-onSurface text-sm">
-                                                <FiSettings className="text-primary" />
-                                                <span className="ml-2">
-                                                    {setup.tyres}
-                                                </span>
+                                            {/* Vertical divider */}
+                                            <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
+                                            {/* Manufacturer Name and Vehicle Name */}
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-sm font-medium text-onSurface/70 truncate">
+                                                    {
+                                                        setup.vehicle
+                                                            .manufacturer.name
+                                                    }
+                                                </p>
+                                                <h3 className="text-lg font-bold text-onSurface truncate">
+                                                    {setup.vehicle.name}
+                                                </h3>
                                             </div>
                                         </div>
 

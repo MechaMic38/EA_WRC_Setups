@@ -1,3 +1,4 @@
+import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
 import LocationCreateModal from "@/Components/Modals/Location/LocationCreateModal";
 import LocationDeleteModal from "@/Components/Modals/Location/LocationDeleteModal";
 import LocationEditModal from "@/Components/Modals/Location/LocationEditModal";
@@ -6,6 +7,7 @@ import { SURFACE_TYPES_MAP } from "@/constants";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { LocationSummary, PaginatedData } from "@/types";
+import { Field, Label } from "@headlessui/react";
 import { Head, Link, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import {
@@ -305,32 +307,25 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
                             <div className="mt-4 p-4 bg-surface rounded-lg border border-surfaceContainerHigh">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {/* Surface Type Filter */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-onSurface/70 mb-2">
+                                    <Field>
+                                        <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Surface Type
-                                        </label>
-                                        <select
-                                            value={filters.surface_type}
-                                            onChange={(e) =>
+                                        </Label>
+                                        <SurfaceTypeListbox
+                                            options={Object.keys(
+                                                SURFACE_TYPES_MAP
+                                            )}
+                                            selectedOption={
+                                                filters.surface_type
+                                            }
+                                            onChange={(value) =>
                                                 handleFilterChange(
                                                     "surface_type",
-                                                    e.target.value
+                                                    value || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Surface Types
-                                            </option>
-                                            {Object.entries(
-                                                SURFACE_TYPES_MAP
-                                            ).map(([key, value]) => (
-                                                <option key={key} value={key}>
-                                                    {value.text}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                        />
+                                    </Field>
                                 </div>
 
                                 {/* Clear Filters Button */}

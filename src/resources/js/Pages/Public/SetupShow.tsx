@@ -35,17 +35,11 @@ import { GiCarWheel } from "react-icons/gi";
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const { get: getSetupBlueprint, isProcessing } =
         useAxiosForm<SetupBlueprint>([]);
-    const { get: getVehicle, isProcessing: isProcessingVehicle } =
-        useAxiosForm<Vehicle>([]);
-    const { get: getLocation, isProcessing: isProcessingLocation } =
-        useAxiosForm<LocationSummary>([]);
 
     const [setup, setSetup] = useState<Setup>(initialSetup);
     const [setupBlueprint, setSetupBlueprint] = useState<SetupBlueprint | null>(
         null
     );
-    const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-    const [location, setLocation] = useState<LocationSummary | null>(null);
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
 
     useEffect(() => {
@@ -62,18 +56,6 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                 }
             );
         }
-
-        getVehicle(route("api.vehicles.show", setup?.vehicle.id), {
-            onSuccess: (response) => {
-                setVehicle(response.data);
-            },
-        });
-
-        getLocation(route("api.locations.show", setup?.location.id), {
-            onSuccess: (response) => {
-                setLocation(response.data);
-            },
-        });
     }, []);
 
     if (!setupBlueprint) {
@@ -200,24 +182,28 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                             </div>
 
                             {/* Vehicle and Location Cards */}
-                            {vehicle && (
+                            {setup.vehicle && (
                                 <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden">
                                     <div className="h-32 relative overflow-hidden bg-surfaceContainerHigh">
                                         <img
-                                            src={vehicle.imgPath}
-                                            alt={vehicle.name}
+                                            src={setup.vehicle.imgPath}
+                                            alt={setup.vehicle.name}
                                             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
                                         <div className="absolute top-3 right-3">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
                                                 <img
                                                     src={
-                                                        vehicle.category.imgPath
+                                                        setup.vehicle.category
+                                                            .imgPath
                                                     }
-                                                    alt={vehicle.category.name}
+                                                    alt={
+                                                        setup.vehicle.category
+                                                            .name
+                                                    }
                                                     className="h-4 w-4 object-contain mr-1"
                                                 />
-                                                {vehicle.category.name}
+                                                {setup.vehicle.category.name}
                                             </span>
                                         </div>
                                     </div>
@@ -227,12 +213,13 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                                             <div className="flex-shrink-0">
                                                 <img
                                                     src={
-                                                        vehicle.manufacturer
+                                                        setup.vehicle
+                                                            .manufacturer
                                                             .imgPath
                                                     }
                                                     alt={
-                                                        vehicle.manufacturer
-                                                            .name
+                                                        setup.vehicle
+                                                            .manufacturer.name
                                                     }
                                                     className="h-12 w-12 object-contain p-1"
                                                 />
@@ -242,10 +229,13 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                                             {/* Manufacturer Name and Vehicle Name */}
                                             <div className="flex-1 min-w-0">
                                                 <p className="text-sm font-medium text-onSurface/70 truncate">
-                                                    {vehicle.manufacturer.name}
+                                                    {
+                                                        setup.vehicle
+                                                            .manufacturer.name
+                                                    }
                                                 </p>
                                                 <h3 className="text-lg font-bold text-onSurface truncate">
-                                                    {vehicle.name}
+                                                    {setup.vehicle.name}
                                                 </h3>
                                             </div>
                                         </div>
@@ -253,46 +243,52 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                                 </div>
                             )}
 
-                            {location && (
+                            {setup.location && (
                                 <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden">
                                     <div className="h-32 relative overflow-hidden">
                                         <img
                                             src={
-                                                location.imgBgPath ||
-                                                location.imgBannerPath
+                                                setup.location.imgBgPath ||
+                                                setup.location.imgBannerPath
                                             }
-                                            alt={location.name}
+                                            alt={setup.location.name}
                                             className="w-full h-full object-cover"
                                         />
                                         <div className="absolute top-3 right-3">
                                             <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
                                                 {
                                                     SURFACE_TYPES_MAP[
-                                                        location.surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                                        setup.location
+                                                            .surfaceType as keyof typeof SURFACE_TYPES_MAP
                                                     ]?.icon
                                                 }
                                                 <span className="ml-1" />
-                                                {SURFACE_TYPES_MAP[
-                                                    location.surfaceType as keyof typeof SURFACE_TYPES_MAP
-                                                ]?.text || location.surfaceType}
+                                                {
+                                                    SURFACE_TYPES_MAP[
+                                                        setup.location
+                                                            .surfaceType as keyof typeof SURFACE_TYPES_MAP
+                                                    ]?.text
+                                                }
                                             </span>
                                         </div>
                                     </div>
                                     <div className="p-4">
                                         <div className="flex items-center mb-3">
                                             <img
-                                                src={location.imgBannerPath}
-                                                alt={location.name}
+                                                src={
+                                                    setup.location.imgBannerPath
+                                                }
+                                                alt={setup.location.name}
                                                 className="h-10 w-10 object-contain mr-3"
                                             />
                                             <div className="flex-1 min-w-0">
                                                 <h3 className="text-lg font-bold text-onSurface truncate">
-                                                    {location.name}
+                                                    {setup.location.name}
                                                 </h3>
                                             </div>
                                         </div>
                                         <p className="text-sm text-onSurface/70 line-clamp-2">
-                                            {location.description}
+                                            {setup.location.description}
                                         </p>
                                     </div>
                                 </div>

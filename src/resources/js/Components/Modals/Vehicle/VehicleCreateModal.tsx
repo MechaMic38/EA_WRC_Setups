@@ -24,8 +24,9 @@ import {
     Input,
     Label,
 } from "@headlessui/react";
-import ListBox from "@/Components/Form/ListBox";
 import BaseModal from "../BaseModal";
+import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
+import CategoryListbox from "@/Components/Form/CategoryListbox";
 
 interface CreateVehicleFormData {
     name: string;
@@ -343,7 +344,7 @@ export default function VehicleCreateModal({
                                         Manufacturer
                                     </Label>
                                 </div>
-                                <ListBox
+                                <ManufacturerListbox
                                     options={manufacturers}
                                     selectedOption={selectedManufacturer}
                                     error={getError("manufacturer_id")}
@@ -367,7 +368,7 @@ export default function VehicleCreateModal({
                                         Category
                                     </Label>
                                 </div>
-                                <ListBox
+                                <CategoryListbox
                                     options={categories}
                                     selectedOption={selectedCategory}
                                     error={getError("category_id")}

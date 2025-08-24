@@ -98,7 +98,7 @@ class SetupController extends Controller
      */
     public function show(Setup $setup)
     {
-        $setup->load(['user', 'location', 'vehicle', 'configuration']);
+        $setup->load(['user', 'location', 'vehicle', 'configuration', 'vehicle.category', 'vehicle.manufacturer']);
 
         return Inertia::render('Public/SetupShow', [
             'setup' => new SetupResource($setup)

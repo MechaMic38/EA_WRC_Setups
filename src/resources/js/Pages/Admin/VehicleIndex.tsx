@@ -25,6 +25,8 @@ import VehicleShowModal from "@/Components/Modals/Vehicle/VehicleShowModal";
 import { Field, Label, Select } from "@headlessui/react";
 import { LiaCarSideSolid } from "react-icons/lia";
 import { BsTools } from "react-icons/bs";
+import CategoryListbox from "@/Components/Form/CategoryListbox";
+import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
 
 interface VehicleIndexProps {
     page?: number;
@@ -360,28 +362,22 @@ const VehicleIndex = ({
                                         <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Category
                                         </Label>
-                                        <Select
-                                            value={filters.category_id}
-                                            onChange={(e) =>
+                                        <CategoryListbox
+                                            options={categories}
+                                            selectedOption={
+                                                categories.find(
+                                                    (category) =>
+                                                        category.id ===
+                                                        filters.category_id
+                                                )!!
+                                            }
+                                            onChange={(value) =>
                                                 onFilterChange(
                                                     "category_id",
-                                                    e.target.value
+                                                    value?.id || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Categories
-                                            </option>
-                                            {categories.map((category) => (
-                                                <option
-                                                    key={category.id}
-                                                    value={category.id}
-                                                >
-                                                    {category.name}
-                                                </option>
-                                            ))}
-                                        </Select>
+                                        />
                                     </Field>
 
                                     {/* Manufacturer Filter */}
@@ -389,30 +385,22 @@ const VehicleIndex = ({
                                         <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                             Manufacturer
                                         </Label>
-                                        <Select
-                                            value={filters.manufacturer_id}
-                                            onChange={(e) =>
+                                        <ManufacturerListbox
+                                            options={manufacturers}
+                                            selectedOption={
+                                                manufacturers.find(
+                                                    (manufacturer) =>
+                                                        manufacturer.id ===
+                                                        filters.manufacturer_id
+                                                )!!
+                                            }
+                                            onChange={(value) =>
                                                 onFilterChange(
                                                     "manufacturer_id",
-                                                    e.target.value
+                                                    value?.id || ""
                                                 )
                                             }
-                                            className="w-full px-4 py-2 bg-surfaceContainer rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
-                                        >
-                                            <option value="">
-                                                All Manufacturers
-                                            </option>
-                                            {manufacturers.map(
-                                                (manufacturer) => (
-                                                    <option
-                                                        key={manufacturer.id}
-                                                        value={manufacturer.id}
-                                                    >
-                                                        {manufacturer.name}
-                                                    </option>
-                                                )
-                                            )}
-                                        </Select>
+                                        />
                                     </Field>
                                 </div>
 
