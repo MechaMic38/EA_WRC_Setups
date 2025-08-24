@@ -4,6 +4,7 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import { FiX, FiCheck, FiShield, FiUser, FiAlertCircle } from "react-icons/fi";
 import { User } from "@/types";
 import BaseModal from "../BaseModal";
+import InputError from "@/Components/Form/InputError";
 
 interface UserEditModalProps {
     isOpen: boolean;
@@ -263,6 +264,7 @@ export default function UserEditModal({
                                     {errors.role}
                                 </p>
                             )}
+                            <InputError message={errors.role} />
                         </Field>
                     </div>
 

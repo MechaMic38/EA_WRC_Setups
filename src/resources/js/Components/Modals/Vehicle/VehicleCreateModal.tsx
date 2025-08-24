@@ -17,16 +17,12 @@ import {
     Vehicle,
 } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
-import {
-    DialogPanel,
-    DialogTitle,
-    Field,
-    Input,
-    Label,
-} from "@headlessui/react";
+import { DialogPanel, DialogTitle, Field, Label } from "@headlessui/react";
 import BaseModal from "../BaseModal";
 import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
 import CategoryListbox from "@/Components/Form/CategoryListbox";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
 
 interface CreateVehicleFormData {
     name: string;
@@ -317,21 +313,17 @@ export default function VehicleCreateModal({
                                 <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Vehicle Name
                                 </Label>
-                                <Input
+                                <TextInput
+                                    inputClassName="bg-surfaceContainer"
                                     type="text"
                                     name="name"
+                                    placeholder="Enter vehicle name"
+                                    required
                                     value={data.name}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                                    required
-                                    placeholder="Enter vehicle name"
+                                    error={getError("name")}
                                 />
-                                {getError("name") && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {getError("name")}
-                                    </p>
-                                )}
+                                <InputError message={getError("name")} />
                             </Field>
 
                             {/* Manufacturer */}
@@ -350,12 +342,9 @@ export default function VehicleCreateModal({
                                     error={getError("manufacturer_id")}
                                     onChange={onManufacturerChange}
                                 />
-                                {getError("manufacturer_id") && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {getError("manufacturer_id")}
-                                    </p>
-                                )}
+                                <InputError
+                                    message={getError("manufacturer_id")}
+                                />
                             </Field>
 
                             {/* Category */}
@@ -374,12 +363,7 @@ export default function VehicleCreateModal({
                                     error={getError("category_id")}
                                     onChange={onCategoryChange}
                                 />
-                                {getError("category_id") && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {getError("category_id")}
-                                    </p>
-                                )}
+                                <InputError message={getError("category_id")} />
                             </Field>
 
                             {/* Image Upload */}
@@ -394,12 +378,7 @@ export default function VehicleCreateModal({
                                     onChange={onImageChange}
                                     error={getError("img")}
                                 />
-                                {getError("img") && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {getError("img")}
-                                    </p>
-                                )}
+                                <InputError message={getError("img")} />
                             </Field>
 
                             {/* Setup Options */}

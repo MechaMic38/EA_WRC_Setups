@@ -1,17 +1,9 @@
-import {
-    DialogPanel,
-    DialogTitle,
-    Field,
-    Input,
-    Label,
-} from "@headlessui/react";
+import { DialogPanel, DialogTitle, Field, Label } from "@headlessui/react";
 import { useEffect, useState } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import {
     FiX,
     FiCheck,
-    FiEye,
-    FiEyeOff,
     FiUser,
     FiMail,
     FiShield,
@@ -20,6 +12,8 @@ import {
 } from "react-icons/fi";
 import { User } from "@/types";
 import BaseModal from "../BaseModal";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
 
 interface UserFormData {
     username: string;
@@ -54,7 +48,6 @@ export default function UserCreateModal({
         role: "user",
     });
 
-    const [showPassword, setShowPassword] = useState(false);
     const [showSuccess, setShowSuccess] = useState(false);
     const [showError, setShowError] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
@@ -64,7 +57,6 @@ export default function UserCreateModal({
         if (isOpen) {
             reset();
             clearErrors();
-            setShowPassword(false);
             setShowSuccess(false);
             setShowError(false);
             setErrorMessage("");
@@ -82,10 +74,6 @@ export default function UserCreateModal({
             clearErrors();
             setShowError(false);
         }
-    };
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -181,22 +169,17 @@ export default function UserCreateModal({
                                     Username
                                 </Label>
                             </div>
-                            <Input
+                            <TextInput
+                                inputClassName="bg-surfaceContainer"
                                 type="text"
                                 name="username"
-                                value={data.username}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
                                 placeholder="e.g., MechaMic_38"
                                 required
-                                autoFocus
+                                value={data.username}
+                                onChange={handleInputChange}
+                                error={errors.username}
                             />
-                            {errors.username && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.username}
-                                </p>
-                            )}
+                            <InputError message={errors.username} />
                         </Field>
 
                         {/* Email */}
@@ -209,21 +192,17 @@ export default function UserCreateModal({
                                     Email Address
                                 </Label>
                             </div>
-                            <Input
+                            <TextInput
+                                inputClassName="bg-surfaceContainer"
                                 type="email"
                                 name="email"
-                                value={data.email}
-                                onChange={handleInputChange}
-                                className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
                                 placeholder="user@example.com"
                                 required
+                                value={data.email}
+                                onChange={handleInputChange}
+                                error={errors.email}
                             />
-                            {errors.email && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.email}
-                                </p>
-                            )}
+                            <InputError message={errors.email} />
                         </Field>
 
                         {/* Password */}
@@ -237,37 +216,21 @@ export default function UserCreateModal({
                                 </Label>
                             </div>
                             <div className="relative">
-                                <Input
-                                    type={showPassword ? "text" : "password"}
+                                <TextInput
+                                    inputClassName="bg-surfaceContainer"
+                                    type="password"
                                     name="password"
+                                    placeholder="Enter password"
+                                    required
                                     value={data.password}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary pr-10"
-                                    placeholder="••••••••"
-                                    required
-                                    minLength={6}
+                                    error={errors.password}
                                 />
-                                <button
-                                    type="button"
-                                    onClick={togglePasswordVisibility}
-                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-onSurface/70 hover:text-onSurface transition-colors duration-200"
-                                >
-                                    {showPassword ? (
-                                        <FiEyeOff className="text-lg" />
-                                    ) : (
-                                        <FiEye className="text-lg" />
-                                    )}
-                                </button>
                             </div>
                             <p className="mt-2 text-xs text-onSurface/50">
                                 Minimum 6 characters
                             </p>
-                            {errors.password && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.password}
-                                </p>
-                            )}
+                            <InputError message={errors.password} />
                         </Field>
 
                         {/* Role */}

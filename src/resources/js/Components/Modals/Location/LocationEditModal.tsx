@@ -1,12 +1,4 @@
-import {
-    DialogPanel,
-    DialogTitle,
-    Field,
-    Input,
-    Label,
-    Select,
-    Textarea,
-} from "@headlessui/react";
+import { DialogPanel, DialogTitle, Field, Label } from "@headlessui/react";
 import { useState, useEffect } from "react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import {
@@ -28,6 +20,9 @@ import {
 import BaseModal from "../BaseModal";
 import { GiCarWheel } from "react-icons/gi";
 import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
+import TextArea from "@/Components/Form/TextArea";
 
 interface LocationFormData {
     _method: "PATCH";
@@ -316,21 +311,17 @@ export default function LocationEditModal({
                                 <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Location Name
                                 </Label>
-                                <Input
+                                <TextInput
+                                    inputClassName="bg-surfaceContainer"
                                     type="text"
                                     name="name"
+                                    placeholder="Enter location name"
+                                    required
                                     value={data.name}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                                    required
-                                    placeholder="Enter location name"
+                                    error={errors.name}
                                 />
-                                {errors.name && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.name}
-                                    </p>
-                                )}
+                                <InputError message={errors.name} />
                             </Field>
 
                             {/* Description */}
@@ -338,21 +329,16 @@ export default function LocationEditModal({
                                 <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                     Description
                                 </Label>
-                                <Textarea
+                                <TextArea
                                     name="description"
                                     value={data.description}
                                     onChange={handleInputChange}
                                     rows={3}
-                                    className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
                                     required
                                     placeholder="Describe this location"
+                                    error={errors.description}
                                 />
-                                {errors.description && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.description}
-                                    </p>
-                                )}
+                                <InputError message={errors.description} />
                             </Field>
 
                             {/* Surface Type */}
@@ -371,12 +357,7 @@ export default function LocationEditModal({
                                     onChange={onSurfaceTypeChange}
                                     error={errors.surface_type}
                                 />
-                                {errors.surface_type && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.surface_type}
-                                    </p>
-                                )}
+                                <InputError message={errors.surface_type} />
                             </Field>
 
                             {/* Seasons */}
@@ -425,12 +406,7 @@ export default function LocationEditModal({
                                         )
                                     )}
                                 </div>
-                                {errors.seasons && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.seasons}
-                                    </p>
-                                )}
+                                <InputError message={errors.seasons} />
                             </Field>
 
                             {/* Surface Conditions */}
@@ -479,12 +455,9 @@ export default function LocationEditModal({
                                         )
                                     )}
                                 </div>
-                                {errors.surface_conditions && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.surface_conditions}
-                                    </p>
-                                )}
+                                <InputError
+                                    message={errors.surface_conditions}
+                                />
                             </Field>
 
                             {/* Tyres */}
@@ -530,12 +503,7 @@ export default function LocationEditModal({
                                         )
                                     )}
                                 </div>
-                                {errors.tyres && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.tyres}
-                                    </p>
-                                )}
+                                <InputError message={errors.tyres} />
                             </Field>
 
                             {/* Background Image */}
@@ -549,13 +517,9 @@ export default function LocationEditModal({
                                 <ImagePicker
                                     fileUrl={bgImageUrl}
                                     onChange={onBackgroundImageChange}
+                                    error={errors.img_bg}
                                 />
-                                {errors.img_bg && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.img_bg}
-                                    </p>
-                                )}
+                                <InputError message={errors.img_bg} />
                             </Field>
 
                             {/* Banner Image */}
@@ -569,13 +533,9 @@ export default function LocationEditModal({
                                 <ImagePicker
                                     fileUrl={bannerImageUrl}
                                     onChange={onBannerImageChange}
+                                    error={errors.img_banner}
                                 />
-                                {errors.img_banner && (
-                                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                                        <FiAlertCircle className="mr-1" />
-                                        {errors.img_banner}
-                                    </p>
-                                )}
+                                <InputError message={errors.img_banner} />
                             </Field>
                         </form>
 

@@ -1,11 +1,13 @@
-import Checkbox from "@/Components/Checkbox";
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import Checkbox from "@/Components/Form/Checkbox";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
+import InputLabel from "@/Components/Form/InputLabel";
+import PrimaryButton from "@/Components/Form/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
+import { Field } from "@headlessui/react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { FormEventHandler, useState } from "react";
-import { FiEye, FiEyeOff, FiMail, FiLock, FiAlertCircle } from "react-icons/fi";
+import { FormEventHandler } from "react";
+import { FiMail, FiLock, FiAlertCircle } from "react-icons/fi";
 
 export default function Login({
     status,
@@ -19,8 +21,6 @@ export default function Login({
         password: "",
         remember: false,
     });
-
-    const [showPassword, setShowPassword] = useState(false);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -54,71 +54,44 @@ export default function Login({
 
             <form onSubmit={submit} className="space-y-6">
                 {/* Email Field */}
-                <div>
+                <Field>
                     <InputLabel
                         htmlFor="email"
                         value="Email Address"
                         className="block text-sm font-medium text-onSurface/70 mb-2"
                     />
-
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiMail className="h-5 w-5 text-onSurface/50" />
-                        </div>
-                        <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
-                            className="pl-10 w-full bg-surface border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                            autoComplete="username"
-                            onChange={(e) => setData("email", e.target.value)}
-                            placeholder="Enter your email address"
-                        />
-                    </div>
-
+                    <TextInput
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        required
+                        value={data.email}
+                        onChange={(e) => setData("email", e.target.value)}
+                        error={errors.email}
+                        icon={<FiMail className="h-5 w-5 text-onSurface/50" />}
+                    />
                     <InputError message={errors.email} className="mt-2" />
-                </div>
+                </Field>
 
                 {/* Password Field */}
-                <div>
+                <Field>
                     <InputLabel
                         htmlFor="password"
                         value="Password"
                         className="block text-sm font-medium text-onSurface/70 mb-2"
                     />
-
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiLock className="h-5 w-5 text-onSurface/50" />
-                        </div>
-                        <input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={data.password}
-                            className="pl-10 pr-10 w-full bg-surface border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                            autoComplete="current-password"
-                            onChange={(e) =>
-                                setData("password", e.target.value)
-                            }
-                            placeholder="Enter your password"
-                        />
-                        <button
-                            type="button"
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? (
-                                <FiEyeOff className="h-5 w-5 text-onSurface/50 hover:text-onSurface" />
-                            ) : (
-                                <FiEye className="h-5 w-5 text-onSurface/50 hover:text-onSurface" />
-                            )}
-                        </button>
-                    </div>
-
+                    <TextInput
+                        type="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                        value={data.password}
+                        onChange={(e) => setData("password", e.target.value)}
+                        error={errors.password}
+                        icon={<FiLock className="h-5 w-5 text-onSurface/50" />}
+                    />
                     <InputError message={errors.password} className="mt-2" />
-                </div>
+                </Field>
 
                 {/* Remember Me & Forgot Password */}
                 <div className="flex items-center justify-between">

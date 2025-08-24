@@ -13,6 +13,7 @@ import { LocationSummary, PaginatedData } from "@/types";
 import { SURFACE_TYPES_MAP } from "@/constants";
 import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
 import { Field, Label } from "@headlessui/react";
+import TextInput from "@/Components/Form/TextInput";
 
 const SkeletonCard = () => (
     <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh p-4 animate-pulse">
@@ -109,13 +110,16 @@ export default function LocationIndex() {
                     <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
-                                <input
+                                <TextInput
                                     type="text"
+                                    name="search"
                                     placeholder="Search locations by name or description..."
                                     value={searchQuery}
                                     onChange={handleSearchChange}
-                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                    icon={
+                                        <FiSearch className="text-onSurface/50" />
+                                    }
+                                    className=""
                                 />
                             </div>
                             <button
@@ -260,14 +264,14 @@ export default function LocationIndex() {
                             {filteredLocations.map((location) => (
                                 <div
                                     key={location.id}
-                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30"
+                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30 group"
                                 >
                                     {/* Banner Image */}
                                     <div className="h-48 relative overflow-hidden">
                                         <img
                                             src={location.imgBgPath}
                                             alt={location.name}
-                                            className="w-full h-full object-cover"
+                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                         />
                                         <div className="absolute bottom-4 left-4">
                                             <img

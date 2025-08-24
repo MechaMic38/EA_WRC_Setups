@@ -12,6 +12,8 @@ import { Manufacturer } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
 import BaseModal from "../BaseModal";
 import { BsTools } from "react-icons/bs";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
 
 interface ManufacturerFormData {
     name: string;
@@ -166,21 +168,17 @@ export default function ManufacturerCreateModal({
                             <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                 Manufacturer Name
                             </Label>
-                            <Input
+                            <TextInput
+                                inputClassName="bg-surfaceContainer"
                                 type="text"
+                                name="name"
+                                placeholder="Enter manufacturer name"
+                                required
                                 value={data.name}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                                placeholder="e.g., Toyota, Ford, Subaru"
-                                required
-                                autoFocus
+                                error={errors.name}
                             />
-                            {errors.name && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.name}
-                                </p>
-                            )}
+                            <InputError message={errors.name} />
                         </Field>
 
                         {/* Logo Upload */}
@@ -195,12 +193,7 @@ export default function ManufacturerCreateModal({
                                 onChange={onImageChange}
                                 error={errors.img}
                             />
-                            {errors.img && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.img}
-                                </p>
-                            )}
+                            <InputError message={errors.img} />
                         </Field>
                     </div>
 

@@ -1,3 +1,4 @@
+import TextInput from "@/Components/Form/TextInput";
 import ManufacturerCreateModal from "@/Components/Modals/Manufacturer/ManufacturerCreateModal";
 import ManufacturerDeleteModal from "@/Components/Modals/Manufacturer/ManufacturerDeleteModal";
 import ManufacturerEditModal from "@/Components/Modals/Manufacturer/ManufacturerEditModal";
@@ -248,15 +249,17 @@ const ManufacturerIndex = ({ page }: ManufacturerIndexProps) => {
                     <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
-                                <input
+                                <TextInput
                                     type="text"
+                                    name="search"
                                     placeholder="Search manufacturers by name..."
                                     value={filters.name}
                                     onChange={(e) =>
                                         onFilterChange("name", e.target.value)
                                     }
-                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                    icon={
+                                        <FiSearch className="text-onSurface/50" />
+                                    }
                                 />
                             </div>
                             <button

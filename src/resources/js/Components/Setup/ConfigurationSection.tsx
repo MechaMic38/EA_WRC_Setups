@@ -28,12 +28,14 @@ export default function ConfigurationSection({
                 <h3 className="text-xl font-bold text-onSurface capitalize">
                     {section.replace("_", " ")}
                 </h3>
-                <button
-                    onClick={() => onReset(section)}
-                    className="px-4 py-2 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainerHigh transition-colors duration-200 text-sm font-medium"
-                >
-                    Reset to Default
-                </button>
+                {!disabled && (
+                    <button
+                        onClick={() => onReset(section)}
+                        className="px-4 py-2 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainerHigh transition-colors duration-200 text-sm font-medium"
+                    >
+                        Reset to Default
+                    </button>
+                )}
             </div>
 
             <div className="space-y-6">

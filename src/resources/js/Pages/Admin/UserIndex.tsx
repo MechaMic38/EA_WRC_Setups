@@ -25,6 +25,7 @@ import UserDeleteModal from "@/Components/Modals/User/UserDeleteModal";
 import UserRoleListbox from "@/Components/Form/UserRoleListbox";
 import { USER_ROLES_MAP } from "@/constants";
 import { Field, Input, Label } from "@headlessui/react";
+import TextInput from "@/Components/Form/TextInput";
 
 interface UserIndexProps {
     page?: number;
@@ -278,10 +279,10 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
                     <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
-                                <input
+                                <TextInput
                                     type="text"
-                                    placeholder="Search by username..."
+                                    name="search"
+                                    placeholder="Search users by name..."
                                     value={filters.username}
                                     onChange={(e) =>
                                         onFilterChange(
@@ -289,7 +290,9 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
                                             e.target.value
                                         )
                                     }
-                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                    icon={
+                                        <FiSearch className="text-onSurface/50" />
+                                    }
                                 />
                             </div>
                             <button

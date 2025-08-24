@@ -11,6 +11,8 @@ import { FiX, FiCheck, FiTag, FiAlertCircle } from "react-icons/fi";
 import { Category } from "@/types";
 import ImagePicker from "@/Components/Form/ImagePicker";
 import BaseModal from "../BaseModal";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
 
 interface CategoryFormData {
     _method: "PATCH";
@@ -193,21 +195,17 @@ export default function CategoryEditModal({
                             <Label className="block text-sm font-medium text-onSurface/70 mb-2">
                                 Category Name
                             </Label>
-                            <Input
+                            <TextInput
+                                inputClassName="bg-surfaceContainer"
                                 type="text"
+                                name="name"
+                                placeholder="Enter category name"
+                                required
                                 value={data.name}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-2 bg-surfaceContainer rounded-lg text-onSurface border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                                placeholder="e.g., Rally1, Rally2, Historic"
-                                required
-                                autoFocus
+                                error={errors.name}
                             />
-                            {errors.name && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.name}
-                                </p>
-                            )}
+                            <InputError message={errors.name} />
                         </Field>
 
                         {/* Image Upload */}
@@ -223,12 +221,7 @@ export default function CategoryEditModal({
                                 onChange={onImageChange}
                                 error={errors.img}
                             />
-                            {errors.img && (
-                                <p className="text-red-500 text-sm mt-1 flex items-center">
-                                    <FiAlertCircle className="mr-1" />
-                                    {errors.img}
-                                </p>
-                            )}
+                            <InputError message={errors.img} />
                         </Field>
                     </div>
 

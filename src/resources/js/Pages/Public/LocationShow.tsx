@@ -22,6 +22,7 @@ import { Field, Label } from "@headlessui/react";
 import SeasonListbox from "@/Components/Form/SeasonListbox";
 import SurfaceConditionListbox from "@/Components/Form/SurfaceConditionListbox";
 import TyresListbox from "@/Components/Form/TyresListbox";
+import TextInput from "@/Components/Form/TextInput";
 
 interface LocationShowProps {
     location: Location;
@@ -172,15 +173,17 @@ export default function LocationShow({ location }: LocationShowProps) {
                     <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
-                                <input
+                                <TextInput
                                     type="text"
+                                    name="search"
                                     placeholder="Search setups by vehicle or creator..."
                                     value={searchQuery}
                                     onChange={(e) =>
                                         setSearchQuery(e.target.value)
                                     }
-                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                    icon={
+                                        <FiSearch className="text-onSurface/50" />
+                                    }
                                 />
                             </div>
                             <button

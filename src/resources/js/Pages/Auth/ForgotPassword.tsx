@@ -1,6 +1,6 @@
-import InputError from "@/Components/InputError";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
+import InputError from "@/Components/Form/InputError";
+import TextInput from "@/Components/Form/TextInput";
+import PrimaryButton from "@/Components/Form/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
 import { Head, useForm } from "@inertiajs/react";
 import { FormEventHandler } from "react";
@@ -34,13 +34,13 @@ export default function ForgotPassword({ status }: { status?: string }) {
 
             <form onSubmit={submit}>
                 <TextInput
-                    id="email"
                     type="email"
                     name="email"
+                    placeholder="user@example.com"
                     value={data.email}
                     className="mt-1 block w-full"
-                    isFocused={true}
                     onChange={(e) => setData("email", e.target.value)}
+                    error={errors.email}
                 />
 
                 <InputError message={errors.email} className="mt-2" />

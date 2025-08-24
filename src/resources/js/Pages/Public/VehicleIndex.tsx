@@ -8,6 +8,7 @@ import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
 import CategoryListbox from "@/Components/Form/CategoryListbox";
 import { Field, Label } from "@headlessui/react";
 import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
+import TextInput from "@/Components/Form/TextInput";
 
 const SkeletonCard = () => (
     <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden animate-pulse">
@@ -131,15 +132,15 @@ export default function VehicleIndex() {
                     <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
-                                <input
-                                    type="text"
-                                    placeholder="Search vehicles by name, manufacturer, or category..."
+                                <TextInput
                                     value={searchQuery}
                                     onChange={(e) =>
                                         setSearchQuery(e.target.value)
                                     }
-                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                    icon={
+                                        <FiSearch className="text-onSurface/50" />
+                                    }
+                                    placeholder="Search vehicles by name, manufacturer, or category..."
                                 />
                             </div>
                             <button

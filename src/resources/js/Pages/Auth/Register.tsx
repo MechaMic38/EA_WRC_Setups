@@ -1,19 +1,12 @@
-import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
-import TextInput from "@/Components/TextInput";
+import TextInput from "@/Components/Form/TextInput";
+import InputError from "@/Components/Form/InputError";
+import InputLabel from "@/Components/Form/InputLabel";
+import PrimaryButton from "@/Components/Form/PrimaryButton";
 import GuestLayout from "@/Layouts/GuestLayout";
+import { Field } from "@headlessui/react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { FormEventHandler, useState } from "react";
-import {
-    FiEye,
-    FiEyeOff,
-    FiMail,
-    FiLock,
-    FiUser,
-    FiAlertCircle,
-    FiCheck,
-} from "react-icons/fi";
+import { FormEventHandler } from "react";
+import { FiMail, FiLock, FiUser, FiAlertCircle, FiCheck } from "react-icons/fi";
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -22,9 +15,6 @@ export default function Register() {
         password: "",
         password_confirmation: "",
     });
-
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -71,97 +61,62 @@ export default function Register() {
 
             <form onSubmit={submit} className="space-y-6">
                 {/* Name Field */}
-                <div>
+                <Field>
                     <InputLabel
                         htmlFor="name"
                         value="Full Name"
                         className="block text-sm font-medium text-onSurface/70 mb-2"
                     />
-
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiUser className="h-5 w-5 text-onSurface/50" />
-                        </div>
-                        <input
-                            id="name"
-                            name="name"
-                            value={data.name}
-                            className="pl-10 w-full bg-surface border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                            autoComplete="name"
-                            onChange={(e) => setData("name", e.target.value)}
-                            placeholder="Enter your full name"
-                            required
-                        />
-                    </div>
-
+                    <TextInput
+                        type="text"
+                        name="name"
+                        placeholder="Enter your full name"
+                        required
+                        value={data.name}
+                        onChange={(e) => setData("name", e.target.value)}
+                        error={errors.name}
+                        icon={<FiUser className="h-5 w-5 text-onSurface/50" />}
+                    />
                     <InputError message={errors.name} className="mt-2" />
-                </div>
+                </Field>
 
                 {/* Email Field */}
-                <div>
+                <Field>
                     <InputLabel
                         htmlFor="email"
                         value="Email Address"
                         className="block text-sm font-medium text-onSurface/70 mb-2"
                     />
-
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiMail className="h-5 w-5 text-onSurface/50" />
-                        </div>
-                        <input
-                            id="email"
-                            type="email"
-                            name="email"
-                            value={data.email}
-                            className="pl-10 w-full bg-surface border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                            autoComplete="email"
-                            onChange={(e) => setData("email", e.target.value)}
-                            placeholder="Enter your email address"
-                            required
-                        />
-                    </div>
-
+                    <TextInput
+                        type="email"
+                        name="email"
+                        placeholder="Enter your email address"
+                        required
+                        value={data.email}
+                        onChange={(e) => setData("email", e.target.value)}
+                        error={errors.email}
+                        icon={<FiMail className="h-5 w-5 text-onSurface/50" />}
+                    />
                     <InputError message={errors.email} className="mt-2" />
-                </div>
+                </Field>
 
                 {/* Password Field */}
-                <div>
+                <Field>
                     <InputLabel
                         htmlFor="password"
                         value="Password"
                         className="block text-sm font-medium text-onSurface/70 mb-2"
                     />
-
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiLock className="h-5 w-5 text-onSurface/50" />
-                        </div>
-                        <input
-                            id="password"
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            value={data.password}
-                            className="pl-10 pr-10 w-full bg-surface border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                            autoComplete="new-password"
-                            onChange={(e) =>
-                                setData("password", e.target.value)
-                            }
-                            placeholder="Create a strong password"
-                            required
-                        />
-                        <button
-                            type="button"
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                            onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? (
-                                <FiEyeOff className="h-5 w-5 text-onSurface/50 hover:text-onSurface" />
-                            ) : (
-                                <FiEye className="h-5 w-5 text-onSurface/50 hover:text-onSurface" />
-                            )}
-                        </button>
-                    </div>
+                    <TextInput
+                        type="password"
+                        name="password"
+                        placeholder="Create a strong password"
+                        required
+                        value={data.password}
+                        onChange={(e) => setData("password", e.target.value)}
+                        error={errors.password}
+                        icon={<FiLock className="h-5 w-5 text-onSurface/50" />}
+                    />
 
                     {/* Password Strength Indicator */}
                     {data.password && (
@@ -287,47 +242,27 @@ export default function Register() {
                     )}
 
                     <InputError message={errors.password} className="mt-2" />
-                </div>
+                </Field>
 
                 {/* Confirm Password Field */}
-                <div>
+                <Field>
                     <InputLabel
                         htmlFor="password_confirmation"
                         value="Confirm Password"
                         className="block text-sm font-medium text-onSurface/70 mb-2"
                     />
-
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <FiLock className="h-5 w-5 text-onSurface/50" />
-                        </div>
-                        <input
-                            id="password_confirmation"
-                            type={showConfirmPassword ? "text" : "password"}
-                            name="password_confirmation"
-                            value={data.password_confirmation}
-                            className="pl-10 pr-10 w-full bg-surface border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary"
-                            autoComplete="new-password"
-                            onChange={(e) =>
-                                setData("password_confirmation", e.target.value)
-                            }
-                            placeholder="Confirm your password"
-                            required
-                        />
-                        <button
-                            type="button"
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                            onClick={() =>
-                                setShowConfirmPassword(!showConfirmPassword)
-                            }
-                        >
-                            {showConfirmPassword ? (
-                                <FiEyeOff className="h-5 w-5 text-onSurface/50 hover:text-onSurface" />
-                            ) : (
-                                <FiEye className="h-5 w-5 text-onSurface/50 hover:text-onSurface" />
-                            )}
-                        </button>
-                    </div>
+                    <TextInput
+                        type="password"
+                        name="password_confirmation"
+                        placeholder="Confirm your password"
+                        required
+                        value={data.password_confirmation}
+                        onChange={(e) =>
+                            setData("password_confirmation", e.target.value)
+                        }
+                        error={errors.password_confirmation}
+                        icon={<FiLock className="h-5 w-5 text-onSurface/50" />}
+                    />
 
                     {/* Password Match Indicator */}
                     {data.password_confirmation && (
@@ -351,7 +286,7 @@ export default function Register() {
                         message={errors.password_confirmation}
                         className="mt-2"
                     />
-                </div>
+                </Field>
 
                 {/* Submit Button */}
                 <div className="mt-8">

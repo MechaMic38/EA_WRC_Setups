@@ -3,6 +3,7 @@ import Dropdown from "@/Components/Dropdown";
 import NavLink from "@/Components/NavLink";
 import { Link, usePage } from "@inertiajs/react";
 import { PropsWithChildren, useState } from "react";
+import { BsWrenchAdjustable } from "react-icons/bs";
 import {
     FiSettings,
     FiMapPin,
@@ -170,6 +171,15 @@ export default function UserLayout({ children }: PropsWithChildren) {
                                                 >
                                                     <FiUser className="mr-2 h-4 w-4" />
                                                     Profile
+                                                </Dropdown.Link>
+                                                <Dropdown.Link
+                                                    href={route(
+                                                        "user.setups.index"
+                                                    )}
+                                                    className="flex items-center px-3 py-2 text-sm rounded-lg transition-all duration-200 hover:bg-surfaceContainerHigh text-onSurface"
+                                                >
+                                                    <BsWrenchAdjustable className="mr-2 h-4 w-4" />
+                                                    My Setups
                                                 </Dropdown.Link>
                                                 <Dropdown.Link
                                                     href={route("auth.logout")}

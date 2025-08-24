@@ -1,4 +1,5 @@
 import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
+import TextInput from "@/Components/Form/TextInput";
 import LocationCreateModal from "@/Components/Modals/Location/LocationCreateModal";
 import LocationDeleteModal from "@/Components/Modals/Location/LocationDeleteModal";
 import LocationEditModal from "@/Components/Modals/Location/LocationEditModal";
@@ -192,7 +193,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
      * @param key The filter key.
      * @param value The filter value.
      */
-    const handleFilterChange = (key: string, value: string) => {
+    const onFilterChange = (key: string, value: string) => {
         switch (key) {
             case "name":
                 setFilters((prev) => ({
@@ -268,18 +269,17 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
                     <div className="bg-surfaceContainer rounded-xl p-4 mb-6 border border-surfaceContainerHigh">
                         <div className="flex flex-col sm:flex-row gap-4">
                             <div className="relative flex-1">
-                                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-onSurface/50" />
-                                <input
+                                <TextInput
                                     type="text"
+                                    name="search"
                                     placeholder="Search locations by name..."
                                     value={filters.name}
                                     onChange={(e) =>
-                                        handleFilterChange(
-                                            "name",
-                                            e.target.value
-                                        )
+                                        onFilterChange("name", e.target.value)
                                     }
-                                    className="w-full pl-10 pr-4 py-3 bg-surface rounded-lg border border-surfaceContainerHigh focus:border-primary focus:ring-1 focus:ring-primary text-onSurface"
+                                    icon={
+                                        <FiSearch className="text-onSurface/50" />
+                                    }
                                 />
                             </div>
                             <button
@@ -319,7 +319,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
                                                 filters.surface_type
                                             }
                                             onChange={(value) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_type",
                                                     value || ""
                                                 )
@@ -364,7 +364,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
                                         Name: {filters.name}
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("name", "")
+                                                onFilterChange("name", "")
                                             }
                                             className="ml-2 hover:text-primary-800"
                                         >
@@ -380,7 +380,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
                                         ]?.text || filters.surface_type}
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_type",
                                                     ""
                                                 )

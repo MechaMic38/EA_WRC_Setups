@@ -1,6 +1,6 @@
 import InputError from "@/Components/InputError";
-import InputLabel from "@/Components/InputLabel";
-import PrimaryButton from "@/Components/PrimaryButton";
+import InputLabel from "@/Components/Form/InputLabel";
+import PrimaryButton from "@/Components/Form/PrimaryButton";
 import TextInput from "@/Components/TextInput";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { Transition } from "@headlessui/react";
