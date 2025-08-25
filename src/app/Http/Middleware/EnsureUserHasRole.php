@@ -25,7 +25,7 @@ class EnsureUserHasRole
             if ($request->expectsJson()) {
                 return response()->json(['message' => 'Unauthorized.'], 403);
             }
-            return redirect('/');
+            return redirect()->to(route('home'));
         }
 
         return $next($request);

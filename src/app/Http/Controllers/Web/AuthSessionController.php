@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Web;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\RedirectResponse;
@@ -33,7 +34,16 @@ class AuthSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('admin', absolute: false));
+        // Get the authenticated user
+        $user = Auth::user();
+
+        // Check if user is an admin and redirect accordingly
+        if ($user->role == UserRole::Admin) {
+            return redirect()->intended(route('admin', absolute: false));
+        }
+
+        // Regular users go to home page
+        return redirect()->intended(route('home', absolute: false));
     }
 
     /**
