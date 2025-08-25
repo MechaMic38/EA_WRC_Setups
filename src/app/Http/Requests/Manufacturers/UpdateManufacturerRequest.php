@@ -4,6 +4,7 @@ namespace App\Http\Requests\Manufacturers;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateManufacturerRequest extends FormRequest
 {
@@ -23,7 +24,12 @@ class UpdateManufacturerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|unique:manufacturers|max:255',
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('manufacturers')->ignore($this->route('manufacturer'))
+            ],
             'img' => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }

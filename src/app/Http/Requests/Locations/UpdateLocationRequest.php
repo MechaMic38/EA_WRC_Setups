@@ -8,6 +8,7 @@ use App\Enums\SurfaceTypeEnum;
 use App\Enums\TyresEnum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
 
 class UpdateLocationRequest extends FormRequest
@@ -28,10 +29,15 @@ class UpdateLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|unique:locations|max:255',
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('locations')->ignore($this->route('location'))
+            ],
             'description' => 'sometimes|string',
-            'seasons' => ['string', new Enum(SeasonEnum::class)],
-            'seasons.*' => 'string',
+            'seasons' => 'sometimes|array',
+            'seasons.*' => ['string', new Enum(SeasonEnum::class)],
             'tyres' => 'sometimes|array',
             'tyres.*' => ['string', new Enum(TyresEnum::class)],
             'surface_conditions' => 'sometimes|array',

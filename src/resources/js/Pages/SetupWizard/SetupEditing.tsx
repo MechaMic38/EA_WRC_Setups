@@ -38,7 +38,7 @@ export default function SetupCreation({ setup }: SetupCreationProps) {
     const {
         data,
         setData,
-        post: updateConfiguration,
+        patch: updateConfiguration,
         errors,
     } = useAxiosForm<SetupConfigResponse, SetupConfigFormData>({
         location_id: setup.location.id,
@@ -149,7 +149,7 @@ export default function SetupCreation({ setup }: SetupCreationProps) {
 
     // Submit the updated setup
     const updateSetup = () => {
-        updateConfiguration(route("api.setups.store", setup.id), {
+        updateConfiguration(route("api.setups.update", setup.id), {
             onSuccess: (response) => {
                 setShowSuccessModal(true);
 

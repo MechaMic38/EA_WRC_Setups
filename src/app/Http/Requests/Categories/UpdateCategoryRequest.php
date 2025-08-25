@@ -4,6 +4,7 @@ namespace App\Http\Requests\Categories;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 
 class UpdateCategoryRequest extends FormRequest
 {
@@ -23,7 +24,12 @@ class UpdateCategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|unique:categories|max:255',
+            'name' => [
+                'sometimes',
+                'string',
+                'max:255',
+                Rule::unique('categories')->ignore($this->route('category'))
+            ],
             'img' => 'sometimes|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }

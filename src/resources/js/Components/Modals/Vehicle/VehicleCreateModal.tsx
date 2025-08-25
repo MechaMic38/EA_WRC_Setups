@@ -99,12 +99,15 @@ export default function VehicleCreateModal({
     // Fetch initial data
     useEffect(() => {
         // Fetch manufacturers
-        getManufacturers(route("api.manufacturers.index"), {
-            onSuccess: (response) => setManufacturers(response.data.data),
-        });
+        getManufacturers(
+            route("api.manufacturers.index", { paginate: false }),
+            {
+                onSuccess: (response) => setManufacturers(response.data.data),
+            }
+        );
 
         // Fetch categories
-        getCategories(route("api.categories.index"), {
+        getCategories(route("api.categories.index", { paginate: false }), {
             onSuccess: (response) => setCategories(response.data.data),
         });
 
