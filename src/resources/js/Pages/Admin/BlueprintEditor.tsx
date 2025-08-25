@@ -36,7 +36,7 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
     const {
         data,
         setData,
-        post: updateBlueprint,
+        patch: updateBlueprint,
         isProcessing,
         errors,
         clearErrors,
@@ -66,8 +66,9 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
     useEffect(() => {
         getBlueprint(route("api.vehicles.blueprint.show", vehicle.id), {
             onSuccess: (response) => {
-                setBlueprint(response.data);
-                setData(response.data);
+                const { id, ...blueprintData } = response.data;
+                setBlueprint(blueprintData);
+                setData(blueprintData);
             },
         });
     }, [vehicle.id]);
@@ -336,7 +337,9 @@ export default function BlueprintEditor({ vehicle }: BlueprintEditorProps) {
                                         ),
                                         {
                                             onSuccess: (response) => {
-                                                setData(response.data);
+                                                const { id, ...blueprintData } =
+                                                    response.data;
+                                                setData(blueprintData);
                                             },
                                         }
                                     );

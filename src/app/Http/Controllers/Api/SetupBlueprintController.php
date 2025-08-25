@@ -33,8 +33,8 @@ class SetupBlueprintController extends Controller
     {
         $data = $request->validated();
 
-        $vehicle = $vehicleService->updateVehicleSetupBlueprint($vehicle, $data);
+        $blueprint = $vehicleService->updateVehicleSetupBlueprint($vehicle, $data);
 
-        return new SetupBlueprintResource($vehicle->setupBlueprint);
+        return new SetupBlueprintResource($blueprint);
     }
 }
