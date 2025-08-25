@@ -1,24 +1,22 @@
+import FilteredEmptyState from "@/Components/FilteredEmptyState";
 import TextInput from "@/Components/Form/TextInput";
 import CategoryCreateModal from "@/Components/Modals/Category/CategoryCreateModal";
 import CategoryDeleteModal from "@/Components/Modals/Category/CategoryDeleteModal";
 import CategoryEditModal from "@/Components/Modals/Category/CategoryEditModal";
 import CategoryShowModal from "@/Components/Modals/Category/CategoryShowModal";
+import Pagination from "@/Components/Pagination";
+import CategoryRow from "@/Components/Rows/CategoryRow";
+import CategoryRowSkeleton from "@/Components/Skeletons/CategoryRowSkeleton";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Category, PaginatedData } from "@/types";
 import { Head, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import {
-    FiChevronLeft,
-    FiChevronRight,
     FiPlus,
-    FiEye,
-    FiEdit,
-    FiTrash2,
     FiSearch,
     FiRefreshCw,
     FiX,
-    FiGrid,
     FiPackage,
     FiTag,
     FiGlobe,
@@ -27,23 +25,6 @@ import {
 interface CategoryIndexProps {
     page?: number;
 }
-
-const SkeletonRow = () => (
-    <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh animate-pulse">
-        <div className="flex items-center space-x-4">
-            <div className="h-12 w-12 bg-surfaceContainerHigh rounded-lg"></div>
-            <div className="flex-1 space-y-2">
-                <div className="h-5 w-40 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-4 w-32 bg-surfaceContainerHigh rounded"></div>
-            </div>
-            <div className="flex space-x-2">
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-            </div>
-        </div>
-    </div>
-);
 
 const CategoryIndex = ({ page }: CategoryIndexProps) => {
     const { get, isProcessing } = useAxiosForm<PaginatedData<Category>>([]);
@@ -210,7 +191,7 @@ const CategoryIndex = ({ page }: CategoryIndexProps) => {
      * Handle pagination.
      * @param url The pagination URL.
      */
-    const onPaginationChange = (url: string) => {
+    const onPageChange = (url: string) => {
         const urlObj = new URL(url);
         const page = urlObj.searchParams.get("page");
         if (page) {
@@ -358,162 +339,36 @@ const CategoryIndex = ({ page }: CategoryIndexProps) => {
                     <div className="space-y-4">
                         {isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <SkeletonRow key={i} />
+                                <CategoryRowSkeleton key={i} />
                             ))
                         ) : categoriesData.data.length === 0 ? (
-                            <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
-                                <FiGrid className="mx-auto text-4xl text-onSurface/50 mb-4" />
-                                <h3 className="text-lg font-medium text-onSurface">
-                                    {hasActiveFilters
-                                        ? "No categories match your search"
-                                        : "No categories found"}
-                                </h3>
-                                <p className="text-onSurface/70 mt-1">
-                                    {hasActiveFilters
-                                        ? "Try adjusting your search terms"
-                                        : "Get started by creating your first category"}
-                                </p>
-                                {hasActiveFilters ? (
-                                    <button
-                                        onClick={clearFilters}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Clear Search
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={onCreateCategory}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Create Category
-                                    </button>
-                                )}
-                            </div>
+                            <FilteredEmptyState
+                                entityName="categories"
+                                icon={<FiTag />}
+                                hasActiveFilters={hasActiveFilters}
+                                onClearFilters={clearFilters}
+                                onCreate={onCreateCategory}
+                            />
                         ) : (
                             categoriesData.data.map((category) => (
-                                <div
+                                <CategoryRow
                                     key={category.id}
-                                    className="bg-surface rounded-xl border border-surfaceContainerHigh p-4 hover:border-primary/30 transition-all duration-200"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-4">
-                                            <img
-                                                className="h-16 w-16 rounded-lg object-contain bg-surfaceContainerHigh p-2"
-                                                src={category.imgPath}
-                                                alt={category.name}
-                                            />
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-onSurface">
-                                                    {category.name}
-                                                </h3>
-                                                <p className="text-sm text-onSurface/70 mt-1">
-                                                    ID: {category.id}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() =>
-                                                    onShowCategory(category)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="View details"
-                                            >
-                                                <FiEye />
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    onEditCategory(category)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="Edit category"
-                                            >
-                                                <FiEdit />
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    onDeleteCategory(category)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200"
-                                                title="Delete category"
-                                            >
-                                                <FiTrash2 />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    category={category}
+                                    onEditCategory={onEditCategory}
+                                    onShowCategory={onShowCategory}
+                                    onDeleteCategory={onDeleteCategory}
+                                />
                             ))
                         )}
                     </div>
 
                     {/* Pagination */}
                     {categoriesData.meta && categoriesData.meta.total > 0 && (
-                        <div className="bg-surfaceContainer rounded-xl p-6 mt-6 border border-surfaceContainerHigh">
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <div className="text-sm text-onSurface">
-                                    Showing{" "}
-                                    <span className="font-medium">
-                                        {categoriesData.meta.from}
-                                    </span>{" "}
-                                    to{" "}
-                                    <span className="font-medium">
-                                        {categoriesData.meta.to}
-                                    </span>{" "}
-                                    of{" "}
-                                    <span className="font-medium">
-                                        {categoriesData.meta.total}
-                                    </span>{" "}
-                                    results
-                                </div>
-                                <nav className="flex items-center space-x-2">
-                                    {categoriesData.links.prev && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    categoriesData.links.prev!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronLeft className="h-5 w-5" />
-                                        </button>
-                                    )}
-
-                                    {categoriesData.meta.links
-                                        ?.slice(1, -1)
-                                        .map((link, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() =>
-                                                    link.url &&
-                                                    onPaginationChange(link.url)
-                                                }
-                                                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-200 ${
-                                                    link.active
-                                                        ? "bg-primary border-primary text-surfaceContainer"
-                                                        : "bg-surface border-surfaceContainerHigh text-onSurface hover:border-primary/30"
-                                                }`}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: link.label,
-                                                }}
-                                            />
-                                        ))}
-
-                                    {categoriesData.links.next && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    categoriesData.links.next!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronRight className="h-5 w-5" />
-                                        </button>
-                                    )}
-                                </nav>
-                            </div>
-                        </div>
+                        <Pagination
+                            meta={categoriesData.meta}
+                            links={categoriesData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
 
                     {/* Modals */}

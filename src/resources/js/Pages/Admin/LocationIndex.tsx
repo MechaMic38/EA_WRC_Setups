@@ -1,23 +1,22 @@
+import FilteredEmptyState from "@/Components/FilteredEmptyState";
 import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
 import TextInput from "@/Components/Form/TextInput";
 import LocationCreateModal from "@/Components/Modals/Location/LocationCreateModal";
 import LocationDeleteModal from "@/Components/Modals/Location/LocationDeleteModal";
 import LocationEditModal from "@/Components/Modals/Location/LocationEditModal";
 import LocationShowModal from "@/Components/Modals/Location/LocationShowModal";
+import Pagination from "@/Components/Pagination";
+import LocationRow from "@/Components/Rows/LocationRow";
+import LocationRowSkeleton from "@/Components/Skeletons/LocationRowSkeleton";
 import { SURFACE_TYPES_MAP } from "@/constants";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { LocationSummary, PaginatedData } from "@/types";
 import { Field, Label } from "@headlessui/react";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import {
-    FiChevronLeft,
-    FiChevronRight,
-    FiEdit,
-    FiEye,
     FiPlus,
-    FiTrash2,
     FiSearch,
     FiFilter,
     FiRefreshCw,
@@ -31,23 +30,6 @@ interface LocationIndexProps {
     page?: number;
     surface_type?: string;
 }
-
-const SkeletonRow = () => (
-    <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh animate-pulse">
-        <div className="flex items-center space-x-4">
-            <div className="h-12 w-16 bg-surfaceContainerHigh rounded-lg"></div>
-            <div className="flex-1 space-y-2">
-                <div className="h-5 w-40 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-4 w-32 bg-surfaceContainerHigh rounded"></div>
-            </div>
-            <div className="flex space-x-2">
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-            </div>
-        </div>
-    </div>
-);
 
 const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
     const { get, isProcessing } = useAxiosForm<PaginatedData<LocationSummary>>(
@@ -228,7 +210,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
      * Handle pagination.
      * @param url The pagination URL.
      */
-    const onPaginationChange = (url: string) => {
+    const onPageChange = (url: string) => {
         const urlObj = new URL(url);
         const page = urlObj.searchParams.get("page");
         if (page) {
@@ -448,170 +430,36 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
                     <div className="space-y-4">
                         {isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <SkeletonRow key={i} />
+                                <LocationRowSkeleton key={i} />
                             ))
                         ) : locationsData.data.length === 0 ? (
-                            <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
-                                <FiMapPin className="mx-auto text-4xl text-onSurface/50 mb-4" />
-                                <h3 className="text-lg font-medium text-onSurface">
-                                    {hasActiveFilters
-                                        ? "No locations match your filters"
-                                        : "No locations found"}
-                                </h3>
-                                <p className="text-onSurface/70 mt-1">
-                                    {hasActiveFilters
-                                        ? "Try adjusting your filters"
-                                        : "Get started by creating your first location"}
-                                </p>
-                                {hasActiveFilters ? (
-                                    <button
-                                        onClick={clearFilters}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Clear Filters
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={onCreateLocation}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Create Location
-                                    </button>
-                                )}
-                            </div>
+                            <FilteredEmptyState
+                                entityName="locations"
+                                icon={<FiMapPin />}
+                                hasActiveFilters={hasActiveFilters}
+                                onClearFilters={clearFilters}
+                                onCreate={onCreateLocation}
+                            />
                         ) : (
                             locationsData.data.map((location) => (
-                                <div
+                                <LocationRow
                                     key={location.id}
-                                    className="bg-surface rounded-xl border border-surfaceContainerHigh p-4 hover:border-primary/30 transition-all duration-200"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-4">
-                                            <img
-                                                className="h-16 w-24 rounded-lg object-cover bg-surfaceContainerHigh"
-                                                src={location.imgBannerPath}
-                                                alt={location.name}
-                                            />
-                                            <div className="flex-1">
-                                                <h3 className="text-lg font-semibold text-onSurface">
-                                                    {location.name}
-                                                </h3>
-                                                <p className="text-sm text-onSurface/70 line-clamp-2 mt-1">
-                                                    {location.description}
-                                                </p>
-                                                <div className="flex items-center mt-2">
-                                                    <span className="inline-flex items-center px-2 py-1 rounded-full bg-surfaceContainerHigh text-xs text-onSurface">
-                                                        {SURFACE_TYPES_MAP[
-                                                            location.surfaceType as keyof typeof SURFACE_TYPES_MAP
-                                                        ]?.text ||
-                                                            location.surfaceType}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() =>
-                                                    onShowLocation(location)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="View details"
-                                            >
-                                                <FiEye />
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    onEditLocation(location)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="Edit location"
-                                            >
-                                                <FiEdit />
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    onDeleteLocation(location)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200"
-                                                title="Delete location"
-                                            >
-                                                <FiTrash2 />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    location={location}
+                                    onShowLocation={onShowLocation}
+                                    onEditLocation={onEditLocation}
+                                    onDeleteLocation={onDeleteLocation}
+                                />
                             ))
                         )}
                     </div>
 
                     {/* Pagination */}
                     {locationsData.meta && locationsData.meta.total > 0 && (
-                        <div className="bg-surfaceContainer rounded-xl p-6 mt-6 border border-surfaceContainerHigh">
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <div className="text-sm text-onSurface">
-                                    Showing{" "}
-                                    <span className="font-medium">
-                                        {locationsData.meta.from}
-                                    </span>{" "}
-                                    to{" "}
-                                    <span className="font-medium">
-                                        {locationsData.meta.to}
-                                    </span>{" "}
-                                    of{" "}
-                                    <span className="font-medium">
-                                        {locationsData.meta.total}
-                                    </span>{" "}
-                                    results
-                                </div>
-                                <nav className="flex items-center space-x-2">
-                                    {locationsData.links.prev && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    locationsData.links.prev!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronLeft className="h-5 w-5" />
-                                        </button>
-                                    )}
-
-                                    {locationsData.meta.links
-                                        ?.slice(1, -1)
-                                        .map((link, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() =>
-                                                    link.url &&
-                                                    onPaginationChange(link.url)
-                                                }
-                                                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-200 ${
-                                                    link.active
-                                                        ? "bg-primary border-primary text-surfaceContainer"
-                                                        : "bg-surface border-surfaceContainerHigh text-onSurface hover:border-primary/30"
-                                                }`}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: link.label,
-                                                }}
-                                            />
-                                        ))}
-
-                                    {locationsData.links.next && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    locationsData.links.next!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronRight className="h-5 w-5" />
-                                        </button>
-                                    )}
-                                </nav>
-                            </div>
-                        </div>
+                        <Pagination
+                            meta={locationsData.meta}
+                            links={locationsData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
 
                     {/* Modals */}

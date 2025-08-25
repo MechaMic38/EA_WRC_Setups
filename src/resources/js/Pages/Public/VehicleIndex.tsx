@@ -1,30 +1,18 @@
 import React from "react";
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
-import { FiChevronRight, FiFilter, FiX, FiSearch } from "react-icons/fi";
+import { FiFilter, FiX, FiSearch } from "react-icons/fi";
 import { Category, Manufacturer, PaginatedData, Vehicle } from "@/types";
 import CategoryListbox from "@/Components/Form/CategoryListbox";
 import { Field, Label } from "@headlessui/react";
 import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
 import TextInput from "@/Components/Form/TextInput";
-
-const SkeletonCard = () => (
-    <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden animate-pulse">
-        <div className="h-48 bg-surfaceContainerHigh"></div>
-        <div className="p-6">
-            <div className="flex items-center mb-4">
-                <div className="h-10 w-10 bg-surfaceContainerHigh rounded-full mr-3"></div>
-                <div className="flex-1">
-                    <div className="h-5 w-3/4 bg-surfaceContainerHigh rounded mb-2"></div>
-                    <div className="h-4 w-1/2 bg-surfaceContainerHigh rounded"></div>
-                </div>
-            </div>
-            <div className="h-10 bg-surfaceContainerHigh rounded-lg"></div>
-        </div>
-    </div>
-);
+import VehicleSetupCard from "@/Components/Cards/VehicleSetupCard";
+import VehicleSetupCardSkeleton from "@/Components/Skeletons/VehicleSetupCardSkeleton";
+import FilteredEmptyState from "@/Components/FilteredEmptyState";
+import { LiaCarSideSolid } from "react-icons/lia";
 
 export default function VehicleIndex() {
     // API hooks
@@ -282,102 +270,25 @@ export default function VehicleIndex() {
                     {isProcessingVehicles ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
-                                <SkeletonCard key={i} />
+                                <VehicleSetupCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : filteredVehicles.length === 0 ? (
-                        <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
-                            <div className="mx-auto text-4xl text-onSurface/50 mb-4">
-                                🚗
-                            </div>
-                            <h3 className="text-lg font-medium text-onSurface">
-                                {hasActiveFilters
-                                    ? "No vehicles match your filters"
-                                    : "No vehicles found"}
-                            </h3>
-                            <p className="text-onSurface/70 mt-1">
-                                {hasActiveFilters
-                                    ? "Try adjusting your filters"
-                                    : "Check back later for new vehicles"}
-                            </p>
-                            {hasActiveFilters && (
-                                <button
-                                    onClick={clearFilters}
-                                    className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                >
-                                    Clear Filters
-                                </button>
-                            )}
-                        </div>
+                        <FilteredEmptyState
+                            entityName="vehicles"
+                            title="No vehicles found"
+                            description="Check back later for new vehicles"
+                            icon={<LiaCarSideSolid />}
+                            hasActiveFilters={hasActiveFilters}
+                            onClearFilters={clearFilters}
+                        />
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredVehicles.map((vehicle) => (
-                                <div
+                                <VehicleSetupCard
                                     key={vehicle.id}
-                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30 group"
-                                >
-                                    {/* Vehicle Image - Full width with object-cover */}
-                                    <div className="h-48 relative overflow-hidden">
-                                        <img
-                                            src={vehicle.imgPath}
-                                            alt={vehicle.name}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                        <div className="absolute top-4 right-4">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                <img
-                                                    src={
-                                                        vehicle.category.imgPath
-                                                    }
-                                                    alt={vehicle.category.name}
-                                                    className="h-4 w-4 object-contain mr-1"
-                                                />
-                                                {vehicle.category.name}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Vehicle Details */}
-                                    <div className="p-6">
-                                        <div className="flex items-center mb-4">
-                                            {/* Manufacturer Logo */}
-                                            <div className="flex-shrink-0">
-                                                <img
-                                                    src={
-                                                        vehicle.manufacturer
-                                                            .imgPath
-                                                    }
-                                                    alt={
-                                                        vehicle.manufacturer
-                                                            .name
-                                                    }
-                                                    className="h-12 w-12 object-contain p-1"
-                                                />
-                                            </div>
-                                            {/* Vertical divider */}
-                                            <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
-                                            {/* Manufacturer Name and Vehicle Name */}
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-onSurface/70 truncate">
-                                                    {vehicle.manufacturer.name}
-                                                </p>
-                                                <h3 className="text-lg font-bold text-onSurface truncate">
-                                                    {vehicle.name}
-                                                </h3>
-                                            </div>
-                                        </div>
-                                        <Link
-                                            href={route(
-                                                "vehicles.show",
-                                                vehicle.id
-                                            )}
-                                            className="inline-flex items-center justify-center w-full px-4 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 font-medium"
-                                        >
-                                            View Setups
-                                            <FiChevronRight className="ml-2" />
-                                        </Link>
-                                    </div>
-                                </div>
+                                    vehicle={vehicle}
+                                />
                             ))}
                         </div>
                     )}

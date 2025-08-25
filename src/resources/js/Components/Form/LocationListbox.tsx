@@ -20,7 +20,7 @@ interface LocationListboxProps {
 export default function LocationListbox({
     options,
     selectedOption,
-    placeholder = "Select a vehicle",
+    placeholder = "Select a location",
     error = null,
     onChange,
 }: LocationListboxProps) {

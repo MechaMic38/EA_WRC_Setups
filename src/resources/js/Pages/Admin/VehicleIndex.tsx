@@ -3,21 +3,14 @@ import VehicleEditModal from "@/Components/Modals/Vehicle/VehicleEditModal";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { PaginatedData, Vehicle, Category, Manufacturer } from "@/types";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import {
-    FiChevronLeft,
-    FiChevronRight,
-    FiEdit,
-    FiEye,
-    FiMap,
     FiPlus,
-    FiTrash2,
     FiSearch,
     FiFilter,
     FiRefreshCw,
     FiX,
-    FiTruck,
     FiTag,
 } from "react-icons/fi";
 import VehicleDeleteModal from "@/Components/Modals/Vehicle/VehicleDeleteModal";
@@ -28,30 +21,16 @@ import { BsTools } from "react-icons/bs";
 import CategoryListbox from "@/Components/Form/CategoryListbox";
 import ManufacturerListbox from "@/Components/Form/ManufacturerListbox";
 import TextInput from "@/Components/Form/TextInput";
+import VehicleRowSkeleton from "@/Components/Skeletons/VehicleRowSkeleton";
+import Pagination from "@/Components/Pagination";
+import VehicleRow from "@/Components/Rows/VehicleRow";
+import FilteredEmptyState from "@/Components/FilteredEmptyState";
 
 interface VehicleIndexProps {
     page?: number;
     category_id?: string;
     manufacturer_id?: string;
 }
-
-const SkeletonRow = () => (
-    <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh animate-pulse">
-        <div className="flex items-center space-x-4">
-            <div className="h-12 w-12 bg-surfaceContainerHigh rounded-lg"></div>
-            <div className="flex-1 space-y-2">
-                <div className="h-5 w-40 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-4 w-32 bg-surfaceContainerHigh rounded"></div>
-            </div>
-            <div className="flex space-x-2">
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-            </div>
-        </div>
-    </div>
-);
 
 const VehicleIndex = ({
     page,
@@ -278,7 +257,7 @@ const VehicleIndex = ({
      * Handle pagination.
      * @param url The pagination URL.
      */
-    const onPaginationChange = (url: string) => {
+    const onPageChange = (url: string) => {
         const urlObj = new URL(url);
         const page = urlObj.searchParams.get("page");
         if (page) {
@@ -565,214 +544,36 @@ const VehicleIndex = ({
                     <div className="space-y-4">
                         {isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <SkeletonRow key={i} />
+                                <VehicleRowSkeleton key={i} />
                             ))
                         ) : vehiclesData.data.length === 0 ? (
-                            <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
-                                <FiTruck className="mx-auto text-4xl text-onSurface/50 mb-4" />
-                                <h3 className="text-lg font-medium text-onSurface">
-                                    {hasActiveFilters
-                                        ? "No vehicles match your filters"
-                                        : "No vehicles found"}
-                                </h3>
-                                <p className="text-onSurface/70 mt-1">
-                                    {hasActiveFilters
-                                        ? "Try adjusting your filters"
-                                        : "Get started by creating your first vehicle"}
-                                </p>
-                                {hasActiveFilters ? (
-                                    <button
-                                        onClick={clearFilters}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Clear Filters
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={onCreateVehicle}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Create Vehicle
-                                    </button>
-                                )}
-                            </div>
+                            <FilteredEmptyState
+                                entityName="vehicles"
+                                icon={<LiaCarSideSolid />}
+                                hasActiveFilters={hasActiveFilters}
+                                onClearFilters={clearFilters}
+                                onCreate={onCreateVehicle}
+                            />
                         ) : (
                             vehiclesData.data.map((vehicle) => (
-                                <div
+                                <VehicleRow
                                     key={vehicle.id}
-                                    className="bg-surface rounded-xl border border-surfaceContainerHigh p-4 hover:border-primary/30 transition-all duration-200"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-4">
-                                            <img
-                                                className="h-16 w-16 rounded-lg object-contain bg-surfaceContainerHigh p-2"
-                                                src={vehicle.imgPath}
-                                                alt={vehicle.name}
-                                            />
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-onSurface">
-                                                    {vehicle.name}
-                                                </h3>
-                                                <div className="flex items-center space-x-4 mt-1">
-                                                    <div className="flex items-center">
-                                                        <img
-                                                            className="h-5 w-5 object-contain mr-2"
-                                                            src={
-                                                                vehicle
-                                                                    .manufacturer
-                                                                    .imgPath
-                                                            }
-                                                            alt={
-                                                                vehicle
-                                                                    .manufacturer
-                                                                    .name
-                                                            }
-                                                        />
-                                                        <span className="text-sm text-onSurface/70">
-                                                            {
-                                                                vehicle
-                                                                    .manufacturer
-                                                                    .name
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex items-center">
-                                                        <img
-                                                            className="h-5 w-5 object-contain mr-2"
-                                                            src={
-                                                                vehicle.category
-                                                                    .imgPath
-                                                            }
-                                                            alt={
-                                                                vehicle.category
-                                                                    .name
-                                                            }
-                                                        />
-                                                        <span className="text-sm text-onSurface/70">
-                                                            {
-                                                                vehicle.category
-                                                                    .name
-                                                            }
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() =>
-                                                    onShowVehicle(vehicle)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="View details"
-                                            >
-                                                <FiEye />
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    onEditVehicle(vehicle)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="Edit vehicle"
-                                            >
-                                                <FiEdit />
-                                            </button>
-                                            <Link
-                                                href={route(
-                                                    "admin.vehicles.blueprint.edit",
-                                                    {
-                                                        vehicle: vehicle.id,
-                                                    }
-                                                )}
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="Update Blueprint"
-                                            >
-                                                <FiMap />
-                                            </Link>
-                                            <button
-                                                onClick={() =>
-                                                    onDeleteVehicle(vehicle)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200"
-                                                title="Delete vehicle"
-                                            >
-                                                <FiTrash2 />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    vehicle={vehicle}
+                                    onShowVehicle={onShowVehicle}
+                                    onEditVehicle={onEditVehicle}
+                                    onDeleteVehicle={onDeleteVehicle}
+                                />
                             ))
                         )}
                     </div>
 
                     {/* Pagination */}
                     {vehiclesData.meta && vehiclesData.meta.total > 0 && (
-                        <div className="bg-surfaceContainer rounded-xl p-6 mt-6 border border-surfaceContainerHigh">
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <div className="text-sm text-onSurface">
-                                    Showing{" "}
-                                    <span className="font-medium">
-                                        {vehiclesData.meta.from}
-                                    </span>{" "}
-                                    to{" "}
-                                    <span className="font-medium">
-                                        {vehiclesData.meta.to}
-                                    </span>{" "}
-                                    of{" "}
-                                    <span className="font-medium">
-                                        {vehiclesData.meta.total}
-                                    </span>{" "}
-                                    results
-                                </div>
-                                <nav className="flex items-center space-x-2">
-                                    {vehiclesData.links.prev && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    vehiclesData.links.prev!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronLeft className="h-5 w-5" />
-                                        </button>
-                                    )}
-
-                                    {vehiclesData.meta.links
-                                        ?.slice(1, -1)
-                                        .map((link, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() =>
-                                                    link.url &&
-                                                    onPaginationChange(link.url)
-                                                }
-                                                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-200 ${
-                                                    link.active
-                                                        ? "bg-primary border-primary text-surfaceContainer"
-                                                        : "bg-surface border-surfaceContainerHigh text-onSurface hover:border-primary/30"
-                                                }`}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: link.label,
-                                                }}
-                                            />
-                                        ))}
-
-                                    {vehiclesData.links.next && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    vehiclesData.links.next!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronRight className="h-5 w-5" />
-                                        </button>
-                                    )}
-                                </nav>
-                            </div>
-                        </div>
+                        <Pagination
+                            meta={vehiclesData.meta}
+                            links={vehiclesData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
 
                     {/* Modals */}

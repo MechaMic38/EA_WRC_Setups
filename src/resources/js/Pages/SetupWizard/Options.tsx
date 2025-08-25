@@ -1,19 +1,14 @@
 import { useEffect, useState } from "react";
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import {
     FiChevronLeft,
     FiCheck,
-    FiDroplet,
     FiCalendar,
     FiSettings,
     FiCloud,
 } from "react-icons/fi";
-import { GiTwirlyFlower, GiLindenLeaf, GiCarWheel } from "react-icons/gi";
-import { FiSun } from "react-icons/fi";
-import { FaRegSnowflake } from "react-icons/fa";
-import { BsCloudSunFill, BsSnow2 } from "react-icons/bs";
-import { BiWater } from "react-icons/bi";
+import { GiCarWheel } from "react-icons/gi";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { Location } from "@/types";
 import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";

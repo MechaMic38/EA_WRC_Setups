@@ -6,31 +6,18 @@ import {
     FiChevronLeft,
     FiUser,
     FiCalendar,
-    FiDroplet,
     FiSettings,
-    FiMapPin,
-    FiTruck,
     FiCopy,
     FiDownload,
     FiInfo,
-    FiCheck,
     FiCloud,
 } from "react-icons/fi";
-import {
-    LocationSummary,
-    Setup,
-    SetupBlueprint,
-    SetupSection,
-    Vehicle,
-} from "@/types";
+import { Setup, SetupBlueprint, SetupSection } from "@/types";
 import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
-import {
-    SEASONS_MAP,
-    SURFACE_CONDITIONS_MAP,
-    SURFACE_TYPES_MAP,
-    TYRES_MAP,
-} from "@/constants";
+import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";
 import { GiCarWheel } from "react-icons/gi";
+import VehicleCard from "@/Components/Cards/VehicleCard";
+import LocationCard from "@/Components/Cards/LocationCard";
 
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const { get: getSetupBlueprint, isProcessing } =
@@ -183,115 +170,17 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
 
                             {/* Vehicle and Location Cards */}
                             {setup.vehicle && (
-                                <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden">
-                                    <div className="h-32 relative overflow-hidden bg-surfaceContainerHigh">
-                                        <img
-                                            src={setup.vehicle.imgPath}
-                                            alt={setup.vehicle.name}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                        <div className="absolute top-3 right-3">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                <img
-                                                    src={
-                                                        setup.vehicle.category
-                                                            .imgPath
-                                                    }
-                                                    alt={
-                                                        setup.vehicle.category
-                                                            .name
-                                                    }
-                                                    className="h-4 w-4 object-contain mr-1"
-                                                />
-                                                {setup.vehicle.category.name}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="p-4">
-                                        <div className="flex items-center mb-3">
-                                            {/* Manufacturer Logo */}
-                                            <div className="flex-shrink-0">
-                                                <img
-                                                    src={
-                                                        setup.vehicle
-                                                            .manufacturer
-                                                            .imgPath
-                                                    }
-                                                    alt={
-                                                        setup.vehicle
-                                                            .manufacturer.name
-                                                    }
-                                                    className="h-12 w-12 object-contain p-1"
-                                                />
-                                            </div>
-                                            {/* Vertical divider */}
-                                            <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
-                                            {/* Manufacturer Name and Vehicle Name */}
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-onSurface/70 truncate">
-                                                    {
-                                                        setup.vehicle
-                                                            .manufacturer.name
-                                                    }
-                                                </p>
-                                                <h3 className="text-lg font-bold text-onSurface truncate">
-                                                    {setup.vehicle.name}
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                                <VehicleCard
+                                    vehicle={setup.vehicle}
+                                    mode="display"
+                                />
                             )}
 
                             {setup.location && (
-                                <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden">
-                                    <div className="h-32 relative overflow-hidden">
-                                        <img
-                                            src={
-                                                setup.location.imgBgPath ||
-                                                setup.location.imgBannerPath
-                                            }
-                                            alt={setup.location.name}
-                                            className="w-full h-full object-cover"
-                                        />
-                                        <div className="absolute top-3 right-3">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                {
-                                                    SURFACE_TYPES_MAP[
-                                                        setup.location
-                                                            .surfaceType as keyof typeof SURFACE_TYPES_MAP
-                                                    ]?.icon
-                                                }
-                                                <span className="ml-1" />
-                                                {
-                                                    SURFACE_TYPES_MAP[
-                                                        setup.location
-                                                            .surfaceType as keyof typeof SURFACE_TYPES_MAP
-                                                    ]?.text
-                                                }
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div className="p-4">
-                                        <div className="flex items-center mb-3">
-                                            <img
-                                                src={
-                                                    setup.location.imgBannerPath
-                                                }
-                                                alt={setup.location.name}
-                                                className="h-10 w-10 object-contain mr-3"
-                                            />
-                                            <div className="flex-1 min-w-0">
-                                                <h3 className="text-lg font-bold text-onSurface truncate">
-                                                    {setup.location.name}
-                                                </h3>
-                                            </div>
-                                        </div>
-                                        <p className="text-sm text-onSurface/70 line-clamp-2">
-                                            {setup.location.description}
-                                        </p>
-                                    </div>
-                                </div>
+                                <LocationCard
+                                    location={setup.location}
+                                    mode="display"
+                                />
                             )}
 
                             {/* Conditions Card */}

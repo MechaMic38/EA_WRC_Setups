@@ -4,12 +4,7 @@ import { useEffect, useState } from "react";
 import { Head, router } from "@inertiajs/react";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import {
-    FiChevronLeft,
-    FiChevronRight,
-    FiEdit,
-    FiEye,
     FiPlus,
-    FiTrash2,
     FiSearch,
     FiFilter,
     FiRefreshCw,
@@ -26,28 +21,15 @@ import UserRoleListbox from "@/Components/Form/UserRoleListbox";
 import { USER_ROLES_MAP } from "@/constants";
 import { Field, Input, Label } from "@headlessui/react";
 import TextInput from "@/Components/Form/TextInput";
+import UserRowSkeleton from "@/Components/Skeletons/UserRowSkeleton";
+import Pagination from "@/Components/Pagination";
+import UserRow from "@/Components/Rows/UserRow";
+import FilteredEmptyState from "@/Components/FilteredEmptyState";
 
 interface UserIndexProps {
     page?: number;
     role?: string;
 }
-
-const SkeletonRow = () => (
-    <div className="p-4 bg-surface rounded-xl border border-surfaceContainerHigh animate-pulse">
-        <div className="flex items-center space-x-4">
-            <div className="h-12 w-12 bg-surfaceContainerHigh rounded-full"></div>
-            <div className="flex-1 space-y-2">
-                <div className="h-5 w-40 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-4 w-32 bg-surfaceContainerHigh rounded"></div>
-            </div>
-            <div className="flex space-x-2">
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-                <div className="h-8 w-8 bg-surfaceContainerHigh rounded"></div>
-            </div>
-        </div>
-    </div>
-);
 
 const UserIndex = ({ page, role }: UserIndexProps) => {
     const { get, isProcessing } = useAxiosForm<PaginatedData<User>>([]);
@@ -220,7 +202,7 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
      * Handle pagination.
      * @param url The pagination URL.
      */
-    const onPaginationChange = (url: string) => {
+    const onPageChange = (url: string) => {
         const urlObj = new URL(url);
         const page = urlObj.searchParams.get("page");
         if (page) {
@@ -232,24 +214,6 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
     };
 
     const hasActiveFilters = filters.username || filters.email || filters.role;
-
-    const getRoleColor = (role: string) => {
-        switch (role) {
-            case "admin":
-                return "bg-red-500 text-surfaceContainer";
-            default:
-                return "bg-surfaceContainer text-onSurface";
-        }
-    };
-
-    const getRoleDisplay = (role: string) => {
-        switch (role) {
-            case "admin":
-                return "Administrator";
-            default:
-                return "User";
-        }
-    };
 
     return (
         <AdminLayout>
@@ -417,7 +381,12 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
                                 )}
                                 {filters.role && (
                                     <span className="inline-flex items-center px-3 py-1 rounded-full bg-tertiary/10 text-tertiary text-sm">
-                                        Role: {getRoleDisplay(filters.role)}
+                                        Role:{" "}
+                                        {
+                                            USER_ROLES_MAP[
+                                                filters.role as keyof typeof USER_ROLES_MAP
+                                            ].text
+                                        }
                                         <button
                                             onClick={() =>
                                                 onFilterChange("role", "")
@@ -493,171 +462,36 @@ const UserIndex = ({ page, role }: UserIndexProps) => {
                     <div className="space-y-4">
                         {isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
-                                <SkeletonRow key={i} />
+                                <UserRowSkeleton key={i} />
                             ))
                         ) : usersData.data.length === 0 ? (
-                            <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
-                                <FiUsers className="mx-auto text-4xl text-onSurface/50 mb-4" />
-                                <h3 className="text-lg font-medium text-onSurface">
-                                    {hasActiveFilters
-                                        ? "No users match your filters"
-                                        : "No users found"}
-                                </h3>
-                                <p className="text-onSurface/70 mt-1">
-                                    {hasActiveFilters
-                                        ? "Try adjusting your filters"
-                                        : "Get started by creating your first user"}
-                                </p>
-                                {hasActiveFilters ? (
-                                    <button
-                                        onClick={clearFilters}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Clear Filters
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={onCreateUser}
-                                        className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                    >
-                                        Create User
-                                    </button>
-                                )}
-                            </div>
+                            <FilteredEmptyState
+                                entityName="users"
+                                icon={<FiUsers />}
+                                hasActiveFilters={hasActiveFilters}
+                                onClearFilters={clearFilters}
+                                onCreate={onCreateUser}
+                            />
                         ) : (
                             usersData.data.map((user) => (
-                                <div
+                                <UserRow
                                     key={user.id}
-                                    className="bg-surface rounded-xl border border-surfaceContainerHigh p-4 hover:border-primary/30 transition-all duration-200"
-                                >
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center space-x-4">
-                                            <img
-                                                className="h-12 w-12 rounded-full object-cover"
-                                                src={`https://ui-avatars.com/api/?name=${encodeURIComponent(
-                                                    user.username
-                                                )}&background=CFBDFE&color=211F24`}
-                                                alt={user.username}
-                                            />
-                                            <div>
-                                                <h3 className="text-lg font-semibold text-onSurface">
-                                                    {user.username}
-                                                </h3>
-                                                <p className="text-sm text-onSurface/70 mt-1">
-                                                    {user.email}
-                                                </p>
-                                                <div className="flex items-center mt-2">
-                                                    <span
-                                                        className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleColor(
-                                                            user.role
-                                                        )}`}
-                                                    >
-                                                        {getRoleDisplay(
-                                                            user.role
-                                                        )}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="flex space-x-2">
-                                            <button
-                                                onClick={() => onShowUser(user)}
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="View details"
-                                            >
-                                                <FiEye />
-                                            </button>
-                                            <button
-                                                onClick={() => onEditUser(user)}
-                                                className="p-2 bg-surfaceContainer rounded-lg text-onSurface hover:bg-surfaceContainerHigh transition-colors duration-200"
-                                                title="Edit user"
-                                            >
-                                                <FiEdit />
-                                            </button>
-                                            <button
-                                                onClick={() =>
-                                                    onDeleteUser(user)
-                                                }
-                                                className="p-2 bg-surfaceContainer rounded-lg text-red-500 hover:bg-red-500/10 transition-colors duration-200"
-                                                title="Delete user"
-                                            >
-                                                <FiTrash2 />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                                    user={user}
+                                    onShowUser={onShowUser}
+                                    onEditUser={onEditUser}
+                                    onDeleteUser={onDeleteUser}
+                                />
                             ))
                         )}
                     </div>
 
                     {/* Pagination */}
                     {usersData.meta && usersData.meta.total > 0 && (
-                        <div className="bg-surfaceContainer rounded-xl p-6 mt-6 border border-surfaceContainerHigh">
-                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                <div className="text-sm text-onSurface">
-                                    Showing{" "}
-                                    <span className="font-medium">
-                                        {usersData.meta.from}
-                                    </span>{" "}
-                                    to{" "}
-                                    <span className="font-medium">
-                                        {usersData.meta.to}
-                                    </span>{" "}
-                                    of{" "}
-                                    <span className="font-medium">
-                                        {usersData.meta.total}
-                                    </span>{" "}
-                                    results
-                                </div>
-                                <nav className="flex items-center space-x-2">
-                                    {usersData.links.prev && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    usersData.links.prev!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronLeft className="h-5 w-5" />
-                                        </button>
-                                    )}
-
-                                    {usersData.meta.links
-                                        ?.slice(1, -1)
-                                        .map((link, index) => (
-                                            <button
-                                                key={index}
-                                                onClick={() =>
-                                                    link.url &&
-                                                    onPaginationChange(link.url)
-                                                }
-                                                className={`px-3 py-2 rounded-lg border text-sm font-medium transition-colors duration-200 ${
-                                                    link.active
-                                                        ? "bg-primary border-primary text-surfaceContainer"
-                                                        : "bg-surface border-surfaceContainerHigh text-onSurface hover:border-primary/30"
-                                                }`}
-                                                dangerouslySetInnerHTML={{
-                                                    __html: link.label,
-                                                }}
-                                            />
-                                        ))}
-
-                                    {usersData.links.next && (
-                                        <button
-                                            onClick={() =>
-                                                onPaginationChange(
-                                                    usersData.links.next!
-                                                )
-                                            }
-                                            className="p-2 bg-surface rounded-lg border border-surfaceContainerHigh hover:border-primary/30 transition-colors duration-200"
-                                        >
-                                            <FiChevronRight className="h-5 w-5" />
-                                        </button>
-                                    )}
-                                </nav>
-                            </div>
-                        </div>
+                        <Pagination
+                            meta={usersData.meta}
+                            links={usersData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
 
                     {/* Modals */}

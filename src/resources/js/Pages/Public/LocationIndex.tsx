@@ -1,29 +1,16 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
-import {
-    FiMapPin,
-    FiChevronRight,
-    FiSearch,
-    FiFilter,
-    FiX,
-} from "react-icons/fi";
+import { FiMapPin, FiSearch, FiFilter, FiX } from "react-icons/fi";
 import { LocationSummary, PaginatedData } from "@/types";
 import { SURFACE_TYPES_MAP } from "@/constants";
 import SurfaceTypeListbox from "@/Components/Form/SurfaceTypeListbox";
 import { Field, Label } from "@headlessui/react";
 import TextInput from "@/Components/Form/TextInput";
-
-const SkeletonCard = () => (
-    <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh p-4 animate-pulse">
-        <div className="h-48 bg-surfaceContainerHigh rounded-lg mb-4"></div>
-        <div className="h-6 w-3/4 bg-surfaceContainerHigh rounded mb-3"></div>
-        <div className="h-4 w-full bg-surfaceContainerHigh rounded mb-2"></div>
-        <div className="h-4 w-2/3 bg-surfaceContainerHigh rounded mb-4"></div>
-        <div className="h-10 bg-surfaceContainerHigh rounded-lg"></div>
-    </div>
-);
+import LocationSetupCard from "@/Components/Cards/LocationSetupCard";
+import LocationSetupCardSkeleton from "@/Components/Skeletons/LocationSetupCardSkeleton";
+import FilteredEmptyState from "@/Components/FilteredEmptyState";
 
 export default function LocationIndex() {
     const { get, isProcessing } = useAxiosForm<PaginatedData<LocationSummary>>(
@@ -64,15 +51,6 @@ export default function LocationIndex() {
     };
 
     const hasActiveFilters = searchQuery || surfaceFilter;
-
-    // Apply filters with a slight delay to avoid too many requests
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            fetchLocations();
-        }, 300);
-
-        return () => clearTimeout(timeoutId);
-    }, [searchQuery, surfaceFilter]);
 
     const filteredLocations = locations.filter((location) => {
         const matchesSearch =
@@ -234,87 +212,25 @@ export default function LocationIndex() {
                     {isProcessing ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
-                                <SkeletonCard key={i} />
+                                <LocationSetupCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : filteredLocations.length === 0 ? (
-                        <div className="text-center py-12 bg-surfaceContainer rounded-xl border border-surfaceContainerHigh">
-                            <FiMapPin className="mx-auto text-4xl text-onSurface/50 mb-4" />
-                            <h3 className="text-lg font-medium text-onSurface">
-                                {hasActiveFilters
-                                    ? "No locations match your filters"
-                                    : "No locations found"}
-                            </h3>
-                            <p className="text-onSurface/70 mt-1">
-                                {hasActiveFilters
-                                    ? "Try adjusting your filters"
-                                    : "Check back later for new locations"}
-                            </p>
-                            {hasActiveFilters && (
-                                <button
-                                    onClick={clearFilters}
-                                    className="mt-4 px-6 py-2 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200"
-                                >
-                                    Clear Filters
-                                </button>
-                            )}
-                        </div>
+                        <FilteredEmptyState
+                            entityName="locations"
+                            title="No locations found"
+                            description="Check back later for new locations"
+                            icon={<FiMapPin />}
+                            hasActiveFilters={hasActiveFilters}
+                            onClearFilters={clearFilters}
+                        />
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {filteredLocations.map((location) => (
-                                <div
+                                <LocationSetupCard
                                     key={location.id}
-                                    className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 hover:border-primary/30 group"
-                                >
-                                    {/* Banner Image */}
-                                    <div className="h-48 relative overflow-hidden">
-                                        <img
-                                            src={location.imgBgPath}
-                                            alt={location.name}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                        <div className="absolute bottom-4 left-4">
-                                            <img
-                                                src={location.imgBannerPath}
-                                                alt={location.name}
-                                                className="h-16 object-contain"
-                                            />
-                                        </div>
-                                        <div className="absolute top-4 right-4">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                {
-                                                    SURFACE_TYPES_MAP[
-                                                        location.surfaceType as keyof typeof SURFACE_TYPES_MAP
-                                                    ]?.icon
-                                                }
-                                                <span className="ml-1" />
-                                                {SURFACE_TYPES_MAP[
-                                                    location.surfaceType as keyof typeof SURFACE_TYPES_MAP
-                                                ]?.text || location.surfaceType}
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Location Details */}
-                                    <div className="p-6">
-                                        <h3 className="text-xl font-bold text-onSurface mb-3 line-clamp-1">
-                                            {location.name}
-                                        </h3>
-                                        <p className="text-onSurface/70 mb-4 line-clamp-3">
-                                            {location.description}
-                                        </p>
-                                        <Link
-                                            href={route(
-                                                "locations.show",
-                                                location.id
-                                            )}
-                                            className="inline-flex items-center justify-center w-full px-4 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 font-medium"
-                                        >
-                                            View Setups
-                                            <FiChevronRight className="ml-2" />
-                                        </Link>
-                                    </div>
-                                </div>
+                                    location={location}
+                                />
                             ))}
                         </div>
                     )}

@@ -2,24 +2,11 @@ import { Head, router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
-import { FiChevronLeft, FiChevronRight, FiCheck } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { PaginatedData, Vehicle } from "@/types";
 import { LiaCarSideSolid } from "react-icons/lia";
-
-const SkeletonCard = () => (
-    <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden animate-pulse">
-        <div className="h-32 bg-surfaceContainerHigh"></div>
-        <div className="p-4">
-            <div className="flex items-center mb-3">
-                <div className="h-10 w-10 bg-surfaceContainerHigh rounded-full mr-3"></div>
-                <div className="flex-1">
-                    <div className="h-5 w-3/4 bg-surfaceContainerHigh rounded mb-2"></div>
-                    <div className="h-4 w-1/2 bg-surfaceContainerHigh rounded"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-);
+import VehicleCard from "@/Components/Cards/VehicleCard";
+import VehicleCardSkeleton from "@/Components/Skeletons/VehicleCardSkeleton";
 
 export default function SetupCreateVehicle({
     location_id,
@@ -105,80 +92,21 @@ export default function SetupCreateVehicle({
                     {isProcessing ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
-                                <SkeletonCard key={i} />
+                                <VehicleCardSkeleton key={i} />
                             ))}
                         </div>
                     ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {vehicles.map((vehicle) => (
-                                <button
+                                <VehicleCard
                                     key={vehicle.id}
-                                    onClick={() => setSelectedVehicle(vehicle)}
-                                    className={`bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden hover:shadow-lg transition-all duration-200 group text-left ${
+                                    vehicle={vehicle}
+                                    mode="selection"
+                                    selected={
                                         selectedVehicle?.id === vehicle.id
-                                            ? "ring-2 ring-primary border-primary/30"
-                                            : "hover:border-primary/30"
-                                    }`}
-                                >
-                                    {/* Vehicle Image */}
-                                    <div className="h-32 relative overflow-hidden bg-surfaceContainerHigh">
-                                        <img
-                                            src={vehicle.imgPath}
-                                            alt={vehicle.name}
-                                            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                        />
-                                        <div className="absolute top-3 right-3">
-                                            <span className="inline-flex items-center px-3 py-1 rounded-full bg-surfaceContainer/90 text-xs font-medium text-onSurface backdrop-blur-sm">
-                                                <img
-                                                    src={
-                                                        vehicle.category.imgPath
-                                                    }
-                                                    alt={vehicle.category.name}
-                                                    className="h-4 w-4 object-contain mr-1"
-                                                />
-                                                {vehicle.category.name}
-                                            </span>
-                                        </div>
-                                        {selectedVehicle?.id === vehicle.id && (
-                                            <div className="absolute top-3 left-3">
-                                                <div className="w-6 h-6 rounded-full bg-primary text-surfaceContainer flex items-center justify-center">
-                                                    <FiCheck size={14} />
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Vehicle Details */}
-                                    <div className="p-4">
-                                        <div className="flex items-center mb-3">
-                                            {/* Manufacturer Logo */}
-                                            <div className="flex-shrink-0">
-                                                <img
-                                                    src={
-                                                        vehicle.manufacturer
-                                                            .imgPath
-                                                    }
-                                                    alt={
-                                                        vehicle.manufacturer
-                                                            .name
-                                                    }
-                                                    className="h-12 w-12 object-contain p-1"
-                                                />
-                                            </div>
-                                            {/* Vertical divider */}
-                                            <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
-                                            {/* Manufacturer Name and Vehicle Name */}
-                                            <div className="flex-1 min-w-0">
-                                                <p className="text-sm font-medium text-onSurface/70 truncate">
-                                                    {vehicle.manufacturer.name}
-                                                </p>
-                                                <h3 className="text-lg font-bold text-onSurface truncate">
-                                                    {vehicle.name}
-                                                </h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </button>
+                                    }
+                                    onSelect={setSelectedVehicle}
+                                />
                             ))}
                         </div>
                     )}
