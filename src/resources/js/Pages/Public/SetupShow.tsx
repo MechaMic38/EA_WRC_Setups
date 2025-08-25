@@ -1,4 +1,4 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
@@ -7,17 +7,19 @@ import {
     FiUser,
     FiCalendar,
     FiSettings,
-    FiCopy,
     FiDownload,
     FiInfo,
-    FiCloud,
+    FiEdit,
+    FiTrash2,
 } from "react-icons/fi";
 import { Setup, SetupBlueprint, SetupSection } from "@/types";
 import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
-import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";
-import { GiCarWheel } from "react-icons/gi";
 import VehicleCard from "@/Components/Cards/VehicleCard";
 import LocationCard from "@/Components/Cards/LocationCard";
+import ConditionsCard from "@/Components/Cards/ConditionsCard";
+import DangerButton from "@/Components/Form/DangerButton";
+import SetupDeleteModal from "@/Components/Modals/Setup/SetupDeleteModal";
+import SuccessModal from "@/Components/Modals/SuccessModal";
 
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const { get: getSetupBlueprint, isProcessing } =
@@ -27,6 +29,9 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const [setupBlueprint, setSetupBlueprint] = useState<SetupBlueprint | null>(
         null
     );
+
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
 
     useEffect(() => {
@@ -44,6 +49,10 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
             );
         }
     }, []);
+
+    const onDeleteSetup = () => {
+        setIsDeleteOpen(true);
+    };
 
     if (!setupBlueprint) {
         return (
@@ -113,9 +122,18 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                             </h1>
                         </div>
                         <div className="flex gap-4">
-                            <button className="px-6 py-3 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainer transition-colors duration-200 flex items-center font-medium">
-                                <FiCopy className="mr-2" /> Copy Setup
-                            </button>
+                            <DangerButton onClick={onDeleteSetup}>
+                                <FiTrash2 className="mr-2" /> Delete Setup
+                            </DangerButton>
+                            <Link
+                                href={route(
+                                    "setups.edit.configuration",
+                                    setup.id
+                                )}
+                                className="px-6 py-3 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainer transition-colors duration-200 flex items-center font-medium"
+                            >
+                                <FiEdit className="mr-2" /> Edit Setup
+                            </Link>
                             <button className="px-6 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 flex items-center font-medium">
                                 <FiDownload className="mr-2" /> Export
                             </button>
@@ -184,65 +202,11 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                             )}
 
                             {/* Conditions Card */}
-                            <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">
-                                <h3 className="text-lg font-bold text-onSurface mb-4 flex items-center">
-                                    <FiSettings className="mr-2 text-primary" />
-                                    Conditions
-                                </h3>
-                                <div className="space-y-4">
-                                    <div className="flex items-center">
-                                        <div className="w-8 h-8 bg-secondary/10 rounded-full flex items-center justify-center mr-3">
-                                            <FiCalendar className="text-secondary" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-onSurface/70">
-                                                Season
-                                            </p>
-                                            <p className="text-onSurface font-medium capitalize">
-                                                {
-                                                    SEASONS_MAP[
-                                                        setup.season as keyof typeof SEASONS_MAP
-                                                    ].text
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="w-8 h-8 bg-tertiary/10 rounded-full flex items-center justify-center mr-3">
-                                            <FiCloud className="text-tertiary" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-onSurface/70">
-                                                Surface
-                                            </p>
-                                            <p className="text-onSurface font-medium capitalize">
-                                                {
-                                                    SURFACE_CONDITIONS_MAP[
-                                                        setup.surfaceCondition as keyof typeof SURFACE_CONDITIONS_MAP
-                                                    ].text
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center mr-3">
-                                            <GiCarWheel className="text-primary" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-onSurface/70">
-                                                Tyres
-                                            </p>
-                                            <p className="text-onSurface font-medium capitalize">
-                                                {
-                                                    TYRES_MAP[
-                                                        setup.tyres as keyof typeof TYRES_MAP
-                                                    ].text
-                                                }
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            <ConditionsCard
+                                season={setup.season}
+                                surfaceCondition={setup.surfaceCondition}
+                                tyres={setup.tyres}
+                            />
                         </div>
 
                         {/* Configuration Section */}
@@ -274,6 +238,33 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                     </div>
                 </div>
             </div>
+
+            {/* Delete Setup Modal */}
+            <SetupDeleteModal
+                isOpen={isDeleteOpen}
+                setup={setup}
+                onClose={() => setIsDeleteOpen(false)}
+                onSuccess={() => {
+                    setIsDeleteOpen(false);
+                    setShowSuccessModal(true);
+
+                    // Auto-redirect after 3 seconds
+                    setTimeout(() => {
+                        router.visit(route("profile.setups.index"));
+                    }, 3000);
+                }}
+            />
+
+            {/* Success Modal */}
+            <SuccessModal
+                isOpen={showSuccessModal}
+                title="Setup Deleted Successfully!"
+                message="Your setup has been deleted and is no longer available. Redirecting to your setup page..."
+                redirectUrl={route("profile.setups.index")}
+                redirectMessage="Go back to setups"
+                onRedirect={() => setShowSuccessModal(false)}
+                duration={3000}
+            />
         </UserLayout>
     );
 }

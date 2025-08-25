@@ -1,7 +1,7 @@
-import { ButtonHTMLAttributes } from 'react';
+import { ButtonHTMLAttributes } from "react";
 
 export default function DangerButton({
-    className = '',
+    className = "",
     disabled,
     children,
     ...props
@@ -9,12 +9,12 @@ export default function DangerButton({
     return (
         <button
             {...props}
-            className={
-                `inline-flex items-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-xs font-semibold uppercase tracking-widest text-white transition duration-150 ease-in-out hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 active:bg-red-700 dark:focus:ring-offset-gray-800 ${
-                    disabled && 'opacity-25'
-                } ` + className
-            }
             disabled={disabled}
+            className={`px-6 py-3 flex items-center rounded-xl font-medium transition-colors duration-200 ${
+                disabled
+                    ? "bg-surfaceContainer text-onSurface/50 cursor-not-allowed"
+                    : "bg-errorContainer/80 text-onErrorContainer hover:bg-errorContainer hover:shadow-lg"
+            } ${className}`}
         >
             {children}
         </button>

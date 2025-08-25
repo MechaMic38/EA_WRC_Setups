@@ -4,11 +4,10 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import { useEffect, useState } from "react";
 import { FiChevronLeft, FiSave, FiSliders, FiX } from "react-icons/fi";
 import {
-    LocationSummary,
+    Setup,
     SetupBlueprint,
     SetupConfigsNumeric,
     SetupSection,
-    Vehicle,
 } from "@/types";
 import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
 import SuccessModal from "@/Components/Modals/SuccessModal";
@@ -17,11 +16,7 @@ import LocationCard from "@/Components/Cards/LocationCard";
 import ConditionsCard from "@/Components/Cards/ConditionsCard";
 
 interface SetupCreationProps {
-    location_id: string;
-    vehicle_id: string;
-    surface_condition: string;
-    season: string;
-    tyres: string;
+    setup: Setup;
 }
 
 interface SetupConfigResponse {
@@ -37,30 +32,20 @@ interface SetupConfigFormData {
     configuration: SetupConfigsNumeric;
 }
 
-export default function SetupCreation({
-    location_id,
-    vehicle_id,
-    surface_condition,
-    season,
-    tyres,
-}: SetupCreationProps) {
+export default function SetupCreation({ setup }: SetupCreationProps) {
     const { get: getBlueprint, isProcessing: isProcessingBlueprint } =
         useAxiosForm<SetupBlueprint>([]);
-    const { get: getVehicle, isProcessing: isProcessingVehicle } =
-        useAxiosForm<Vehicle>([]);
-    const { get: getLocation, isProcessing: isProcessingLocation } =
-        useAxiosForm<LocationSummary>([]);
     const {
         data,
         setData,
-        post: postConfiguration,
+        post: updateConfiguration,
         errors,
     } = useAxiosForm<SetupConfigResponse, SetupConfigFormData>({
-        location_id,
-        vehicle_id,
-        surface_condition,
-        season,
-        tyres,
+        location_id: setup.location.id,
+        vehicle_id: setup.vehicle.id,
+        surface_condition: setup.surfaceCondition,
+        season: setup.season,
+        tyres: setup.tyres,
         configuration: {
             alignment: {},
             braking: {},
@@ -71,36 +56,21 @@ export default function SetupCreation({
         },
     });
 
-    const [vehicle, setVehicle] = useState<Vehicle | null>(null);
-    const [location, setLocation] = useState<LocationSummary | null>(null);
     const [blueprint, setBlueprint] = useState<SetupBlueprint | null>(null);
 
     const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [createdSetupId, setCreatedSetupId] = useState<string | null>(null);
 
     const [activeTab, setActiveTab] = useState<SetupSection>("alignment");
 
     // Fetch vehicle blueprint
     useEffect(() => {
-        getBlueprint(route("api.vehicles.blueprint.show", vehicle_id), {
+        getBlueprint(route("api.vehicles.blueprint.show", setup.vehicle.id), {
             onSuccess: (response) => {
                 setBlueprint(response.data);
                 initializeConfig(response.data);
             },
         });
-
-        getVehicle(route("api.vehicles.show", vehicle_id), {
-            onSuccess: (response) => {
-                setVehicle(response.data);
-            },
-        });
-
-        getLocation(route("api.locations.show", location_id), {
-            onSuccess: (response) => {
-                setLocation(response.data);
-            },
-        });
-    }, [vehicle_id]);
+    }, []);
 
     // Initialize configuration with default values
     const initializeConfig = (blueprintData: SetupBlueprint) => {
@@ -127,7 +97,9 @@ export default function SetupCreation({
 
             Object.keys(blueprintData[section]).forEach((setting) => {
                 const option = blueprintData[section][setting];
-                initialConfig[section][setting] = option.default_value;
+                initialConfig[section][setting] =
+                    Number(setup.configuration?.[section]?.[setting]) ??
+                    option.default_value;
             });
         });
 
@@ -162,6 +134,7 @@ export default function SetupCreation({
         const sectionDefaults: any = {};
         Object.keys(blueprint[section]).forEach((setting) => {
             sectionDefaults[setting] =
+                Number(setup.configuration?.[section]?.[setting]) ??
                 blueprint[section][setting].default_value;
         });
 
@@ -174,11 +147,10 @@ export default function SetupCreation({
         }));
     };
 
-    // Submit the setup
-    const submitSetup = () => {
-        postConfiguration(route("api.setups.store"), {
+    // Submit the updated setup
+    const updateSetup = () => {
+        updateConfiguration(route("api.setups.store", setup.id), {
             onSuccess: (response) => {
-                setCreatedSetupId(response.data.id);
                 setShowSuccessModal(true);
 
                 // Auto-redirect after 3 seconds
@@ -228,17 +200,15 @@ export default function SetupCreation({
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div>
                             <Link
-                                href={route("setups.create.options", {
-                                    location_id,
-                                    vehicle_id,
+                                href={route("setups.show", {
+                                    setup: setup.id,
                                 })}
                                 className="inline-flex items-center text-primary hover:text-primary-600 mb-4 transition-colors duration-200"
                             >
-                                <FiChevronLeft className="mr-2" /> Back to
-                                Options
+                                <FiChevronLeft className="mr-2" /> Back to Setup
                             </Link>
                             <h1 className="text-3xl font-bold text-onSurface mb-2">
-                                Configure Your Setup
+                                Edit Your Setup
                             </h1>
                         </div>
                         <div className="flex gap-4">
@@ -251,7 +221,7 @@ export default function SetupCreation({
                                 <FiX className="mr-2" /> Reset All
                             </button>
                             <button
-                                onClick={submitSetup}
+                                onClick={updateSetup}
                                 disabled={isProcessingBlueprint}
                                 className={`px-6 py-3 rounded-xl flex items-center font-medium transition-all duration-200 ${
                                     isProcessingBlueprint
@@ -261,8 +231,8 @@ export default function SetupCreation({
                             >
                                 <FiSave className="mr-2" />{" "}
                                 {isProcessingBlueprint
-                                    ? "Saving..."
-                                    : "Save Setup"}
+                                    ? "Updating..."
+                                    : "Update Setup"}
                             </button>
                         </div>
                     </div>
@@ -276,23 +246,27 @@ export default function SetupCreation({
                         {/* Left Sidebar - Location and Vehicle Cards */}
                         <div className="lg:col-span-1 space-y-6">
                             {/* Location Card */}
-                            {location && (
-                                <LocationCard
-                                    location={location}
+                            {setup.vehicle && (
+                                <VehicleCard
+                                    vehicle={setup.vehicle}
                                     mode="display"
                                 />
                             )}
 
                             {/* Vehicle Card */}
-                            {vehicle && (
-                                <VehicleCard vehicle={vehicle} mode="display" />
+
+                            {setup.location && (
+                                <LocationCard
+                                    location={setup.location}
+                                    mode="display"
+                                />
                             )}
 
                             {/* Conditions Card */}
                             <ConditionsCard
-                                season={season}
-                                surfaceCondition={surface_condition}
-                                tyres={tyres}
+                                season={setup.season}
+                                surfaceCondition={setup.surfaceCondition}
+                                tyres={setup.tyres}
                             />
                         </div>
 
@@ -359,12 +333,10 @@ export default function SetupCreation({
             {/* Success Modal */}
             <SuccessModal
                 isOpen={showSuccessModal}
-                title="Setup Created Successfully!"
-                message="Your setup has been saved and is now available. Redirecting to your setup page..."
+                title="Setup Updated Successfully!"
+                message="Your setup has been updated. Redirecting to your setup page..."
                 redirectUrl={
-                    createdSetupId
-                        ? route("setups.show", createdSetupId)
-                        : undefined
+                    setup.id ? route("setups.show", setup.id) : undefined
                 }
                 redirectMessage="View Setup Now"
                 onRedirect={() => setShowSuccessModal(false)}

@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/setups/create/vehicle', [SetupController::class, 'createVehicle'])->name('setups.create.vehicle');
     Route::get('/setups/create/options', [SetupController::class, 'createOptions'])->name('setups.create.options');
     Route::get('/setups/create/configuration', [SetupController::class, 'createConfiguration'])->name('setups.create.configuration');
+
+    Route::get('/setups/{setup}/edit/configuration', [SetupController::class, 'editConfiguration'])->name('setups.edit.configuration');
 });
 
 /*

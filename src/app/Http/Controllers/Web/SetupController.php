@@ -94,6 +94,15 @@ class SetupController extends Controller
         ]);
     }
 
+    public function editConfiguration(Setup $setup)
+    {
+        $setup->load(['user', 'location', 'vehicle', 'configuration', 'vehicle.category', 'vehicle.manufacturer']);
+
+        return Inertia::render('SetupWizard/SetupEditing', [
+            'setup' => new SetupResource($setup)
+        ]);
+    }
+
     /**
      * Display the specified resource.
      */
