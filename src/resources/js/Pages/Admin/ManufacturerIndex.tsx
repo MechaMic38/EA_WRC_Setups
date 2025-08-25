@@ -11,7 +11,7 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Manufacturer, PaginatedData } from "@/types";
 import { Head, router } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { BsTools } from "react-icons/bs";
 import {
     FiPlus,
@@ -52,6 +52,9 @@ const ManufacturerIndex = ({ page }: ManufacturerIndexProps) => {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
+
     // Filter state - initialize from URL parameters
     const [filters, setFilters] = useState({
         page: page || 1,
@@ -65,6 +68,11 @@ const ManufacturerIndex = ({ page }: ManufacturerIndexProps) => {
 
     // Apply filters when they change
     useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         const timeoutId = setTimeout(() => {
             fetchManufacturers();
             updateUrlWithFilters(filters);
@@ -115,6 +123,7 @@ const ManufacturerIndex = ({ page }: ManufacturerIndexProps) => {
         get(finalUrl, {
             onSuccess: (response) => {
                 setManufacturersData(response.data);
+                setIsInitialLoading(false);
             },
             onError: (error) => {
                 console.error("Error fetching manufacturers:", error);
@@ -336,7 +345,7 @@ const ManufacturerIndex = ({ page }: ManufacturerIndexProps) => {
 
                     {/* Manufacturers Grid */}
                     <div className="space-y-4">
-                        {isProcessing ? (
+                        {isInitialLoading || isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <ManufacturerRowSkeleton key={i} />
                             ))

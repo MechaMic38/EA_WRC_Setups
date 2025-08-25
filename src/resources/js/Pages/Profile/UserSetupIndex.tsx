@@ -1,20 +1,9 @@
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { useEffect, useState } from "react";
-import {
-    FiCalendar,
-    FiDroplet,
-    FiFilter,
-    FiX,
-    FiSearch,
-    FiPlus,
-} from "react-icons/fi";
-import { GiTwirlyFlower, GiLindenLeaf } from "react-icons/gi";
-import { FiSun } from "react-icons/fi";
-import { FaRegSnowflake } from "react-icons/fa";
-import { BsCloudSunFill, BsSnow2, BsWrenchAdjustable } from "react-icons/bs";
-import { BiWater } from "react-icons/bi";
+import { useEffect, useRef, useState } from "react";
+import { FiFilter, FiX, FiSearch, FiPlus } from "react-icons/fi";
+import { BsWrenchAdjustable } from "react-icons/bs";
 import { PaginatedData, Setup, Vehicle, LocationSummary } from "@/types";
 import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";
 import TextInput from "@/Components/Form/TextInput";
@@ -27,9 +16,21 @@ import TyresListbox from "@/Components/Form/TyresListbox";
 import SetupCard from "@/Components/Cards/SetupCard";
 import SetupCardSkeleton from "@/Components/Skeletons/SetupCardSkeleton";
 import FilteredEmptyState from "@/Components/FilteredEmptyState";
+import Pagination from "@/Components/Pagination";
 
-export default function UserSetupIndex() {
+interface UserSetupIndexProps {
+    page?: number;
+    vehicle_id?: string;
+    location_id?: string;
+}
+
+export default function UserSetupIndex({
+    page,
+    vehicle_id,
+    location_id,
+}: UserSetupIndexProps) {
     const user = usePage().props.auth.user;
+
     const { get: getSetups, isProcessing: isProcessingSetups } = useAxiosForm<
         PaginatedData<Setup>
     >([]);
@@ -54,18 +55,25 @@ export default function UserSetupIndex() {
     });
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [locations, setLocations] = useState<LocationSummary[]>([]);
+
+    // Filter states
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
-        vehicle_id: "",
-        location_id: "",
+        page: page || 1,
+        vehicle_id: vehicle_id || "",
+        location_id: location_id || "",
         season: "",
         surface_condition: "",
         tyres: "",
     });
+
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
+
+    // Initial data fetch
     useEffect(() => {
-        fetchSetups();
         getVehicles(route("api.vehicles.index", { paginate: false }), {
             onSuccess: (response) => {
                 setVehicles(response.data.data);
@@ -76,31 +84,102 @@ export default function UserSetupIndex() {
                 setLocations(response.data.data);
             },
         });
+        fetchSetups();
     }, []);
 
+    // Apply filters with debounce
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            fetchSetups();
+            updateUrlWithFilters(filters);
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [filters]);
+
+    /**
+     * Update the URL with the current filters.
+     * @param newFilters The new filter values.
+     */
+    const updateUrlWithFilters = (newFilters: typeof filters) => {
+        const params: any = {};
+
+        if (newFilters.vehicle_id) params["vehicle_id"] = newFilters.vehicle_id;
+        if (newFilters.location_id)
+            params["location_id"] = newFilters.location_id;
+        if (newFilters.page) params["page"] = newFilters.page;
+
+        // Use Inertia's router to update URL without full page reload
+        router.get(route("profile.setups.index"), params, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    /**
+     * Fetch setups based on the current filters.
+     */
     const fetchSetups = () => {
         const params: any = { user_id: user.id };
-        if (searchQuery) params.search = searchQuery;
-        if (filters.vehicle_id) params.vehicle_id = filters.vehicle_id;
-        if (filters.location_id) params.location_id = filters.location_id;
-        if (filters.season) params.season = filters.season;
+        if (filters.page) params["page"] = filters.page;
+        if (filters.vehicle_id) params["vehicle_id"] = filters.vehicle_id;
+        if (filters.location_id) params["location_id"] = filters.location_id;
+        if (filters.season) params["season"] = filters.season;
         if (filters.surface_condition)
-            params.surface_condition = filters.surface_condition;
-        if (filters.tyres) params.tyres = filters.tyres;
+            params["surface_condition"] = filters.surface_condition;
+        if (filters.tyres) params["tyres"] = filters.tyres;
 
         getSetups(route("api.setups.index", params), {
             onSuccess: (response) => {
                 setSetupsData(response.data);
+                setIsInitialLoading(false);
             },
         });
     };
 
-    const handleFilterChange = (key: string, value: string) => {
-        setFilters((prev) => ({ ...prev, [key]: value }));
+    /**
+     * Handle filter changes.
+     * @param key The filter key.
+     * @param value The filter value.
+     */
+    const onFilterChange = (key: string, value: string) => {
+        switch (key) {
+            case "page":
+                setFilters((prev) => ({ ...prev, page: parseInt(value) }));
+                break;
+            case "vehicle_id":
+                setFilters((prev) => ({ ...prev, vehicle_id: value, page: 1 }));
+                break;
+            case "location_id":
+                setFilters((prev) => ({
+                    ...prev,
+                    location_id: value,
+                    page: 1,
+                }));
+                break;
+            case "season":
+                setFilters((prev) => ({ ...prev, season: value }));
+                break;
+            case "surface_condition":
+                setFilters((prev) => ({ ...prev, surface_condition: value }));
+                break;
+            case "tyres":
+                setFilters((prev) => ({ ...prev, tyres: value }));
+                break;
+            default:
+                break;
+        }
     };
 
     const clearFilters = () => {
         setFilters({
+            page: 1,
             vehicle_id: "",
             location_id: "",
             season: "",
@@ -118,42 +197,18 @@ export default function UserSetupIndex() {
         filters.tyres ||
         searchQuery;
 
-    // Apply filters with debounce
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            fetchSetups();
-        }, 300);
-
-        return () => clearTimeout(timeoutId);
-    }, [filters, searchQuery]);
-
-    // Helper function to get season icon
-    const getSeasonIcon = (season: string) => {
-        switch (season) {
-            case "spring":
-                return <GiTwirlyFlower className="text-green-500 text-lg" />;
-            case "summer":
-                return <FiSun className="text-yellow-500 text-lg" />;
-            case "autumn":
-                return <GiLindenLeaf className="text-orange-500 text-lg" />;
-            case "winter":
-                return <FaRegSnowflake className="text-blue-400 text-lg" />;
-            default:
-                return <FiCalendar className="text-primary text-lg" />;
-        }
-    };
-
-    // Helper function to get surface condition icon
-    const getSurfaceConditionIcon = (condition: string) => {
-        switch (condition) {
-            case "dry":
-                return <BsCloudSunFill className="text-amber-500 text-lg" />;
-            case "wet":
-                return <BiWater className="text-blue-500 text-lg" />;
-            case "snow":
-                return <BsSnow2 className="text-blue-400 text-lg" />;
-            default:
-                return <FiDroplet className="text-primary text-lg" />;
+    /**
+     * Handle pagination.
+     * @param url The pagination URL.
+     */
+    const onPageChange = (url: string) => {
+        const urlObj = new URL(url);
+        const page = urlObj.searchParams.get("page");
+        if (page) {
+            setFilters((prev) => ({
+                ...prev,
+                page: parseInt(page),
+            }));
         }
     };
 
@@ -235,7 +290,7 @@ export default function UserSetupIndex() {
                                                 )!!
                                             }
                                             onChange={(vehicle) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "vehicle_id",
                                                     vehicle ? vehicle.id : ""
                                                 )
@@ -258,7 +313,7 @@ export default function UserSetupIndex() {
                                                 )!!
                                             }
                                             onChange={(location) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "location_id",
                                                     location ? location.id : ""
                                                 )
@@ -275,7 +330,7 @@ export default function UserSetupIndex() {
                                             options={Object.keys(SEASONS_MAP)}
                                             selectedOption={filters.season}
                                             onChange={(option) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "season",
                                                     option || ""
                                                 )
@@ -296,7 +351,7 @@ export default function UserSetupIndex() {
                                                 filters.surface_condition
                                             }
                                             onChange={(option) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_condition",
                                                     option || ""
                                                 )
@@ -313,7 +368,7 @@ export default function UserSetupIndex() {
                                             options={Object.keys(TYRES_MAP)}
                                             selectedOption={filters.tyres}
                                             onChange={(option) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "tyres",
                                                     option || ""
                                                 )
@@ -375,10 +430,7 @@ export default function UserSetupIndex() {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
-                                                    "vehicle_id",
-                                                    ""
-                                                )
+                                                onFilterChange("vehicle_id", "")
                                             }
                                             className="ml-2 hover:text-secondary-800"
                                         >
@@ -397,7 +449,7 @@ export default function UserSetupIndex() {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "location_id",
                                                     ""
                                                 )
@@ -418,7 +470,7 @@ export default function UserSetupIndex() {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("season", "")
+                                                onFilterChange("season", "")
                                             }
                                             className="ml-2 hover:text-primary-800"
                                         >
@@ -436,7 +488,7 @@ export default function UserSetupIndex() {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_condition",
                                                     ""
                                                 )
@@ -457,7 +509,7 @@ export default function UserSetupIndex() {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("tyres", "")
+                                                onFilterChange("tyres", "")
                                             }
                                             className="ml-2 hover:text-tertiary-800"
                                         >
@@ -483,7 +535,7 @@ export default function UserSetupIndex() {
                     )}
 
                     {/* Setups Grid */}
-                    {isProcessingSetups ? (
+                    {isInitialLoading || isProcessingSetups ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
                                 <SetupCardSkeleton key={i} />
@@ -504,6 +556,15 @@ export default function UserSetupIndex() {
                                 <SetupCard key={setup.id} setup={setup} />
                             ))}
                         </div>
+                    )}
+
+                    {/* Pagination */}
+                    {setupsData.meta && setupsData.meta.total > 0 && (
+                        <Pagination
+                            meta={setupsData.meta}
+                            links={setupsData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
                 </div>
             </div>

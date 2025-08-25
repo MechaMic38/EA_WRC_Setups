@@ -14,7 +14,7 @@ import AdminLayout from "@/Layouts/AdminLayout";
 import { LocationSummary, PaginatedData } from "@/types";
 import { Field, Label } from "@headlessui/react";
 import { Head, router } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     FiPlus,
     FiSearch,
@@ -60,6 +60,9 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
+
     // Filter states - initialize from URL parameters
     const [filters, setFilters] = useState({
         page: page || 1,
@@ -74,6 +77,11 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
 
     // Apply filters when they change
     useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         const timeoutId = setTimeout(() => {
             fetchLocations();
             updateUrlWithFilters(filters);
@@ -128,6 +136,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
         get(finalUrl, {
             onSuccess: (response) => {
                 setLocationsData(response.data);
+                setIsInitialLoading(false);
             },
             onError: (error) => {
                 console.error("Error fetching locations:", error);
@@ -428,7 +437,7 @@ const LocationIndex = ({ page, surface_type }: LocationIndexProps) => {
 
                     {/* Locations Grid */}
                     <div className="space-y-4">
-                        {isProcessing ? (
+                        {isInitialLoading || isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <LocationRowSkeleton key={i} />
                             ))

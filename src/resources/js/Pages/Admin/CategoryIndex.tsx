@@ -11,7 +11,7 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { Category, PaginatedData } from "@/types";
 import { Head, router } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     FiPlus,
     FiSearch,
@@ -53,6 +53,9 @@ const CategoryIndex = ({ page }: CategoryIndexProps) => {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
+
     // Filter state - initialize from URL parameters
     const [filters, setFilters] = useState({
         page: page || 1,
@@ -66,6 +69,11 @@ const CategoryIndex = ({ page }: CategoryIndexProps) => {
 
     // Apply filters when they change
     useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         const timeoutId = setTimeout(() => {
             fetchCategories();
             updateUrlWithFilters(filters);
@@ -116,6 +124,7 @@ const CategoryIndex = ({ page }: CategoryIndexProps) => {
         get(finalUrl, {
             onSuccess: (response) => {
                 setCategoriesData(response.data);
+                setIsInitialLoading(false);
             },
             onError: (error) => {
                 console.error("Error fetching categories:", error);
@@ -337,7 +346,7 @@ const CategoryIndex = ({ page }: CategoryIndexProps) => {
 
                     {/* Categories Grid */}
                     <div className="space-y-4">
-                        {isProcessing ? (
+                        {isInitialLoading || isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <CategoryRowSkeleton key={i} />
                             ))

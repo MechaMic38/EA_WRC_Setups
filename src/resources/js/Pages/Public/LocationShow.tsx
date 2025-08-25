@@ -1,6 +1,6 @@
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { useEffect, useState } from "react";
-import { FiFilter, FiMapPin, FiSearch, FiX } from "react-icons/fi";
+import { useEffect, useRef, useState } from "react";
+import { FiFilter, FiSearch, FiX } from "react-icons/fi";
 import { Location, PaginatedData, Setup, Vehicle } from "@/types";
 import {
     SEASONS_MAP,
@@ -9,7 +9,7 @@ import {
     TYRES_MAP,
 } from "@/constants";
 import UserLayout from "@/Layouts/UserLayout";
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import VehicleListbox from "@/Components/Form/VehicleListbox";
 import { Field, Label } from "@headlessui/react";
 import SeasonListbox from "@/Components/Form/SeasonListbox";
@@ -19,12 +19,20 @@ import TextInput from "@/Components/Form/TextInput";
 import SetupCard from "@/Components/Cards/SetupCard";
 import SetupCardSkeleton from "@/Components/Skeletons/SetupCardSkeleton";
 import FilteredEmptyState from "@/Components/FilteredEmptyState";
+import Pagination from "@/Components/Pagination";
+import { BsWrenchAdjustable } from "react-icons/bs";
 
 interface LocationShowProps {
     location: Location;
+    page?: number;
+    vehicle_id?: string;
 }
 
-export default function LocationShow({ location }: LocationShowProps) {
+export default function LocationShow({
+    location,
+    page,
+    vehicle_id,
+}: LocationShowProps) {
     const { get: getVehicles, isProcessing: isProcessingVehicles } =
         useAxiosForm<PaginatedData<Vehicle>>([]);
     const { get: getSetup, isProcessing: isProcessingSetup } = useAxiosForm<
@@ -47,14 +55,19 @@ export default function LocationShow({ location }: LocationShowProps) {
     });
     const [vehicles, setVehicles] = useState<Vehicle[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
-    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
     const [filters, setFilters] = useState({
-        vehicle_id: "",
+        page: page || 1,
+        vehicle_id: vehicle_id || "",
         season: "",
         surface_condition: "",
         tyres: "",
     });
+
+    const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
 
     // Initial data fetch
     useEffect(() => {
@@ -68,41 +81,113 @@ export default function LocationShow({ location }: LocationShowProps) {
 
     // Apply filters with debounce
     useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         const timeoutId = setTimeout(() => {
             fetchSetups();
+            updateUrlWithFilters(filters);
         }, 300);
 
         return () => clearTimeout(timeoutId);
-    }, [filters, searchQuery]);
+    }, [filters]);
 
+    /**
+     * Update the URL with the current filters.
+     * @param newFilters The new filter values.
+     */
+    const updateUrlWithFilters = (newFilters: typeof filters) => {
+        const params: any = {};
+
+        if (newFilters.vehicle_id) params["vehicle_id"] = newFilters.vehicle_id;
+        if (newFilters.page) params["page"] = newFilters.page;
+
+        // Use Inertia's router to update URL without full page reload
+        router.get(route("locations.show", location.id), params, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    /**
+     * Fetch setups based on the current filters.
+     */
     const fetchSetups = () => {
         const params: any = { location_id: location.id };
-        if (searchQuery) params.search = searchQuery;
-        if (filters.vehicle_id) params.vehicle_id = filters.vehicle_id;
-        if (filters.season) params.season = filters.season;
+
+        if (filters.page) params["page"] = filters.page;
+        if (filters.vehicle_id) params["vehicle_id"] = filters.vehicle_id;
+        if (filters.season) params["season"] = filters.season;
         if (filters.surface_condition)
-            params.surface_condition = filters.surface_condition;
-        if (filters.tyres) params.tyres = filters.tyres;
+            params["surface_condition"] = filters.surface_condition;
+        if (filters.tyres) params["tyres"] = filters.tyres;
 
         getSetup(route("api.setups.index", params), {
             onSuccess: (response) => {
                 setSetupsData(response.data);
+                setIsInitialLoading(false);
             },
         });
     };
 
+    /**
+     * Handle filter changes.
+     * @param key The filter key.
+     * @param value The filter value.
+     */
     const onFilterChange = (key: string, value: string) => {
-        setFilters((prev) => ({ ...prev, [key]: value }));
+        switch (key) {
+            case "page":
+                setFilters((prev) => ({ ...prev, page: parseInt(value) }));
+                break;
+            case "vehicle_id":
+                setFilters((prev) => ({
+                    ...prev,
+                    vehicle_id: value,
+                    page: 1,
+                }));
+                break;
+            case "season":
+                setFilters((prev) => ({ ...prev, season: value }));
+                break;
+            case "surface_condition":
+                setFilters((prev) => ({ ...prev, surface_condition: value }));
+                break;
+            case "tyres":
+                setFilters((prev) => ({ ...prev, tyres: value }));
+                break;
+            default:
+                break;
+        }
     };
 
     const clearFilters = () => {
         setFilters({
+            page: 1,
             vehicle_id: "",
             season: "",
             surface_condition: "",
             tyres: "",
         });
         setSearchQuery("");
+    };
+
+    /**
+     * Handle pagination.
+     * @param url The pagination URL.
+     */
+    const onPageChange = (url: string) => {
+        const urlObj = new URL(url);
+        const page = urlObj.searchParams.get("page");
+        if (page) {
+            setFilters((prev) => ({
+                ...prev,
+                page: parseInt(page),
+            }));
+        }
     };
 
     const hasActiveFilters =
@@ -411,7 +496,7 @@ export default function LocationShow({ location }: LocationShowProps) {
                     )}
 
                     {/* Setups Grid */}
-                    {isProcessingSetup ? (
+                    {isInitialLoading || isProcessingSetup ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
                                 <SetupCardSkeleton key={i} />
@@ -419,10 +504,10 @@ export default function LocationShow({ location }: LocationShowProps) {
                         </div>
                     ) : setupsData.data.length === 0 ? (
                         <FilteredEmptyState
-                            entityName="locations"
+                            entityName="setups"
                             title={`No setups found for ${location.name}`}
                             description="Come back later to see if new setups have been created"
-                            icon={<FiMapPin />}
+                            icon={<BsWrenchAdjustable />}
                             hasActiveFilters={hasActiveFilters}
                             onClearFilters={clearFilters}
                         />
@@ -436,6 +521,15 @@ export default function LocationShow({ location }: LocationShowProps) {
                                 />
                             ))}
                         </div>
+                    )}
+
+                    {/* Pagination */}
+                    {setupsData.meta && setupsData.meta.total > 0 && (
+                        <Pagination
+                            meta={setupsData.meta}
+                            links={setupsData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
                 </div>
             </div>

@@ -43,10 +43,17 @@ class LocationController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Location $location)
+    public function show(Location $location, Request $request)
     {
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+            'vehicle_id' => 'string'
+        ]);
+
         return Inertia::render('Public/LocationShow', [
             'location' => new LocationResource($location),
+            'page' => $data['page'] ?? null,
+            'vehicle_id' => $data['vehicle_id'] ?? null
         ]);
     }
 

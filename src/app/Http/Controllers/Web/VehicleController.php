@@ -44,12 +44,19 @@ class VehicleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Vehicle $vehicle)
+    public function show(Vehicle $vehicle, Request $request)
     {
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+            'location_id' => 'string'
+        ]);
+
         $vehicle->load(['category', 'manufacturer']);
 
         return Inertia::render('Public/VehicleShow', [
-            'vehicle' => new VehicleResource($vehicle)
+            'vehicle' => new VehicleResource($vehicle),
+            'page' => $data['page'] ?? null,
+            'location_id' => $data['location_id'] ?? null
         ]);
     }
 

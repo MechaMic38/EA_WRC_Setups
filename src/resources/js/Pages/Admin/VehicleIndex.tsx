@@ -4,7 +4,7 @@ import useAxiosForm from "@/Hooks/useAxiosForm";
 import AdminLayout from "@/Layouts/AdminLayout";
 import { PaginatedData, Vehicle, Category, Manufacturer } from "@/types";
 import { Head, router } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     FiPlus,
     FiSearch,
@@ -77,6 +77,9 @@ const VehicleIndex = ({
         manufacturer_id: manufacturer_id || "",
     });
 
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
+
     // Initial data fetch
     useEffect(() => {
         fetchVehicles();
@@ -86,6 +89,11 @@ const VehicleIndex = ({
 
     // Apply filters when they change
     useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
         const timeoutId = setTimeout(() => {
             fetchVehicles();
             updateUrlWithFilters(filters);
@@ -110,6 +118,7 @@ const VehicleIndex = ({
         // Use Inertia's router to update URL without full page reload
         router.get(route("admin.vehicles.index"), params, {
             preserveState: true,
+            preserveScroll: true,
             replace: true,
         });
     };
@@ -144,6 +153,7 @@ const VehicleIndex = ({
         get(finalUrl, {
             onSuccess: (response) => {
                 setVehiclesData(response.data);
+                setIsInitialLoading(false);
             },
             onError: (error) => {
                 console.error("Error fetching vehicles:", error);
@@ -542,7 +552,7 @@ const VehicleIndex = ({
 
                     {/* Vehicles Grid */}
                     <div className="space-y-4">
-                        {isProcessing ? (
+                        {isInitialLoading || isProcessing ? (
                             Array.from({ length: 6 }).map((_, i) => (
                                 <VehicleRowSkeleton key={i} />
                             ))

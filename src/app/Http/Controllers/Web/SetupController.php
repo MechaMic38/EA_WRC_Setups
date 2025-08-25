@@ -13,9 +13,15 @@ class SetupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function userIndex()
+    public function userIndex(Request $request)
     {
-        return Inertia::render('Profile/UserSetupIndex', []);
+        $data = $request->validate([
+            'page' => 'integer|min:1',
+            'vehicle_id' => 'string',
+            'location_id' => 'string',
+        ]);
+
+        return Inertia::render('Profile/UserSetupIndex', $data);
     }
 
 

@@ -1,7 +1,7 @@
-import { Head } from "@inertiajs/react";
+import { Head, router } from "@inertiajs/react";
 import UserLayout from "@/Layouts/UserLayout";
 import useAxiosForm from "@/Hooks/useAxiosForm";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FiFilter, FiX, FiSearch } from "react-icons/fi";
 import { LocationSummary, PaginatedData, Setup, Vehicle } from "@/types";
 import { SEASONS_MAP, SURFACE_CONDITIONS_MAP, TYRES_MAP } from "@/constants";
@@ -14,13 +14,20 @@ import TextInput from "@/Components/Form/TextInput";
 import SetupCard from "@/Components/Cards/SetupCard";
 import SetupCardSkeleton from "@/Components/Skeletons/SetupCardSkeleton";
 import FilteredEmptyState from "@/Components/FilteredEmptyState";
-import { LiaCarSideSolid } from "react-icons/lia";
+import Pagination from "@/Components/Pagination";
+import { BsWrenchAdjustable } from "react-icons/bs";
 
 interface VehicleShowProps {
     vehicle: Vehicle;
+    page?: number;
+    location_id?: string;
 }
 
-export default function VehicleShow({ vehicle }: VehicleShowProps) {
+export default function VehicleShow({
+    vehicle,
+    page,
+    location_id,
+}: VehicleShowProps) {
     const { get: getLocations, isProcessing: isProcessingLocations } =
         useAxiosForm<PaginatedData<LocationSummary>>([]);
     const { get: getSetup, isProcessing: isProcessingSetup } = useAxiosForm<
@@ -44,46 +51,116 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
     const [locations, setLocations] = useState<LocationSummary[]>([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [filters, setFilters] = useState({
-        location_id: "",
+        page: page || 1,
+        location_id: location_id || "",
         season: "",
         surface_condition: "",
         tyres: "",
     });
     const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
+    const isInitialMount = useRef(true);
+
+    // Initial data fetch
     useEffect(() => {
-        fetchSetups();
         getLocations(route("api.locations.index", { paginate: false }), {
             onSuccess: (response) => {
-                console.log("Locations", response.data);
-                console.log("Locations data", response.data.data);
                 setLocations(response.data.data);
             },
         });
+        fetchSetups();
     }, [vehicle.id]);
 
+    // Apply filters with debounce
+    useEffect(() => {
+        if (isInitialMount.current) {
+            isInitialMount.current = false;
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            fetchSetups();
+            updateUrlWithFilters(filters);
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [filters]);
+
+    /**
+     * Update the URL with the current filters.
+     * @param newFilters The new filter values.
+     */
+    const updateUrlWithFilters = (newFilters: typeof filters) => {
+        const params: any = {};
+
+        if (newFilters.location_id)
+            params["location_id"] = newFilters.location_id;
+        if (newFilters.page) params["page"] = newFilters.page;
+
+        // Use Inertia's router to update URL without full page reload
+        router.get(route("vehicles.show", vehicle.id), params, {
+            preserveState: true,
+            preserveScroll: true,
+            replace: true,
+        });
+    };
+
+    /**
+     * Fetch setups based on the current filters.
+     */
     const fetchSetups = () => {
         const params: any = { vehicle_id: vehicle.id };
-        if (searchQuery) params.search = searchQuery;
-        if (filters.location_id) params.location_id = filters.location_id;
-        if (filters.season) params.season = filters.season;
+
+        if (filters.page) params["page"] = filters.page;
+        if (filters.location_id) params["location_id"] = filters.location_id;
+        if (filters.season) params["season"] = filters.season;
         if (filters.surface_condition)
-            params.surface_condition = filters.surface_condition;
-        if (filters.tyres) params.tyres = filters.tyres;
+            params["surface_condition"] = filters.surface_condition;
+        if (filters.tyres) params["tyres"] = filters.tyres;
 
         getSetup(route("api.setups.index", params), {
             onSuccess: (response) => {
                 setSetupsData(response.data);
+                setIsInitialLoading(false);
             },
         });
     };
 
-    const handleFilterChange = (key: string, value: string) => {
-        setFilters((prev) => ({ ...prev, [key]: value }));
+    /**
+     * Handle filter changes.
+     * @param key The filter key.
+     * @param value The filter value.
+     */
+    const onFilterChange = (key: string, value: string) => {
+        switch (key) {
+            case "page":
+                setFilters((prev) => ({ ...prev, page: parseInt(value) }));
+                break;
+            case "location_id":
+                setFilters((prev) => ({
+                    ...prev,
+                    location_id: value,
+                    page: 1,
+                }));
+                break;
+            case "season":
+                setFilters((prev) => ({ ...prev, season: value }));
+                break;
+            case "surface_condition":
+                setFilters((prev) => ({ ...prev, surface_condition: value }));
+                break;
+            case "tyres":
+                setFilters((prev) => ({ ...prev, tyres: value }));
+                break;
+            default:
+                break;
+        }
     };
 
     const clearFilters = () => {
         setFilters({
+            page: 1,
             location_id: "",
             season: "",
             surface_condition: "",
@@ -92,21 +169,27 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
         setSearchQuery("");
     };
 
+    /**
+     * Handle pagination.
+     * @param url The pagination URL.
+     */
+    const onPageChange = (url: string) => {
+        const urlObj = new URL(url);
+        const page = urlObj.searchParams.get("page");
+        if (page) {
+            setFilters((prev) => ({
+                ...prev,
+                page: parseInt(page),
+            }));
+        }
+    };
+
     const hasActiveFilters =
         filters.location_id ||
         filters.season ||
         filters.surface_condition ||
         filters.tyres ||
         searchQuery;
-
-    // Apply filters with debounce
-    useEffect(() => {
-        const timeoutId = setTimeout(() => {
-            fetchSetups();
-        }, 300);
-
-        return () => clearTimeout(timeoutId);
-    }, [filters, searchQuery]);
 
     return (
         <UserLayout>
@@ -208,7 +291,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                                 )!!
                                             }
                                             onChange={(value) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "location_id",
                                                     value?.id || ""
                                                 )
@@ -225,7 +308,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                             options={Object.keys(SEASONS_MAP)}
                                             selectedOption={filters.season}
                                             onChange={(option) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "season",
                                                     option || ""
                                                 )
@@ -246,7 +329,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                                 filters.surface_condition
                                             }
                                             onChange={(option) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_condition",
                                                     option || ""
                                                 )
@@ -263,7 +346,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                             options={Object.keys(TYRES_MAP)}
                                             selectedOption={filters.tyres}
                                             onChange={(option) =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "tyres",
                                                     option || ""
                                                 )
@@ -325,7 +408,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "location_id",
                                                     ""
                                                 )
@@ -346,7 +429,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("season", "")
+                                                onFilterChange("season", "")
                                             }
                                             className="ml-2 hover:text-tertiary-800"
                                         >
@@ -364,7 +447,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange(
+                                                onFilterChange(
                                                     "surface_condition",
                                                     ""
                                                 )
@@ -385,7 +468,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                         }
                                         <button
                                             onClick={() =>
-                                                handleFilterChange("tyres", "")
+                                                onFilterChange("tyres", "")
                                             }
                                             className="ml-2 hover:text-secondary-800"
                                         >
@@ -409,7 +492,7 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                     )}
 
                     {/* Setups Grid */}
-                    {isProcessingSetup ? (
+                    {isInitialLoading || isProcessingSetup ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {[...Array(6)].map((_, i) => (
                                 <SetupCardSkeleton key={i} />
@@ -417,10 +500,10 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                         </div>
                     ) : setupsData.data.length === 0 ? (
                         <FilteredEmptyState
-                            entityName="locations"
+                            entityName="setups"
                             title={`No setups found for ${vehicle.name}`}
                             description="Come back later to see if new setups have been created"
-                            icon={<LiaCarSideSolid />}
+                            icon={<BsWrenchAdjustable />}
                             hasActiveFilters={hasActiveFilters}
                             onClearFilters={clearFilters}
                         />
@@ -434,6 +517,15 @@ export default function VehicleShow({ vehicle }: VehicleShowProps) {
                                 />
                             ))}
                         </div>
+                    )}
+
+                    {/* Pagination */}
+                    {setupsData.meta && setupsData.meta.total > 0 && (
+                        <Pagination
+                            meta={setupsData.meta}
+                            links={setupsData.links}
+                            onPageChange={onPageChange}
+                        />
                     )}
                 </div>
             </div>
