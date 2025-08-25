@@ -7,12 +7,14 @@ import { GiCarWheel } from "react-icons/gi";
 
 interface SetupCardProps {
     setup: Setup;
+    image?: "vehicle" | "location";
     hideVehicle?: boolean;
     hideLocation?: boolean;
 }
 
 export default function SetupCard({
     setup,
+    image = "vehicle",
     hideVehicle = false,
     hideLocation = false,
 }: SetupCardProps) {
@@ -21,8 +23,16 @@ export default function SetupCard({
             {/* Vehicle Image */}
             <div className="h-48 relative overflow-hidden bg-surfaceContainerHigh">
                 <img
-                    src={setup.vehicle.imgPath}
-                    alt={setup.vehicle.name}
+                    src={
+                        image === "vehicle"
+                            ? setup.vehicle.imgPath
+                            : setup.location.imgBgPath
+                    }
+                    alt={
+                        image === "vehicle"
+                            ? setup.vehicle.name
+                            : setup.location.name
+                    }
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
                 <div className="absolute top-3 right-3 flex flex-col gap-3">

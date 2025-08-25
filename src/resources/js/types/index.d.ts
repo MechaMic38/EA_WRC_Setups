@@ -121,6 +121,10 @@ export interface Setup {
     location: Location;
     user: User;
     configuration?: SetupConfiguration;
+    permissions: {
+        update: boolean;
+        delete: boolean;
+    };
 }
 
 // ==========================================================================

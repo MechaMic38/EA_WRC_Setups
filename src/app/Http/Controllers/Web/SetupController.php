@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\SetupResource;
 use App\Models\Setup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 
 class SetupController extends Controller
@@ -96,6 +97,8 @@ class SetupController extends Controller
 
     public function editConfiguration(Setup $setup)
     {
+        Gate::authorize('update', $setup);
+
         $setup->load(['user', 'location', 'vehicle', 'configuration', 'vehicle.category', 'vehicle.manufacturer']);
 
         return Inertia::render('SetupWizard/SetupEditing', [

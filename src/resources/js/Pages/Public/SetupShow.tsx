@@ -17,7 +17,6 @@ import ConfigurationSection from "@/Components/Setup/ConfigurationSection";
 import VehicleCard from "@/Components/Cards/VehicleCard";
 import LocationCard from "@/Components/Cards/LocationCard";
 import ConditionsCard from "@/Components/Cards/ConditionsCard";
-import DangerButton from "@/Components/Form/DangerButton";
 import SetupDeleteModal from "@/Components/Modals/Setup/SetupDeleteModal";
 import SuccessModal from "@/Components/Modals/SuccessModal";
 
@@ -122,18 +121,25 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
                             </h1>
                         </div>
                         <div className="flex gap-4">
-                            <DangerButton onClick={onDeleteSetup}>
-                                <FiTrash2 className="mr-2" /> Delete Setup
-                            </DangerButton>
-                            <Link
-                                href={route(
-                                    "setups.edit.configuration",
-                                    setup.id
-                                )}
-                                className="px-6 py-3 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainer transition-colors duration-200 flex items-center font-medium"
-                            >
-                                <FiEdit className="mr-2" /> Edit Setup
-                            </Link>
+                            {setup.permissions.delete && (
+                                <button
+                                    onClick={onDeleteSetup}
+                                    className="px-6 py-3 bg-surface text-error border border-error rounded-xl hover:bg-errorContainer/10 transition-colors duration-200 flex items-center font-medium"
+                                >
+                                    <FiTrash2 className="mr-2" /> Delete Setup
+                                </button>
+                            )}
+                            {setup.permissions.update && (
+                                <Link
+                                    href={route(
+                                        "setups.edit.configuration",
+                                        setup.id
+                                    )}
+                                    className="px-6 py-3 bg-surface text-primary border border-primary rounded-xl hover:bg-surfaceContainer transition-colors duration-200 flex items-center font-medium"
+                                >
+                                    <FiEdit className="mr-2" /> Edit Setup
+                                </Link>
+                            )}
                             <button className="px-6 py-3 bg-primary text-surfaceContainer rounded-xl hover:bg-primary-600 transition-colors duration-200 flex items-center font-medium">
                                 <FiDownload className="mr-2" /> Export
                             </button>

@@ -513,6 +513,7 @@ export default function VehicleShow({
                                 <SetupCard
                                     key={setup.id}
                                     setup={setup}
+                                    image="location"
                                     hideVehicle
                                 />
                             ))}

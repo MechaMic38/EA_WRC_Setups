@@ -35,6 +35,10 @@ class SetupResource extends JsonResource
             'configuration' => $this->whenLoaded('configuration', function () {
                 return new SetupConfigurationResource($this->configuration);
             }),
+            'permissions' => [
+                'update' => $request->user() ? $request->user()->can('update', $this->resource) : false,
+                'delete' => $request->user() ? $request->user()->can('delete', $this->resource) : false,
+            ]
         ];
     }
 }
