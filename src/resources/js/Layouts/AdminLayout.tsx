@@ -86,7 +86,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
 
             {/* Sidebar */}
             <div
-                className={`fixed inset-y-0 left-0 z-50 w-64 transform shadow-2xl transition-all duration-300 ease-in-out lg:translate-x-0
+                className={`fixed inset-y-0 left-0 z-50 w-64 transform shadow-2xl transition-all duration-300 ease-in-out lg:translate-x-0 overflow-hidden
         ${
             mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative bg-surfaceContainer border-r border-surfaceContainerHigh`}
