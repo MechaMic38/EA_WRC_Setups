@@ -14,6 +14,8 @@ import SuccessModal from "@/Components/Modals/SuccessModal";
 import VehicleCard from "@/Components/Cards/VehicleCard";
 import LocationCard from "@/Components/Cards/LocationCard";
 import ConditionsCard from "@/Components/Cards/ConditionsCard";
+import Configurationtabs from "@/Components/Setup/Configurationtabs";
+import { CONFIGURATION_TABS } from "@/constants";
 
 interface SetupCreationProps {
     setup: Setup;
@@ -176,20 +178,6 @@ export default function SetupCreation({ setup }: SetupCreationProps) {
         );
     };
 
-    // Configuration tabs
-    const configurationTabs: {
-        id: SetupSection;
-        icon: JSX.Element;
-        label: string;
-    }[] = [
-        { id: "alignment", icon: <FiSliders />, label: "Alignment" },
-        { id: "braking", icon: <FiSliders />, label: "Braking" },
-        { id: "differentials", icon: <FiSliders />, label: "Differentials" },
-        { id: "gears", icon: <FiSliders />, label: "Gears" },
-        { id: "damping", icon: <FiSliders />, label: "Damping" },
-        { id: "springs", icon: <FiSliders />, label: "Springs" },
-    ];
-
     return (
         <UserLayout>
             <Head title="Configure Setup" />
@@ -272,27 +260,11 @@ export default function SetupCreation({ setup }: SetupCreationProps) {
 
                         {/* Configuration Section */}
                         <div className="lg:col-span-3">
-                            {/* Configuration Tabs */}
-                            <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden mb-6">
-                                <nav className="flex overflow-x-auto">
-                                    {configurationTabs.map((tab) => (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => setActiveTab(tab.id)}
-                                            className={`px-6 py-4 font-medium text-sm flex items-center whitespace-nowrap transition-colors duration-200 ${
-                                                activeTab === tab.id
-                                                    ? "bg-primary text-surfaceContainer"
-                                                    : "text-onSurface hover:bg-surfaceContainerHigh"
-                                            }`}
-                                        >
-                                            <span className="text-lg mr-3">
-                                                {tab.icon}
-                                            </span>
-                                            <span>{tab.label}</span>
-                                        </button>
-                                    ))}
-                                </nav>
-                            </div>
+                            <Configurationtabs
+                                tabs={CONFIGURATION_TABS}
+                                activeTab={activeTab}
+                                onChangeTab={setActiveTab}
+                            />
 
                             {isProcessingBlueprint && !blueprint ? (
                                 <div className="bg-surfaceContainer rounded-xl p-6 border border-surfaceContainerHigh">

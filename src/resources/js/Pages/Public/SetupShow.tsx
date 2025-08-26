@@ -6,7 +6,6 @@ import {
     FiChevronLeft,
     FiUser,
     FiCalendar,
-    FiSettings,
     FiDownload,
     FiInfo,
     FiEdit,
@@ -19,6 +18,8 @@ import LocationCard from "@/Components/Cards/LocationCard";
 import ConditionsCard from "@/Components/Cards/ConditionsCard";
 import SetupDeleteModal from "@/Components/Modals/Setup/SetupDeleteModal";
 import SuccessModal from "@/Components/Modals/SuccessModal";
+import Configurationtabs from "@/Components/Setup/Configurationtabs";
+import { CONFIGURATION_TABS } from "@/constants";
 
 export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
     const { get: getSetupBlueprint, isProcessing } =
@@ -84,19 +85,6 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
             />
         );
     };
-
-    const configurationTabs: {
-        id: SetupSection;
-        icon: JSX.Element;
-        label: string;
-    }[] = [
-        { id: "alignment", icon: <FiSettings />, label: "Alignment" },
-        { id: "braking", icon: <FiSettings />, label: "Braking" },
-        { id: "differentials", icon: <FiSettings />, label: "Differentials" },
-        { id: "gears", icon: <FiSettings />, label: "Gears" },
-        { id: "damping", icon: <FiSettings />, label: "Damping" },
-        { id: "springs", icon: <FiSettings />, label: "Springs" },
-    ];
 
     return (
         <UserLayout>
@@ -217,27 +205,11 @@ export default function SetupShow({ setup: initialSetup }: { setup: Setup }) {
 
                         {/* Configuration Section */}
                         <div className="lg:col-span-3">
-                            {/* Configuration Tabs */}
-                            <div className="bg-surfaceContainer rounded-xl border border-surfaceContainerHigh overflow-hidden mb-6">
-                                <nav className="flex overflow-x-auto">
-                                    {configurationTabs.map((tab) => (
-                                        <button
-                                            key={tab.id}
-                                            onClick={() => setActiveTab(tab.id)}
-                                            className={`px-6 py-4 font-medium text-sm flex items-center whitespace-nowrap transition-colors duration-200 ${
-                                                activeTab === tab.id
-                                                    ? "bg-primary text-surfaceContainer"
-                                                    : "text-onSurface hover:bg-surfaceContainerHigh"
-                                            }`}
-                                        >
-                                            <span className="text-lg mr-3">
-                                                {tab.icon}
-                                            </span>
-                                            <span>{tab.label}</span>
-                                        </button>
-                                    ))}
-                                </nav>
-                            </div>
+                            <Configurationtabs
+                                tabs={CONFIGURATION_TABS}
+                                activeTab={activeTab}
+                                onChangeTab={setActiveTab}
+                            />
 
                             {renderConfigurationSection(activeTab)}
                         </div>

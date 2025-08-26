@@ -1,14 +1,25 @@
 import { BiWater } from "react-icons/bi";
-import { BsCloudSunFill, BsSnow2 } from "react-icons/bs";
+import { BsCloudSunFill, BsSnow2, BsSpeedometer2 } from "react-icons/bs";
 import { FaRegSnowflake } from "react-icons/fa";
-import { FiCloudSnow, FiShield, FiSun, FiUser } from "react-icons/fi";
+import {
+    FiCloudSnow,
+    FiShield,
+    FiSliders,
+    FiSun,
+    FiUser,
+} from "react-icons/fi";
 import {
     GiConcreteBag,
     GiDustCloud,
     GiIceCube,
     GiLindenLeaf,
+    GiSpring,
+    GiSuspensionBridge,
     GiTwirlyFlower,
 } from "react-icons/gi";
+import { SetupSection } from "./types";
+import { MdOutlineTireRepair } from "react-icons/md";
+import { TbManualGearbox } from "react-icons/tb";
 
 /**
  * Mapping of seasons to their display properties.
@@ -118,3 +129,16 @@ export const USER_ROLES_MAP = {
         icon: <FiUser className="text-secondary" />,
     },
 };
+
+export const CONFIGURATION_TABS: {
+    id: SetupSection;
+    icon: JSX.Element;
+    label: string;
+}[] = [
+    { id: "alignment", icon: <MdOutlineTireRepair />, label: "Alignment" },
+    { id: "braking", icon: <BsSpeedometer2 />, label: "Braking" },
+    { id: "differentials", icon: <FiSliders />, label: "Differentials" },
+    { id: "gears", icon: <TbManualGearbox />, label: "Gears" },
+    { id: "damping", icon: <GiSuspensionBridge />, label: "Damping" },
+    { id: "springs", icon: <GiSpring />, label: "Springs" },
+];

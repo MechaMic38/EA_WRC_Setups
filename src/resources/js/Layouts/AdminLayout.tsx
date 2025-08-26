@@ -118,6 +118,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                                     key={item.name}
                                     href={item.href}
                                     active={item.current}
+                                    glow={item.current}
                                     className="group flex items-center px-4 py-3 text-sm font-medium rounded-xl w-full transition-all duration-200 text-onSurface hover:bg-surfaceContainerHigh hover:shadow-sm"
                                 >
                                     <div
