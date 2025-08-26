@@ -242,7 +242,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                 </div>
 
                 {/* Content area */}
-                <div className="relative flex flex-1 flex-col overflow-y-auto">
+                <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
                     {/* Light effect - top right  */}
                     <div className="absolute top-0 right-0 w-[700px] h-[700px] transform translate-x-1/2 -translate-y-1/2">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-secondary/25 to-transparent rounded-full blur-[120px] opacity-60"></div>
