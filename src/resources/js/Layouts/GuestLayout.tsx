@@ -8,7 +8,7 @@ interface GuestLayoutProps extends PropsWithChildren {
 
 export default function Guest({ children, header }: GuestLayoutProps) {
     return (
-        <div className="min-h-screen bg-gradient-to-br from-surfaceContainer via-surface to-surfaceContainerHigh flex items-center justify-center p-4">
+        <div className="min-h-screen bg-gradient-to-br from-primaryContainer/50 via-surface to-tertiaryContainer/50 flex items-center justify-center p-4">
             <div className="w-full max-w-md">
                 {/* Logo Header */}
                 <div className="text-center mb-8">
