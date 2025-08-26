@@ -47,12 +47,12 @@ export default function UserLayout({ children }: PropsWithChildren) {
                 route().current("locations.index") ||
                 route().current("locations.*"),
         },
-        {
-            name: "About",
-            href: route("about"),
-            icon: FiInfo,
-            current: route().current("about"),
-        },
+        // {
+        //     name: "About",
+        //     href: route("about"),
+        //     icon: FiInfo,
+        //     current: route().current("about"),
+        // },
     ];
 
     return (

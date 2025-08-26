@@ -91,6 +91,9 @@ export default function AdminLayout({ children }: PropsWithChildren) {
             mobileSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:relative bg-surfaceContainer border-r border-surfaceContainerHigh`}
             >
+                {/* Light effect - bottom left  */}
+                <div className="absolute bottom-0 left-0 w-72 h-72 bg-tertiaryContainer/70 rounded-full blur-[100px] transform -translate-x-1/2 translate-y-1/2"></div>
+
                 <div className="flex h-full flex-col">
                     {/* Logo */}
                     <div className="flex h-20 shrink-0 items-center justify-center px-6 border-b border-surfaceContainerHigh">
@@ -238,8 +241,14 @@ export default function AdminLayout({ children }: PropsWithChildren) {
                 </div>
 
                 {/* Content area */}
-                <div className="flex flex-1 flex-col overflow-y-auto">
-                    <main className="flex-1 p-4 sm:p-6 lg:p-8 text-onSurface">
+                <div className="relative flex flex-1 flex-col overflow-y-auto">
+                    {/* Light effect - top right  */}
+                    <div className="absolute top-0 right-0 w-[700px] h-[700px] transform translate-x-1/2 -translate-y-1/2">
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-secondary/25 to-transparent rounded-full blur-[120px] opacity-60"></div>
+                        <div className="absolute inset-0 bg-gradient-to-br from-tertiary/20 to-transparent rounded-full blur-[80px] opacity-40 scale-110"></div>
+                    </div>
+
+                    <main className="flex-1 p-4 sm:p-6 lg:p-8 text-onSurface z-10">
                         <div className="max-w-7xl mx-auto">{children}</div>
                     </main>
                 </div>
