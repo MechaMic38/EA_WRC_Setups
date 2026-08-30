@@ -1,6 +1,22 @@
+<div align="center">
+    <img align="center" src="/docs/images/setup_list.png" alt="EA WRC Setups | Setup List" />
+</div>
+
 # EA WRC SETUPS
 
 Project for the Web Programming &amp; Digital Services course, held at Università degli Studi di Brescia (Italy).
+You can see the project in action in two separate videos:
+
+- **End-User Perspective:** the end-user can search for setups, filter them based on various criteria (car, category, location, weather...), and view their details. If the user is logged in, they can also create and share their own setups. [[Youtube]](https://youtu.be/S2wnWEV2Wmo)
+- **Admin Perspective:** the administrator can manage users, and all aspects of the application (available cars and locations, categories, manufacturers, and their associated images). [[Youtube]](https://youtu.be/rAsDtclXHMA)
+
+<div align="center">
+    <img align="center" src="/docs/images/car_setup.png" alt="EA WRC Setups | Car Setup" />
+</div>
+
+<div align="center">
+    <img align="center" src="/docs/images/admin_view.png" alt="EA WRC Setups | Admin View" />
+</div>
 
 ## How To Use
 
