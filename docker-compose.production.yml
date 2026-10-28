@@ -40,5 +40,20 @@ services:
             SESSION_DRIVER: file
             CACHE_STORE: file
             QUEUE_CONNECTION: sync
+
+            FILESYSTEM_DISK: public
+            PUBLIC_STORAGE_DRIVER: ${PUBLIC_STORAGE_DRIVER:-s3}
+
+            AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:?Set AWS_ACCESS_KEY_ID}
+            AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:?Set AWS_SECRET_ACCESS_KEY}
+            AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION:-auto}
+            AWS_BUCKET: ${AWS_BUCKET:?Set AWS_BUCKET}
+            AWS_ENDPOINT: ${AWS_ENDPOINT:?Set AWS_ENDPOINT}
+            AWS_URL: ${AWS_URL:?Set AWS_URL}
+            AWS_USE_PATH_STYLE_ENDPOINT: ${AWS_USE_PATH_STYLE_ENDPOINT:-true}
+
+            ADMIN_NAME: ${ADMIN_NAME:?Set ADMIN_NAME in .env.production}
+            ADMIN_EMAIL: ${ADMIN_EMAIL:?Set ADMIN_EMAIL in .env.production}
+            ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in .env.production}
         networks:
             - app_network

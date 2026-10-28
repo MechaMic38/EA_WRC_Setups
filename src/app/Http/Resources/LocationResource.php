@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Storage;
 
 class LocationResource extends JsonResource
 {
@@ -25,8 +25,8 @@ class LocationResource extends JsonResource
             'tyres' => $this->tyres,
             'surfaceConditions' => $this->surface_conditions,
             'surfaceType' => $this->surface_type,
-            'imgBannerPath' => URL::asset('storage' . '/' . $this->img_banner_path),
-            'imgBgPath' => URL::asset('storage' . '/' . $this->img_bg_path)
+            'imgBannerPath' => Storage::disk('public')->url($this->img_banner_path),
+            'imgBgPath' => Storage::disk('public')->url($this->img_bg_path)
         ];
     }
 }
