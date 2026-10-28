@@ -1,0 +1,44 @@
+services:
+    # These are part of the development architecture
+    # Disable them when using the combined production image
+    php:
+        profiles:
+            - development
+
+
+    nginx:
+        profiles:
+            - development
+
+
+    # Production application: PHP-Apache + Laravel
+    app:
+        image: ea-wrc-setups:production
+        build:
+            context: .
+            dockerfile: ./docker/production.dockerfile
+            args:
+                PHP_VERSION: ${PHP_VERSION:-8.3}
+                NODE_VERSION: ${NODE_VERSION:-20}
+        restart: unless-stopped
+        ports:
+            - "${APP_PORT:-10000}:10000"
+        environment:
+            APP_NAME: "EA WRC Setups"
+            APP_ENV: production
+            APP_DEBUG: "false"
+            APP_KEY: ${APP_KEY:?Set APP_KEY in .env.production}
+            APP_URL: ${APP_URL:-http://localhost:10000}
+
+            LOG_CHANNEL: stderr
+
+            DB_CONNECTION: mongodb
+            DB_URI: ${DB_URI:?Set DB_URI in .env.production}
+            DB_DATABASE: ${DB_DATABASE:-ea_wrc_setups}
+
+            # Suitable starting defaults for a temporary showcase.
+            SESSION_DRIVER: file
+            CACHE_STORE: file
+            QUEUE_CONNECTION: sync
+        networks:
+            - app_network
