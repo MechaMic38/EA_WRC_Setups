@@ -19,8 +19,8 @@ class UserResource extends JsonResource
         return [
             'id' => $this->id,
             'username' => $this->username,
-            'email' => $this->email,
             $this->mergeWhen($request->user() && ($request->user()->isAdmin() || $request->user()->id === $this->id), [
+                'email' => $this->email,
                 'role' => $this->role,
             ]),
         ];

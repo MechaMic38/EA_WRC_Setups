@@ -17,20 +17,23 @@ services:
 
     # Local development database
     mongodb:
-        image: mongo:${MONGO_VERSION:-7.0}
+        image: mongodb/mongodb-atlas-local:${MONGO_VERSION:-7.0}
+        hostname: mongodb
         restart: unless-stopped
         ports:
             - ${MONGO_ON_HOST:-27017}:27017
         volumes:
-            - ./docker/database/data:/data/db
+            - mongodb_data:/data/db
+            - mongodb_configdb:/data/configdb
+            - mongodb_mongot:/data/mongot
         ulimits:
             nofile:
                 soft: 64000
                 hard: 64000
         environment:
-            MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?Set MONGO_USERNAME in .env}
-            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Set MONGO_PASSWORD in .env}
-        command: ["mongod", "--quiet"]
+            MONGODB_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?Set MONGO_USERNAME in .env}
+            MONGODB_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Set MONGO_PASSWORD in .env}
+            DO_NOT_TRACK: "1"
         networks:
             - app_network
 
@@ -106,3 +109,9 @@ services:
             - nginx
         networks:
             - app_network
+
+
+volumes:
+    mongodb_data:
+    mongodb_configdb:
+    mongodb_mongot:
