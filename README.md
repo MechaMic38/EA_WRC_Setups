@@ -10,6 +10,8 @@ You can see the project in action in two separate videos:
 - **End-User Perspective:** the end-user can search for setups, filter them based on various criteria (car, category, location, weather...), and view their details. If the user is logged in, they can also create and share their own setups. [[Youtube]](https://youtu.be/S2wnWEV2Wmo)
 - **Admin Perspective:** the administrator can manage users, and all aspects of the application (available cars and locations, categories, manufacturers, and their associated images). [[Youtube]](https://youtu.be/rAsDtclXHMA)
 
+The project is also available as a showcase at this website: [https://ea-wrc-setups.onrender.com](https://ea-wrc-setups.onrender.com)
+
 <div align="center">
     <img align="center" src="/docs/images/car_setup.png" alt="EA WRC Setups | Car Setup" />
 </div>
