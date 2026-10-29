@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Setup;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class SetupService extends Service
 {
@@ -23,13 +24,15 @@ class SetupService extends Service
         // Round all configuration values according to their precision
         $configuration = $this->roundConfigurationValues($configuration, $setupOptions);
 
-        // Create a new setup record
-        $setup = $user->setups()->create($data);
+        return DB::transaction(function () use ($data, $configuration, $user) {
+            // Create a new setup record
+            $setup = $user->setups()->create($data);
 
-        // Create a new setup configuration record
-        $setup->configuration()->create($configuration);
+            // Create a new setup configuration record
+            $setup->configuration()->create($configuration);
 
-        return $setup;
+            return $setup;
+        });
     }
 
     /**
@@ -42,20 +45,21 @@ class SetupService extends Service
      */
     public function updateSetup(Setup $setup, array $data, array $configuration): Setup
     {
-        // TODO: separate the update of the setup record and the setup configuration record
         // Get the setup options configuration
         $setupOptions = config('setup-options');
 
         // Round all configuration values according to their precision
         $configuration = $this->roundConfigurationValues($configuration, $setupOptions);
 
-        // Update the setup record
-        $setup->update($data);
+        return DB::transaction(function () use ($setup, $data, $configuration) {
+            // Update the setup record
+            $setup->update($data);
 
-        // Update the setup configuration record
-        $setup->configuration->update($configuration);
+            // Update the setup configuration record
+            $setup->configuration->update($configuration);
 
-        return $setup;
+            return $setup;
+        });
     }
 
     /**
@@ -66,11 +70,13 @@ class SetupService extends Service
      */
     public function deleteSetup(Setup $setup): void
     {
-        // Delete the setup configuration record
-        $setup->configuration->delete();
+        DB::transaction(function () use ($setup) {
+            // Delete the setup configuration record
+            $setup->configuration()->delete();
 
-        // Delete the setup record
-        $setup->delete();
+            // Delete the setup record
+            $setup->delete();
+        });
     }
 
     /**

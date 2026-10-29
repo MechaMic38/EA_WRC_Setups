@@ -17,14 +17,9 @@ jobs:
 
     services:
       mongodb:
-        image: mongo:7.0
+        image: mongodb/mongodb-atlas-local:7.0
         ports:
           - 27017:27017
-        options: >-
-          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     env:
       APP_ENV: testing
@@ -32,7 +27,7 @@ jobs:
       APP_URL: http://localhost
 
       DB_CONNECTION: mongodb
-      DB_URI: mongodb://127.0.0.1:27017
+      DB_URI: mongodb://127.0.0.1:27017/?directConnection=true
       DB_DATABASE: ea_wrc_setups_test
 
       SESSION_DRIVER: array
