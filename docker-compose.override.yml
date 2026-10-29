@@ -23,6 +23,10 @@ services:
             - ${MONGO_ON_HOST:-27017}:27017
         volumes:
             - ./docker/database/data:/data/db
+        ulimits:
+            nofile:
+                soft: 64000
+                hard: 64000
         environment:
             MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME:?Set MONGO_USERNAME in .env}
             MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:?Set MONGO_PASSWORD in .env}
