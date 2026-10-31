@@ -289,6 +289,14 @@ export default function UserLayout({ children }: PropsWithChildren) {
                                         Profile
                                     </Link>
                                     <Link
+                                        href={route("profile.setups.index")}
+                                        className="flex items-center w-full px-4 py-2 text-sm rounded-xl transition-all duration-200 hover:bg-surfaceContainerHigh text-onSurface"
+                                        onClick={() => setMobileMenuOpen(false)}
+                                    >
+                                        <BsWrenchAdjustable className="mr-2 h-4 w-4" />
+                                        My Setups
+                                    </Link>
+                                    <Link
                                         href={route("auth.logout")}
                                         method="post"
                                         as="button"
