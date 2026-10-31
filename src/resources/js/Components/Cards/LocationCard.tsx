@@ -87,7 +87,7 @@ export default function LocationCard({
                         />
                     </div>
                     {/* Vertical divider */}
-                    <div className="hidden md:block w-px h-12 border border-tertiaryContainer mx-3" />
+                    <div className="w-px h-12 border border-tertiaryContainer mx-3" />
                     {/* Location Name */}
                     <div className="flex-1 min-w-0">
                         <h3 className="text-lg font-bold text-onSurface truncate">
